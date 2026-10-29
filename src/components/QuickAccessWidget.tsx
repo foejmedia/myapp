@@ -17,6 +17,9 @@ const TILES = [
   { icon: 'history_edu', label: 'Hadith', href: '/hadees', color: '#eab308' },
   { icon: 'radio', label: 'Radio', href: '/radio', color: '#ef4444' },
   { icon: 'event_available', label: 'Namaz', href: '/namaz-tracker', color: '#10b981' },
+  { icon: 'explore', label: 'Qibla', href: '/qibla', color: '#d97706' },
+  { icon: 'mosque', label: 'Mosques', href: '/mosques', color: '#047857' },
+  { icon: 'quiz', label: 'Quiz', href: '/quiz', color: '#b8913a' },
   { icon: 'home', label: 'Home', href: '/', color: '#64748b' },
 ];
 

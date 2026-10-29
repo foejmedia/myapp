@@ -1,0 +1,126 @@
+/* =========================================================
+   QIBLA COMPASS — /qibla
+   Light page in the Namaz Tracker palette.
+   ========================================================= */
+
+.qb {
+  /* global headings read these; keep them dark on this light page even in site dark mode */
+  --text-primary: #16231c;
+  --text-secondary: #5a6760;
+
+  min-height: 100vh;
+  background: #f3f5f0;
+  color: #16231c;
+  font-family: var(--qb-font, 'Manrope'), system-ui, sans-serif;
+}
+
+/* the app shell pads <main>; let the page background run edge to edge */
+@media (min-width: 1024px) {
+  .qb { margin: -28px -32px -72px; }
+}
+
+.qb h1, .qb p { margin: 0; }
+.qb button { font-family: inherit; }
+.qb [lang='ar'] { font-family: var(--qb-font-ar, 'Amiri'), serif; }
+
+.qb-wrap { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; }
+
+.qb-head { text-align: center; }
+.qb-ar { font-size: 28px; line-height: 1.2; color: #0b5d43; }
+.qb-head h1 { margin-top: 4px; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; color: #16231c; }
+.qb-head p:last-child { margin-top: 8px; font-size: 15px; line-height: 1.5; color: #5a6760; }
+
+.qb-card { background: #ffffff; border: 1px solid #e1e5de; border-radius: 20px; padding: 24px; box-sizing: border-box; }
+
+/* ---------- compass ---------- */
+.qb-compass { display: flex; flex-direction: column; align-items: center; gap: 16px; transition: border-color .3s, box-shadow .3s; }
+.qb-compass.is-aligned { border-color: #3e9e73; box-shadow: 0 0 0 4px #ddefe4; }
+
+.qb-dial-wrap { position: relative; width: min(100%, 320px); aspect-ratio: 1; padding-top: 14px; box-sizing: content-box; }
+.qb-dial { display: block; width: 100%; height: 100%; will-change: transform; }
+
+/* fixed marker for "the way your phone points" */
+.qb-pointer {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 16px solid #16231c;
+  transition: border-top-color .3s;
+}
+.is-aligned .qb-pointer { border-top-color: #0b5d43; }
+
+.qb-rim { fill: #fbfcfa; stroke: #d3d8d0; stroke-width: 2; }
+.is-aligned .qb-rim { fill: #eef7f1; }
+.qb-tick { stroke: #b6beb3; stroke-width: 1.5; }
+.qb-tick.major { stroke: #5a6760; stroke-width: 2.5; }
+.qb-letter { font-size: 18px; font-weight: 800; fill: #5a6760; text-anchor: middle; dominant-baseline: middle; }
+.qb-letter.north { fill: #b3362b; }
+
+.qb-needle { stroke: #0b5d43; stroke-width: 4; stroke-linecap: round; }
+.qb-kaaba { fill: #16231c; }
+.qb-kaaba-band { fill: #f2c766; }
+.qb-hub { fill: #0b5d43; stroke: #ffffff; stroke-width: 3; }
+
+.qb-hint { font-size: 20px; font-weight: 800; text-align: center; color: #16231c; min-height: 1.5em; }
+.is-aligned .qb-hint { color: #0b5d43; }
+.qb-note { font-size: 13px; line-height: 1.5; color: #5a6760; text-align: center; max-width: 420px; }
+
+.qb-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px;
+  border-radius: 12px; border: 1px solid #d3d8d0; background: #ffffff; color: #16231c;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.qb-btn.primary { background: #0b5d43; border-color: #0b5d43; color: #ffffff; }
+.qb-btn:disabled { opacity: .6; cursor: default; }
+.qb-btn:focus-visible { outline: 3px solid #3e9e73; outline-offset: 2px; }
+
+/* ---------- stats ---------- */
+.qb-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.qb-stats > div { background: #ffffff; border: 1px solid #e1e5de; border-radius: 16px; padding: 16px; min-width: 0; }
+.qb-stats p { font-size: 13px; font-weight: 700; color: #5a6760; }
+.qb-stats b { display: block; margin-top: 6px; font-size: 26px; line-height: 1.15; font-weight: 800; color: #0b5d43; }
+.qb-stats b.qb-place { font-size: 17px; color: #16231c; overflow-wrap: anywhere; }
+.qb-stats span { display: block; margin-top: 4px; font-size: 12px; color: #5a6760; }
+
+.qb-locate { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 20px; }
+.qb-locate p { font-size: 14px; line-height: 1.5; color: #5a6760; }
+.qb-error { color: #8e2a20 !important; font-weight: 700; }
+
+/* ---------- prayer / sun / map cards ---------- */
+.qb-card h2 { margin: 0 0 12px; font-size: 17px; font-weight: 800; color: #16231c; }
+.qb-muted { font-size: 13px; line-height: 1.5; color: #5a6760; }
+
+.qb-sun { fill: #f2c766; stroke: #a86e12; stroke-width: 2; }
+.qb-sun-ring { fill: none; stroke: #f2c766; stroke-width: 2; stroke-dasharray: 3 3; }
+
+.qb-next b:first-child { font-size: 26px; font-weight: 800; color: #0b5d43; }
+.qb-next [lang='ar'] { font-size: 22px; color: #5a6760; margin-left: 6px; }
+.qb-next p { margin-top: 4px; font-size: 15px; color: #5a6760; }
+.qb-next p b { color: #16231c; font-variant-numeric: tabular-nums; }
+
+.qb-times { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.qb-times li { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; border-radius: 12px; background: #f3f5f0; min-width: 0; }
+.qb-times span { font-size: 12px; font-weight: 700; color: #5a6760; }
+.qb-times b { font-size: 13px; font-weight: 800; color: #16231c; white-space: nowrap; }
+.qb-times li.is-past { opacity: .55; }
+.qb-times li.is-next { background: #0b5d43; }
+.qb-times li.is-next span, .qb-times li.is-next b { color: #ffffff; }
+@media (max-width: 380px) {
+  .qb-times b { font-size: 11px; }
+}
+
+.qb-sunbox > p:first-of-type { font-size: 15px; line-height: 1.55; color: #16231c; }
+.qb-sunbox .qb-muted { margin-top: 6px; }
+.qb-rasd { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: #fbebc3; border: 1px solid #f2c766; }
+.qb-rasd p { font-size: 13px; line-height: 1.55; color: #5c3d00; }
+
+.qb-map { width: 100%; height: 300px; border-radius: 14px; overflow: hidden; background: #e7ebe4; z-index: 0; }
+.qb-mapbox .qb-muted { margin-top: 10px; }
+.qb-map-kaaba span { display: block; width: 18px; height: 18px; background: #16231c; border: 2px solid #f2c766; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+
+.qb-mosques { display: flex; align-items: center; gap: 14px; padding: 16px 20px; text-decoration: none; color: #16231c !important; }
+.qb-mosques:hover { border-color: #3e9e73; }
+.qb-mosques > span:first-child { color: #0b5d43; font-size: 28px; }
+.qb-mosques > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; }
+.qb-mosques b { font-size: 16px; font-weight: 800; }
+.qb-mosques small { font-size: 13px; color: #5a6760; }
+.qb-mosques > span:last-child { color: #5a6760; }

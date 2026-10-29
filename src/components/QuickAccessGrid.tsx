@@ -32,6 +32,9 @@ const TILES: Tile[] = [
   { key: 'dua', label: 'Duas', sub: 'Daily Supplications', ar: 'دعاء', icon: 'volunteer_activism', href: '/dua', from: '#f472b6', to: '#be185d', anim: 'raise' },
   { key: 'tra', label: 'Translation Audio', sub: 'Hear the Quran ayah by ayah in your language', ar: 'ترجمة', icon: 'record_voice_over', href: '/translation-audio', from: '#2dd4bf', to: '#0f766e', anim: 'pulse', wide: true, chips: ['English', 'اردو', 'فارسی', 'Azərbaycanca', 'Bosanski'] },
   { key: 'namaz', label: 'Namaz Tracker', sub: 'Log your five daily prayers and keep count of qaza', ar: 'صلاة', icon: 'event_available', href: '/namaz-tracker', from: '#34d399', to: '#047857', anim: 'pulse', wide: true, chips: ['Today', 'Month', 'Qaza'] },
+  { key: 'qibla', label: 'Qibla Compass', sub: 'Find the direction of the Kaaba from wherever you are', ar: 'قبلة', icon: 'explore', href: '/qibla', from: '#fbbf24', to: '#b45309', anim: 'spin', wide: true, chips: ['Live compass', 'Bearing', 'Distance'] },
+  { key: 'mosques', label: 'Mosques Near You', sub: 'Find nearby mosques on a map and get directions', ar: 'مسجد', icon: 'mosque', href: '/mosques', from: '#10b981', to: '#065f46', anim: 'raise', wide: true, chips: ['Map', 'Facilities', 'Directions'] },
+  { key: 'quiz', label: 'Quran Quiz', sub: 'Learn and revise ayahs, surahs, translations and vocabulary', ar: 'اختبار', icon: 'quiz', href: '/quiz', from: '#fbbf24', to: '#047857', anim: 'flip', wide: true, chips: ['Daily challenge', 'Revision', '3 levels'] },
 ];
 
 /** Tracks the cursor for the 3D tilt + spotlight, without re-rendering React */
