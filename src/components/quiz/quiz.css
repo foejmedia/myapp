@@ -51,9 +51,6 @@
   --qz-no-soft: #3a1c18;
   --qz-shadow: 0 1px 2px rgba(0, 0, 0, .3);
 }
-@media (min-width: 1024px) {
-  .qz { margin: -28px -32px -72px; }
-}
 
 .qz h1, .qz h2, .qz h3, .qz p { margin: 0; }
 .qz button, .qz select { font-family: inherit; }

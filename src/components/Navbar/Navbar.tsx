@@ -29,6 +29,7 @@ const NAV_SECTIONS: NavSection[] = [
       { href: '/learn-quran', label: 'Learn Quran', icon: 'school', desc: 'Structured lessons from Alif' },
       { href: '/memorize-quran', label: 'Hifz Program', icon: 'psychology', desc: 'Smart spaced repetition' },
       { href: '/tajweed', label: 'Tajweed', icon: 'record_voice_over', desc: 'Rules of recitation' },
+      { href: '/books', label: 'Library', icon: 'local_library', desc: 'Free Islamic books to read & download' },
     ],
     feature: { title: 'New to Arabic?', text: 'Begin with the letters and build up to fluent recitation.', href: '/learn-quran', cta: 'Begin lessons' },
   },
@@ -39,6 +40,7 @@ const NAV_SECTIONS: NavSection[] = [
       { href: '/quran-player', label: 'Quran Player', icon: 'play_circle', desc: 'Renowned reciters' },
       { href: '/audio-quran', label: 'Audio Quran', icon: 'headphones', desc: 'Stream full recitations' },
       { href: '/radio', label: 'Quran Radio', icon: 'radio', desc: 'Live channels 24/7' },
+      { href: '/video-gallery', label: 'Watch', icon: 'smart_display', desc: 'Recitations, lectures & kids' },
     ],
     feature: { title: 'Live right now', text: 'Tune in to continuous Quran recitation from around the world.', href: '/radio', cta: 'Open radio' },
   },
@@ -175,6 +177,9 @@ export default function Navbar() {
   }, [router]);
 
   const dark = resolvedTheme === 'dark';
+
+  // Watch (/video-gallery) is a full-screen streaming layout with its own side menu
+  if (pathname.startsWith('/video-gallery')) return null;
 
   return (
     <>

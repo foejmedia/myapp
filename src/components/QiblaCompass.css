@@ -14,10 +14,6 @@
   font-family: var(--qb-font, 'Manrope'), system-ui, sans-serif;
 }
 
-/* the app shell pads <main>; let the page background run edge to edge */
-@media (min-width: 1024px) {
-  .qb { margin: -28px -32px -72px; }
-}
 
 .qb h1, .qb p { margin: 0; }
 .qb button { font-family: inherit; }

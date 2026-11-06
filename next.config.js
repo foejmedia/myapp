@@ -2,6 +2,8 @@
 const path = require('path');
 
 const nextConfig = {
+  // a separate build folder for a second dev server (e.g. NEXT_DIST_DIR=.next-test), so it never touches .next
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   reactStrictMode: true,
   transpilePackages: ['framer-motion'],
 

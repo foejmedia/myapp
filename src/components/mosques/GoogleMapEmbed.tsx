@@ -1,50 +1,35 @@
 'use client';
-import type { LatLng } from './client';
 
 /**
- * Google's own mosque search, embedded. Free: the Maps Embed API has no usage charge.
+ * Mosque search on Google Maps, embedded. Free: the Maps Embed API has no usage charge.
  * Set NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY (a key restricted to this site, with only the
  * "Maps Embed API" enabled). Without a key it falls back to Google's keyless embed link,
  * which works but isn't an officially supported API.
  *
- * It's an iframe, so Google's results stay inside it — our list and filters still use
- * OpenStreetMap. Reading Google's results into the page needs the paid Places API.
+ * Google's embed only finds mosques from a place name ("mosques in Anjanapura, Bengaluru");
+ * given bare coordinates it shows the map with no results. GPS positions are therefore turned
+ * into an area name first (see /api/geocode).
  */
 const KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY;
 
-const ZOOM: Record<number, number> = { 1: 15, 5: 13, 10: 12, 25: 11, 50: 10 };
+export const embedUrl = (place: string) => {
+  const q = encodeURIComponent(`mosques in ${place}`);
+  return KEY ? `https://www.google.com/maps/embed/v1/search?key=${KEY}&q=${q}` : `https://maps.google.com/maps?q=${q}&output=embed`;
+};
 
-export function googleEmbedUrl(center: LatLng, radiusKm: number) {
-  const zoom = ZOOM[radiusKm] ?? 13;
-  const at = `${center.lat.toFixed(5)},${center.lng.toFixed(5)}`;
-  return KEY
-    ? `https://www.google.com/maps/embed/v1/search?key=${KEY}&q=${encodeURIComponent('mosque')}&center=${at}&zoom=${zoom}`
-    : `https://maps.google.com/maps?q=${encodeURIComponent(`mosque near ${at}`)}&ll=${at}&z=${zoom}&output=embed`;
-}
+/**
+ * The same search in the Google Maps app or site (Maps URLs: free, no key). Without a place,
+ * "near me" lets Google Maps use the device's own precise location.
+ */
+export const openUrl = (place?: string | null) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place ? `mosques in ${place}` : 'mosques near me')}`;
 
-/** One spot (a mosque's details page) */
-export function googlePlaceUrl(at: LatLng) {
-  const q = `${at.lat.toFixed(6)},${at.lng.toFixed(6)}`;
-  return KEY
-    ? `https://www.google.com/maps/embed/v1/place?key=${KEY}&q=${q}&zoom=17`
-    : `https://maps.google.com/maps?q=${q}&z=17&output=embed`;
-}
-
-interface Props {
-  /** area search around a centre, or a single place */
-  center: LatLng;
-  radiusKm?: number;
-  place?: boolean;
-  title: string;
-  className?: string;
-}
-
-export default function GoogleMapEmbed({ center, radiusKm = 5, place, title, className }: Props) {
+export default function GoogleMapEmbed({ place }: { place: string }) {
   return (
     <iframe
-      className={`mq-map mq-gmap ${className ?? ''}`}
-      title={title}
-      src={place ? googlePlaceUrl(center) : googleEmbedUrl(center, radiusKm)}
+      className="mq-map"
+      title={`Google Maps: mosques in ${place}`}
+      src={embedUrl(place)}
       loading="lazy"
       referrerPolicy="no-referrer-when-downgrade"
       allowFullScreen

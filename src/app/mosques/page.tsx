@@ -7,7 +7,7 @@ const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--
 
 export const metadata: Metadata = {
   title: 'Mosques Near You',
-  description: 'Find mosques near you on a map, see their address and facilities, and get directions.',
+  description: 'Find mosques near you on Google Maps and get directions.',
 };
 
 export default function MosquesPage() {
