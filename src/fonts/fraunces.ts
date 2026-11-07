@@ -39,3 +39,9 @@ export const frauncesTooba = localFont({
   display: 'swap',
   variable: '--tb-serif',
 });
+
+export const frauncesGame = localFont({
+  src: [{ path: './fraunces/Fraunces-latin-normal.woff2', weight: '100 900', style: 'normal' }],
+  display: 'swap',
+  variable: '--gd-font-serif',
+});
