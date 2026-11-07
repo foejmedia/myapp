@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Amiri, Fraunces, Manrope } from 'next/font/google';
+import { Amiri, Manrope } from 'next/font/google';
+import { frauncesTooba as fraunces } from '@/fonts/fraunces';
 import ToobaTasbeeh from '@/components/tasbih-tooba/ToobaTasbeeh';
 
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--tb-font' });
-const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '500'], style: ['normal', 'italic'], variable: '--tb-serif' });
 const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--tb-font-ar' });
 
 export const metadata: Metadata = {
