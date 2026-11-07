@@ -3,49 +3,63 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TreeArt, { MiniTree } from './TreeArt';
 import ThemeMenu from '../tasbih-themes/ThemeMenu';
-import { CUSTOM_ID, DHIKR, roundProgress, roundsDone } from '@/lib/tasbih';
-import { buildTree, leavesShown } from '@/lib/tasbih-tree';
+import {
+  CUSTOM_ID, DHIKR, lastDays, progressOf, roundProgress, streak, type TasbihState,
+} from '@/lib/tasbih';
+import { leavesShown } from '@/lib/tasbih-tree';
+import { speciesOf, treeOf } from '@/lib/tasbih-species';
 import { buzz, tone, useTasbih } from '@/lib/useTasbih';
 import './tooba.css';
 
-const SLOTS = buildTree().slots.length;
-const GROVE_MAX = 9;
 const RING_R = 92;
 const RING_C = 2 * Math.PI * RING_R;
 const HADITH_ID = 'subhanallahibihamdihi';
 const CHIP_GOALS = [33, 99, 100, 313, 1000];
+const GROVE_SHOW = 24;
 
 /** A soft water-drop "plip". */
 const drop = () => tone(1250, 0.09, 0.05, 0, 'sine', 0.45);
 /** A rising, airy chime. */
 const bloom = () => [587.33, 739.99, 880, 1174.66].forEach((f, i) => tone(f, 1.3, 0.04, i * 0.08, 'sine', 0.998));
 
+const labelOf = (s: TasbihState, id: string) =>
+  id === CUSTOM_ID ? s.custom || 'Your own dhikr' : DHIKR.find(d => d.id === id)?.label ?? 'Dhikr';
+
+interface Note { title: string; body?: string }
 interface Fly { id: number; dx: number }
 
 export default function ToobaTasbeeh() {
   const router = useRouter();
   const [celebrate, setCelebrate] = useState(0);
-  const [note, setNote] = useState<{ title: string; body?: string } | null>(null);
+  const [note, setNote] = useState<Note | null>(null);
   const [flies, setFlies] = useState<Fly[]>([]);
   const [armReset, setArmReset] = useState(false);
   const [customGoal, setCustomGoal] = useState(false);
+  const [groveTab, setGroveTab] = useState<'today' | 'all'>('today');
   const flyId = useRef(0);
+  const noteTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); };
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  useEffect(() => () => { timers.current.forEach(clearTimeout); clearTimeout(noteTimer.current); }, []);
 
-  const { st, setSt, tap, undo } = useTasbih((next, hit) => {
+  const show = (n: Note, ms = 3800) => {
+    setNote(n);
+    clearTimeout(noteTimer.current);
+    noteTimer.current = setTimeout(() => setNote(null), ms);
+  };
+
+  const { st, setSt, tap, undo, switchTo } = useTasbih((next, hit) => {
     if (next.sound) (hit ? bloom : drop)();
-    buzz(hit ? [25, 60, 25, 60, 50] : 9);
+    if (next.haptics) buzz(hit ? [25, 60, 25, 60, 50] : 9);
     const id = ++flyId.current;
     setFlies(f => [...f.slice(-6), { id, dx: Math.round((Math.random() - 0.5) * 60) }]);
     later(() => setFlies(f => f.filter(x => x.id !== id)), 900);
     if (hit) {
+      const sp = speciesOf(next.dhikrId);
       setCelebrate(c => c + 1);
-      setNote(next.dhikrId === HADITH_ID
-        ? { title: 'A tree is planted in your grove', body: '“Whoever says SubhanAllahi wa bihamdihi, a palm tree is planted for him in Paradise.” — Tirmidhi 3464' }
-        : { title: 'MashaAllah — your tree is in full bloom', body: 'It has been planted in your grove.' });
-      later(() => setNote(null), 4200);
+      show(next.dhikrId === HADITH_ID
+        ? { title: `A ${sp.name.toLowerCase()} is planted in your grove`, body: '“Whoever says SubhanAllahi wa bihamdihi, a palm tree is planted for him in Paradise.” — Tirmidhi 3464' }
+        : { title: `MashaAllah — your ${sp.name.toLowerCase()} is in full bloom`, body: `It has been planted in your grove. Keep going to grow the next one.` }, 4600);
     }
   });
 
@@ -61,23 +75,58 @@ export default function ToobaTasbeeh() {
     return () => window.removeEventListener('keydown', onKey);
   }, [tap, undo]);
 
+  // keep the screen awake while counting, if asked
+  const [wakeSupported, setWakeSupported] = useState(false);
+  useEffect(() => setWakeSupported('wakeLock' in navigator), []);
+  useEffect(() => {
+    if (!st.wake || !wakeSupported) return;
+    let lock: WakeLockSentinel | null = null;
+    let alive = true;
+    const acquire = async () => {
+      try {
+        if (document.visibilityState === 'visible') lock = await navigator.wakeLock.request('screen');
+        if (!alive) void lock?.release();
+      } catch { /* denied, e.g. battery saver */ }
+    };
+    void acquire();
+    const onVis = () => { if (document.visibilityState === 'visible') void acquire(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { alive = false; document.removeEventListener('visibilitychange', onVis); void lock?.release(); };
+  }, [st.wake, wakeSupported]);
+
+  const sp = speciesOf(st.dhikrId);
+  const slots = treeOf(sp).slots.length;
   const pct = roundProgress(st.count, st.goal);
-  const shown = leavesShown(st.count, st.goal, SLOTS);
-  const rounds = roundsDone(st.count, st.goal);
+  const shown = leavesShown(st.count, st.goal, slots);
   const inRound = st.count === 0 ? 0 : ((st.count - 1) % st.goal) + 1;
   const full = pct >= 1;
   const preset = DHIKR.find(d => d.id === st.dhikrId);
-  const label = st.dhikrId === CUSTOM_ID ? st.custom || 'Zikr' : preset?.label ?? 'Zikr';
+  const label = labelOf(st, st.dhikrId);
+  const planted = st.grove.filter(g => g.d === st.dhikrId).length;
   const knob = useMemo(() => {
     const a = pct * Math.PI * 2 - Math.PI / 2;
     return { x: 110 + Math.cos(a) * RING_R, y: 110 + Math.sin(a) * RING_R };
   }, [pct]);
+
+  const pick = (id: string, custom?: string) => {
+    if (id === st.dhikrId && custom === undefined) return;
+    const next = switchTo(id, custom);
+    const nsp = speciesOf(id);
+    const name = labelOf(next, id);
+    const trees = next.grove.filter(g => g.d === id).length;
+    if (next.count === 0 && trees === 0) {
+      show({ title: `A new ${nsp.name.toLowerCase()} for ${name}`, body: 'A seedling is planted — every count grows a leaf.' }, 3200);
+    } else if (id !== st.dhikrId) {
+      show({ title: `Back to your ${nsp.name.toLowerCase()}`, body: `${name} · ${next.count === 0 ? 0 : ((next.count - 1) % next.goal) + 1} of ${next.goal}${trees ? ` · ${trees} planted` : ''}` }, 2800);
+    }
+  };
 
   const reset = () => {
     if (st.count === 0) return;
     if (!armReset) { setArmReset(true); later(() => setArmReset(false), 2500); return; }
     setArmReset(false);
     setSt(s => ({ ...s, count: 0 }));
+    show({ title: 'Tree reset', body: 'Trees you planted stay in your grove.' }, 2400);
   };
 
   const back = () => (window.history.length > 1 ? router.back() : router.push('/'));
@@ -95,131 +144,141 @@ export default function ToobaTasbeeh() {
         <ThemeMenu current="tooba" className="tb-round" />
       </header>
 
-      <DhikrCarousel
-        current={st.dhikrId}
-        custom={st.custom}
-        count={st.count}
-        onPick={(dhikrId, custom) => setSt(s => ({ ...s, dhikrId, custom: custom ?? s.custom, count: s.dhikrId === dhikrId ? s.count : 0 }))}
-      />
+      <div className="tb-layout">
+        <div className="tb-left">
+          {/* ── current dhikr ── */}
+          <section className="tb-hero" style={{ ['--bloom' as string]: sp.blossom }} aria-live="polite">
+            <div className="tb-hero-top">
+              <span className="tb-species"><i />{sp.name}</span>
+              {planted > 0 && <span className="tb-planted"><span className="material-symbols-outlined">park</span>{planted} planted</span>}
+            </div>
+            {preset?.ar && st.dhikrId !== CUSTOM_ID && <p className="tb-hero-ar" lang="ar" dir="rtl">{preset.ar}</p>}
+            <p className={st.dhikrId === CUSTOM_ID ? 'tb-hero-own' : 'tb-hero-label'}>{label}</p>
+            {preset?.meaning && st.dhikrId !== CUSTOM_ID && <p className="tb-hero-meaning">{preset.meaning}</p>}
+          </section>
 
-      <section className={`tb-stage${full ? ' full' : ''}`} aria-label={`Your tree is ${Math.round(pct * 100)}% grown`}>
-        <div className="tb-pill">
-          <span className="material-symbols-outlined">eco</span>
-          {Math.round(pct * 100)}% grown
-        </div>
-        {rounds > 0 && <div className="tb-pill tb-pill-r"><span className="material-symbols-outlined">park</span>{rounds}</div>}
+          <DhikrChips state={st} onPick={pick} />
 
-        <TreeArt shown={shown} full={full} />
-        {st.count === 0 && <p className="tb-empty">Begin your dhikr — every count grows a leaf</p>}
+          {/* ── the tree ── */}
+          <section className={`tb-stage${full ? ' full' : ''}`} aria-label={`Your ${sp.name} is ${Math.round(pct * 100)}% grown`}>
+            <div className="tb-pill">
+              <span className="material-symbols-outlined">eco</span>
+              {Math.round(pct * 100)}% grown
+            </div>
+            <TreeArt sp={sp} shown={shown} full={full} />
+            {st.count === 0 && !note && <p className="tb-empty">Begin your dhikr — every count grows a leaf</p>}
 
-        {celebrate > 0 && (
-          <div key={celebrate} className="tb-petals" aria-hidden="true">
-            {Array.from({ length: 16 }).map((_, i) => (
-              <i key={i} style={{ left: `${(i * 37) % 100}%`, animationDelay: `${(i % 8) * 0.18}s`, ['--drift' as string]: `${((i * 53) % 80) - 40}px` }} />
-            ))}
-          </div>
-        )}
+            {celebrate > 0 && (
+              <div key={celebrate} className="tb-petals" aria-hidden="true" style={{ ['--petal' as string]: sp.blossom }}>
+                {Array.from({ length: 16 }).map((_, i) => (
+                  <i key={i} style={{ left: `${(i * 37) % 100}%`, animationDelay: `${(i % 8) * 0.18}s`, ['--drift' as string]: `${((i * 53) % 80) - 40}px` }} />
+                ))}
+              </div>
+            )}
 
-        {note && (
-          <div className="tb-note" role="status">
-            <b>{note.title}</b>
-            {note.body && <span>{note.body}</span>}
-          </div>
-        )}
-      </section>
-
-      <section className="tb-counter" aria-label="Counter">
-        <button className="tb-side" onClick={undo} disabled={st.count === 0} aria-label="Undo last count">
-          <span className="material-symbols-outlined">undo</span>
-        </button>
-
-        <div className="tb-dial">
-          <svg viewBox="0 0 220 220" className="tb-ring" aria-hidden="true">
-            <defs>
-              <linearGradient id="tb-prog" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#b7d3b0" />
-                <stop offset="1" stopColor="#5f8b6b" />
-              </linearGradient>
-            </defs>
-            <circle cx="110" cy="110" r={RING_R} className="tb-track" />
-            <circle
-              cx="110" cy="110" r={RING_R}
-              className="tb-progress"
-              strokeDasharray={RING_C}
-              strokeDashoffset={RING_C * (1 - pct)}
-              transform="rotate(-90 110 110)"
-            />
-            {st.count > 0 && <circle cx={knob.x} cy={knob.y} r="6" className="tb-knob" />}
-          </svg>
-          <button className="tb-tap" onClick={tap} aria-label={`Count ${label}. ${st.count} so far, goal ${st.goal}`}>
-            <span key={st.count} className="tb-num">{st.count.toLocaleString()}</span>
-            <span className="tb-of">{inRound} of {st.goal}</span>
-          </button>
-          {flies.map(f => (
-            <span key={f.id} className="tb-fly" style={{ ['--dx' as string]: `${f.dx}px` }} aria-hidden="true">
-              <svg viewBox="0 0 14 10"><path d={'M0 5 C3 0.4, 9 -0.2, 13.5 5 C9 10.2, 3 9.6, 0 5 Z'} /></svg>
-            </span>
-          ))}
+            {note && (
+              <div key={note.title} className="tb-note" role="status">
+                <b>{note.title}</b>
+                {note.body && <span>{note.body}</span>}
+              </div>
+            )}
+          </section>
         </div>
 
-        <button
-          className={`tb-side${st.sound ? '' : ' off'}`}
-          onClick={() => { if (!st.sound) drop(); setSt(s => ({ ...s, sound: !s.sound })); }}
-          aria-pressed={st.sound}
-          aria-label="Sound"
-        >
-          <span className="material-symbols-outlined">{st.sound ? 'volume_up' : 'volume_off'}</span>
-        </button>
-      </section>
-
-      <section className="tb-goals" aria-label="Goal">
-        <span className="tb-goals-label">Goal</span>
-        <div className="tb-chips">
-          {CHIP_GOALS.map(g => (
-            <button key={g} className={`tb-chip${st.goal === g ? ' on' : ''}`} onClick={() => { setCustomGoal(false); setSt(s => ({ ...s, goal: g })); }}>
-              {g}
+        <div className="tb-right">
+          {/* ── counter ── */}
+          <section className="tb-counter" aria-label="Counter">
+            <button className="tb-side" onClick={undo} disabled={st.count === 0} aria-label="Undo last count" title="Undo (Backspace)">
+              <span className="material-symbols-outlined">undo</span>
             </button>
-          ))}
-          {customGoal ? (
-            <GoalInput
-              initial={CHIP_GOALS.includes(st.goal) ? '' : String(st.goal)}
-              onDone={g => { if (g) setSt(s => ({ ...s, goal: g })); setCustomGoal(false); }}
-            />
-          ) : (
-            <button className={`tb-chip${CHIP_GOALS.includes(st.goal) ? '' : ' on'}`} onClick={() => setCustomGoal(true)}>
-              {CHIP_GOALS.includes(st.goal) ? <><span className="material-symbols-outlined">edit</span>Custom</> : st.goal}
-            </button>
-          )}
-        </div>
-      </section>
-
-      <section className="tb-grove" aria-label="Your grove">
-        <div className="tb-grove-head">
-          <h2>Your grove</h2>
-          <button className={`tb-reset${armReset ? ' armed' : ''}`} onClick={reset} disabled={st.count === 0}>
-            <span className="material-symbols-outlined">restart_alt</span>
-            {armReset ? 'Tap again to reset' : 'Reset'}
-          </button>
-        </div>
-        <div className="tb-grove-row">
-          {rounds === 0 ? (
-            <p className="tb-grove-empty">Reach your goal to plant your first tree</p>
-          ) : (
-            <>
-              {Array.from({ length: Math.min(rounds, GROVE_MAX) }).map((_, i) => (
-                <MiniTree key={i} fresh={i === Math.min(rounds, GROVE_MAX) - 1 && celebrate > 0} />
+            <div className="tb-dial">
+              <svg viewBox="0 0 220 220" className="tb-ring" aria-hidden="true">
+                <defs>
+                  <linearGradient id="tb-prog" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stopColor="#7fd396" />
+                    <stop offset="1" stopColor="#16a34a" />
+                  </linearGradient>
+                </defs>
+                <circle cx="110" cy="110" r={RING_R} className="tb-track" />
+                <circle
+                  cx="110" cy="110" r={RING_R}
+                  className="tb-progress"
+                  strokeDasharray={RING_C}
+                  strokeDashoffset={RING_C * (1 - pct)}
+                  transform="rotate(-90 110 110)"
+                />
+                {st.count > 0 && <circle cx={knob.x} cy={knob.y} r="6" className="tb-knob" />}
+              </svg>
+              <button className="tb-tap" onClick={tap} aria-label={`Count ${label}. ${st.count} so far, goal ${st.goal}`}>
+                <span key={st.count} className="tb-num">{st.count.toLocaleString()}</span>
+                <span className="tb-of">{inRound} of {st.goal}</span>
+              </button>
+              {flies.map(f => (
+                <span key={f.id} className="tb-fly" style={{ ['--dx' as string]: `${f.dx}px` }} aria-hidden="true">
+                  <svg viewBox="0 0 14 10"><path d="M0 5 C3 0.4, 9 -0.2, 13.5 5 C9 10.2, 3 9.6, 0 5 Z" /></svg>
+                </span>
               ))}
-              {rounds > GROVE_MAX && <span className="tb-grove-more">+{rounds - GROVE_MAX}</span>}
-            </>
-          )}
+            </div>
+            <button className={`tb-side${armReset ? ' armed' : ''}`} onClick={reset} disabled={st.count === 0} aria-label={armReset ? 'Tap again to reset this tree' : 'Reset this tree'} title="Reset this tree">
+              <span className="material-symbols-outlined">restart_alt</span>
+            </button>
+          </section>
+          <p className={`tb-hint${armReset ? ' warn' : ''}`}>
+            {armReset ? 'Tap reset again to start this tree over' : 'Tap the circle · Space on a keyboard'}
+          </p>
+
+          {/* ── goal ── */}
+          <section className="tb-panel" aria-label="Goal">
+            <h2 className="tb-h">Goal for this tree</h2>
+            <div className="tb-chips">
+              {CHIP_GOALS.map(g => (
+                <button key={g} className={`tb-chip${st.goal === g ? ' on' : ''}`} aria-pressed={st.goal === g} onClick={() => { setCustomGoal(false); setSt(s => ({ ...s, goal: g })); }}>
+                  {g}
+                </button>
+              ))}
+              {customGoal ? (
+                <GoalInput
+                  initial={CHIP_GOALS.includes(st.goal) ? '' : String(st.goal)}
+                  onDone={g => { if (g) setSt(s => ({ ...s, goal: g })); setCustomGoal(false); }}
+                />
+              ) : (
+                <button className={`tb-chip${CHIP_GOALS.includes(st.goal) ? '' : ' on'}`} onClick={() => setCustomGoal(true)}>
+                  {CHIP_GOALS.includes(st.goal) ? <><span className="material-symbols-outlined">edit</span>Custom</> : st.goal}
+                </button>
+              )}
+            </div>
+
+            <div className="tb-toggles">
+              <Toggle icon={st.sound ? 'volume_up' : 'volume_off'} label="Sound" on={st.sound} onClick={() => { if (!st.sound) drop(); setSt(s => ({ ...s, sound: !s.sound })); }} />
+              <Toggle icon="vibration" label="Vibrate" on={st.haptics} onClick={() => { if (!st.haptics) buzz(15); setSt(s => ({ ...s, haptics: !s.haptics })); }} />
+              <Toggle
+                icon="light_mode"
+                label="Screen on"
+                on={st.wake && wakeSupported}
+                disabled={!wakeSupported}
+                title={wakeSupported ? 'Keep the screen awake while counting' : 'Not supported in this browser'}
+                onClick={() => setSt(s => ({ ...s, wake: !s.wake }))}
+              />
+            </div>
+          </section>
+
+          <Grove state={st} tab={groveTab} setTab={setGroveTab} fresh={celebrate} />
+          <Week state={st} />
         </div>
-        <dl className="tb-stats">
-          <div><dt>Today</dt><dd>{st.today.toLocaleString()}</dd></div>
-          <div><dt>Trees</dt><dd>{rounds}</dd></div>
-          <div><dt>Lifetime</dt><dd>{st.total.toLocaleString()}</dd></div>
-        </dl>
-      </section>
+      </div>
     </div>
+  );
+}
+
+function Toggle({ icon, label, on, onClick, disabled, title }: {
+  icon: string; label: string; on: boolean; onClick: () => void; disabled?: boolean; title?: string;
+}) {
+  return (
+    <button className={`tb-toggle${on ? ' on' : ''}`} onClick={onClick} aria-pressed={on} disabled={disabled} title={title}>
+      <span className="material-symbols-outlined">{icon}</span>
+      {label}
+      <i aria-hidden="true" />
+    </button>
   );
 }
 
@@ -234,78 +293,134 @@ function GoalInput({ initial, onDone }: { initial: string; onDone: (g: number | 
   );
 }
 
-/** Swipe to browse; tap a card to count it. Switching asks twice if you have a count going. */
-function DhikrCarousel({ current, custom, count, onPick }: {
-  current: string;
-  custom: string;
-  count: number;
-  onPick: (id: string, custom?: string) => void;
-}) {
+/** One chip per dhikr, each showing its own tree's progress. */
+function DhikrChips({ state, onPick }: { state: TasbihState; onPick: (id: string, custom?: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(state.custom);
+  const ids = [...DHIKR.map(d => d.id), ...(state.custom ? [CUSTOM_ID] : [])];
   const ref = useRef<HTMLDivElement>(null);
-  const [focus, setFocus] = useState(0);
-  const [armed, setArmed] = useState<string | null>(null);
-  const [text, setText] = useState(custom);
-  const items = [...DHIKR.map(d => d.id), CUSTOM_ID];
 
-  // centre the selected card on first paint
+  // keep the active chip in view
   useEffect(() => {
-    const el = ref.current;
-    const i = Math.max(0, items.indexOf(current));
-    const card = el?.children[i] as HTMLElement | undefined;
-    if (el && card) el.scrollLeft = card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2;
-    setFocus(i);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current]);
-
-  const onScroll = () => {
-    const el = ref.current;
-    if (!el) return;
-    const mid = el.scrollLeft + el.clientWidth / 2;
-    let best = 0, bd = Infinity;
-    Array.from(el.children).forEach((c, i) => {
-      const h = c as HTMLElement;
-      const d = Math.abs(h.offsetLeft + h.offsetWidth / 2 - mid);
-      if (d < bd) { bd = d; best = i; }
-    });
-    setFocus(best);
-  };
-
-  const choose = (id: string, c?: string) => {
-    if (id === current && id !== CUSTOM_ID) return;
-    if (count > 0 && armed !== id) { setArmed(id); setTimeout(() => setArmed(a => (a === id ? null : a)), 2600); return; }
-    setArmed(null);
-    onPick(id, c);
-  };
+    const el = ref.current?.querySelector<HTMLElement>('.tb-dchip.on');
+    const box = ref.current;
+    if (el && box) box.scrollTo({ left: el.offsetLeft - (box.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
+  }, [state.dhikrId]);
 
   return (
-    <div className="tb-carousel" ref={ref} onScroll={onScroll} role="listbox" aria-label="Choose dhikr">
-      {DHIKR.map((d, i) => {
-        const on = d.id === current;
+    <div className="tb-dchips" ref={ref} role="tablist" aria-label="Choose dhikr — each grows its own tree">
+      {ids.map(id => {
+        const p = progressOf(state, id);
+        const sp = speciesOf(id);
+        const frac = roundProgress(p.count, p.goal);
+        const on = id === state.dhikrId;
         return (
-          <button
-            key={d.id}
-            role="option"
-            aria-selected={on}
-            className={`tb-card${on ? ' on' : ''}${focus === i ? ' focus' : ''}`}
-            onClick={() => choose(d.id)}
-          >
-            <span className="tb-card-ar" lang="ar" dir="rtl">{d.ar}</span>
-            <b>{d.label}</b>
-            <small>{d.meaning}</small>
-            {on && <span className="tb-badge">Counting</span>}
-            {armed === d.id && <span className="tb-armed">Tap again to start a new tree</span>}
+          <button key={id} role="tab" aria-selected={on} className={`tb-dchip${on ? ' on' : ''}`} onClick={() => onPick(id)} title={`${sp.name} · ${p.count} counted`}>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="7.5" className="tb-dchip-track" />
+              <circle cx="10" cy="10" r="7.5" className="tb-dchip-prog" strokeDasharray={47.1} strokeDashoffset={47.1 * (1 - frac)} transform="rotate(-90 10 10)" />
+              <circle cx="10" cy="10" r="3.4" fill={sp.blossom} stroke="rgba(0,0,0,0.08)" strokeWidth="0.6" />
+            </svg>
+            {labelOf(state, id)}
           </button>
         );
       })}
-      <div className={`tb-card tb-card-own${current === CUSTOM_ID ? ' on' : ''}${focus === items.length - 1 ? ' focus' : ''}`} role="option" aria-selected={current === CUSTOM_ID}>
-        <span className="material-symbols-outlined">edit_note</span>
-        <form onSubmit={e => { e.preventDefault(); if (text.trim()) choose(CUSTOM_ID, text.trim()); }}>
-          <input value={text} onChange={e => setText(e.target.value)} maxLength={40} placeholder="Your own dhikr" aria-label="Custom dhikr" />
-          <button type="submit" disabled={!text.trim()}>Use</button>
+      {editing ? (
+        <form className="tb-own" onSubmit={e => { e.preventDefault(); if (text.trim()) { onPick(CUSTOM_ID, text.trim()); setEditing(false); } }}>
+          <input autoFocus value={text} onChange={e => setText(e.target.value)} maxLength={40} placeholder="Your own dhikr" aria-label="Your own dhikr" onBlur={() => !text.trim() && setEditing(false)} />
+          <button type="submit" disabled={!text.trim()} aria-label="Use"><span className="material-symbols-outlined">check</span></button>
         </form>
-        {current === CUSTOM_ID && <span className="tb-badge">Counting</span>}
-        {armed === CUSTOM_ID && <span className="tb-armed">Tap Use again to start a new tree</span>}
-      </div>
+      ) : (
+        <button className="tb-dchip tb-dchip-add" onClick={() => setEditing(true)}>
+          <span className="material-symbols-outlined">add</span>{state.custom ? 'Rename own' : 'Your own'}
+        </button>
+      )}
     </div>
+  );
+}
+
+function Grove({ state, tab, setTab, fresh }: {
+  state: TasbihState; tab: 'today' | 'all'; setTab: (t: 'today' | 'all') => void; fresh: number;
+}) {
+  const start = new Date(); start.setHours(0, 0, 0, 0);
+  const list = tab === 'today' ? state.grove.filter(g => g.t >= start.getTime()) : state.grove;
+  const visible = list.slice(-GROVE_SHOW);
+  const tally = new Map<string, number>();
+  for (const g of list) tally.set(g.d, (tally.get(g.d) ?? 0) + 1);
+
+  return (
+    <section className="tb-panel tb-grove" aria-label="Your grove">
+      <div className="tb-grove-head">
+        <h2 className="tb-h">Your grove</h2>
+        <div className="tb-tabs" role="tablist">
+          {(['today', 'all'] as const).map(t => (
+            <button key={t} role="tab" aria-selected={tab === t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>
+              {t === 'today' ? 'Today' : 'All time'}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="tb-grove-row">
+        {visible.length === 0 ? (
+          <p className="tb-grove-empty">{tab === 'today' ? 'Reach a goal to plant today’s first tree' : 'Your planted trees will grow here'}</p>
+        ) : (
+          <>
+            {list.length > GROVE_SHOW && <span className="tb-grove-more">+{list.length - GROVE_SHOW}</span>}
+            {visible.map((g, i) => (
+              <MiniTree
+                key={`${g.t}-${i}`}
+                sp={speciesOf(g.d)}
+                fresh={fresh > 0 && i === visible.length - 1}
+                title={`${speciesOf(g.d).name} · ${labelOf(state, g.d)} · ${new Date(g.t).toLocaleString()}`}
+              />
+            ))}
+          </>
+        )}
+      </div>
+      {tally.size > 0 && (
+        <ul className="tb-tally">
+          {[...tally.entries()].sort((a, b) => b[1] - a[1]).map(([d, n]) => (
+            <li key={d}>
+              <i style={{ background: speciesOf(d).blossom }} />
+              <span>{speciesOf(d).name}</span>
+              <small>{labelOf(state, d)}</small>
+              <b>×{n}</b>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function Week({ state }: { state: TasbihState }) {
+  const days = lastDays(state.history, 7);
+  const max = Math.max(1, ...days.map(d => d.count));
+  const s = streak(state.history);
+  const best = Math.max(0, ...Object.values(state.history));
+  return (
+    <section className="tb-panel tb-week" aria-label="This week">
+      <div className="tb-grove-head">
+        <h2 className="tb-h">This week</h2>
+        <span className={`tb-streak${s ? ' on' : ''}`}>
+          <span className="material-symbols-outlined">local_fire_department</span>
+          {s} day{s === 1 ? '' : 's'} streak
+        </span>
+      </div>
+      <div className="tb-bars">
+        {days.map(d => (
+          <div key={d.iso} className={`tb-bar${d.today ? ' today' : ''}`} title={`${d.iso}: ${d.count}`}>
+            <small>{d.count ? d.count.toLocaleString() : ''}</small>
+            <span><i style={{ height: `${(d.count / max) * 100}%` }} /></span>
+            <b>{d.label}</b>
+          </div>
+        ))}
+      </div>
+      <dl className="tb-stats">
+        <div><dt>Today</dt><dd>{state.today.toLocaleString()}</dd></div>
+        <div><dt>Best day</dt><dd>{best.toLocaleString()}</dd></div>
+        <div><dt>Lifetime</dt><dd>{state.total.toLocaleString()}</dd></div>
+      </dl>
+    </section>
   );
 }

@@ -37,9 +37,9 @@ export default function NoorTasbeeh() {
     toastTimer.current = setTimeout(() => setToast(''), 2600);
   };
 
-  const { st, setSt, tap, undo } = useTasbih((next, hit) => {
+  const { st, setSt, tap, undo, switchTo } = useTasbih((next, hit) => {
     if (next.sound) (hit ? chime : clack)();
-    buzz(hit ? [30, 70, 30, 70, 60] : 8);
+    if (next.haptics) buzz(hit ? [30, 70, 30, 70, 60] : 8);
     setBump(b => b + 1);
     if (hit) {
       const n = next.count / next.goal;
@@ -177,7 +177,7 @@ export default function NoorTasbeeh() {
               current={st.dhikrId}
               custom={st.custom}
               onPick={(dhikrId, c) => {
-                setSt(s => ({ ...s, dhikrId, custom: c ?? s.custom, count: s.dhikrId === dhikrId ? s.count : 0 }));
+                switchTo(dhikrId, c);
                 setSheet(null);
               }}
             />
@@ -214,7 +214,7 @@ function DhikrList({ current, custom, onPick }: { current: string; custom: strin
   const [text, setText] = useState(custom);
   return (
     <>
-      <p className="nr-sheet-note">Switching dhikr begins a new night sky.</p>
+      <p className="nr-sheet-note">Each dhikr keeps its own sky — switch back any time.</p>
       <ul className="nr-dlist">
         {DHIKR.map(d => (
           <li key={d.id}>

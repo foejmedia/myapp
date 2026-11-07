@@ -18,12 +18,12 @@ export default function TasbeehGarden() {
   const [toast, setToast] = useState('');
   const [picker, setPicker] = useState(false);
   const [armReset, setArmReset] = useState(false);
-  const { st, setSt, tap, undo } = useTasbih((next, hit) => {
+  const { st, setSt, tap, undo, switchTo } = useTasbih((next, hit) => {
     if (next.sound) {
       if (hit) { tone(660, 0.4, 0.08); tone(880, 0.45, 0.07, 0.12); tone(1320, 0.6, 0.05, 0.24); }
       else tone(1400, 0.06, 0.05, 0, 'triangle');
     }
-    buzz(hit ? [40, 60, 40] : 10);
+    if (next.haptics) buzz(hit ? [40, 60, 40] : 10);
     if (hit) {
       const n = next.count / next.goal;
       setCelebrate(c => c + 1);
@@ -177,7 +177,7 @@ export default function TasbeehGarden() {
           state={st}
           onClose={() => setPicker(false)}
           onPick={(dhikrId, custom) => {
-            setSt(s => ({ ...s, dhikrId, custom: custom ?? s.custom, count: s.dhikrId === dhikrId ? s.count : 0 }));
+            switchTo(dhikrId, custom);
             setPicker(false);
           }}
         />
@@ -203,7 +203,7 @@ function DhikrPicker({ state, onPick, onClose }: {
       <div className="tg-sheet" role="dialog" aria-modal="true" aria-label="Choose dhikr" onClick={e => e.stopPropagation()}>
         <div className="tg-sheet-grip" />
         <h3>Choose your dhikr</h3>
-        <p className="tg-sheet-note">Switching dhikr starts a fresh count.</p>
+        <p className="tg-sheet-note">Each dhikr keeps its own count — switch back any time.</p>
         <ul>
           {DHIKR.map(d => (
             <li key={d.id}>

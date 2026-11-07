@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { STORE_KEY, blankState, dayKey, parseState, type TasbihState } from './tasbih';
+import { STORE_KEY, applyTap, applyUndo, blankState, parseState, switchDhikr, type TasbihState } from './tasbih';
 
 /**
  * Shared counter state for every tasbeeh theme (garden, noor, …).
@@ -25,21 +25,27 @@ export function useTasbih(onTap?: (next: TasbihState, hit: boolean) => void) {
   }, [st, ready]);
 
   const tap = useCallback(() => {
-    const s = stRef.current;
-    const today = dayKey();
-    const base = s.todayDate === today ? s : { ...s, todayDate: today, today: 0 };
-    const count = base.count + 1;
-    const next = { ...base, count, today: base.today + 1, total: base.total + 1 };
+    const { next, hit } = applyTap(stRef.current);
     stRef.current = next; // fast double-taps before re-render still count
     setSt(next);
-    onTapRef.current?.(next, count % base.goal === 0);
+    onTapRef.current?.(next, hit);
   }, []);
 
   const undo = useCallback(() => {
-    setSt(s => (s.count === 0 ? s : { ...s, count: s.count - 1, today: Math.max(0, s.today - 1), total: Math.max(0, s.total - 1) }));
+    const next = applyUndo(stRef.current);
+    stRef.current = next;
+    setSt(next);
   }, []);
 
-  return { st, setSt, ready, tap, undo };
+  /** Each dhikr keeps its own count, goal and tree. */
+  const switchTo = useCallback((id: string, custom?: string) => {
+    const next = switchDhikr(stRef.current, id, custom);
+    stRef.current = next;
+    setSt(next);
+    return next;
+  }, []);
+
+  return { st, setSt, ready, tap, undo, switchTo };
 }
 
 // ── tiny WebAudio synth, no files needed ──
