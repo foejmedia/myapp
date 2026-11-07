@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeTasbih as manrope } from '@/fonts/manrope';
+import { amiriTasbih as amiri } from '@/fonts/amiri';
 import TasbeehGarden from '@/components/tasbih-garden/TasbeehGarden';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--tg-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--tg-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Tasbeeh Counter — Dhikr Garden',

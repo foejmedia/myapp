@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeMosques as manrope } from '@/fonts/manrope';
+import { amiriMosques as amiri } from '@/fonts/amiri';
 import NearbyMosques from '@/components/mosques/NearbyMosques';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--mq-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--mq-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Mosques Near You',

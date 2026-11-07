@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import { Manrope } from 'next/font/google';
+import { manropeBooks as sans } from '@/fonts/manrope';
 import { frauncesBooks as serif } from '@/fonts/fraunces';
 
-const sans = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--bk-font' });
 
 export const metadata: Metadata = {
   title: 'Library — free Islamic books | LearnQuran',

@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeTooba as manrope } from '@/fonts/manrope';
+import { amiriTooba as amiri } from '@/fonts/amiri';
 import { frauncesTooba as fraunces } from '@/fonts/fraunces';
 import ToobaTasbeeh from '@/components/tasbih-tooba/ToobaTasbeeh';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--tb-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--tb-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Tooba Tasbeeh — Grow a Tree of Dhikr',

@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeNamaz as manrope } from '@/fonts/manrope';
+import { amiriNamaz as amiri } from '@/fonts/amiri';
 import NamazTracker from '@/components/NamazTracker';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--nt-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--nt-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Namaz Tracker',

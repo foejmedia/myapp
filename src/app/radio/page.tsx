@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeRadio as manrope } from '@/fonts/manrope';
+import { amiriRadio as amiri } from '@/fonts/amiri';
 import LiveRadio from '@/components/live-radio/LiveRadio';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--lr-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--lr-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Live Quran Radio',

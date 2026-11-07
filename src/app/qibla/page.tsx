@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Amiri, Manrope } from 'next/font/google';
+import { manropeQibla as manrope } from '@/fonts/manrope';
+import { amiriQibla as amiri } from '@/fonts/amiri';
 import QiblaCompass from '@/components/QiblaCompass';
 
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--qb-font' });
-const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--qb-font-ar' });
 
 export const metadata: Metadata = {
   title: 'Qibla Compass',
