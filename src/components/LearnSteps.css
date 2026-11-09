@@ -559,3 +559,8 @@
     opacity: 0;
   }
 }
+
+/* Not shown on phones */
+@media (max-width: 767px) {
+  .ls { display: none; }
+}
