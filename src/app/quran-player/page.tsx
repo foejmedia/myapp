@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import Link from "next/link";
 import "./quranfy-player.css";
 import "./player-controls-fix.css";
 
@@ -35,7 +34,6 @@ export default function QuranPlayerPage() {
   const [mobileView, setMobileView] = useState<'home'|'search'|'library'>('home');
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [scrolled, setScrolled] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReciterPlaylist, setSelectedReciterPlaylist] = useState<Reciter | null>(null);
@@ -304,14 +302,6 @@ export default function QuranPlayerPage() {
     update();
   }, []);
 
-  useEffect(() => {
-    const el = mainRef.current;
-    if (!el) return;
-    const onScroll = () => setScrolled(el.scrollTop > 20);
-    el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
   const getTotalDuration = (trackList: Track[]) => {
     const MathFloor = Math.floor;
     const totalSec = trackList.reduce((acc, t) => acc + t.durationSeconds, 0);
@@ -384,37 +374,6 @@ export default function QuranPlayerPage() {
         />
 
         <main className="sp-main" ref={mainRef}>
-          {/* Top Bar */}
-          <div className={`sp-topbar${scrolled ? " scrolled" : ""}`}>
-            <div className="sp-topbar-left">
-              <Link href="/" className="sp-home-btn" aria-label="Go to home page" title="Home">
-                <Icons.Home />
-              </Link>
-              <button
-                className="sp-topbar-nav-btn"
-                disabled={!selectedReciterPlaylist}
-                onClick={() => setSelectedReciterPlaylist(null)}
-              >
-                <Icons.ChevronLeft />
-              </button>
-              <button className="sp-topbar-nav-btn" disabled>
-                <Icons.ChevronRight />
-              </button>
-            </div>
-            <div className="sp-topbar-right">
-              <div className="sp-search-container">
-                <Icons.Search />
-                <input
-                  className="sp-search-input"
-                  type="text"
-                  placeholder="What do you want to listen to?"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
           {/* VIEW ROUTING based on state */}
           {mobileView === 'search' && window.innerWidth < 768 ? (
             <div style={{ padding: '80px 24px 24px' }}>

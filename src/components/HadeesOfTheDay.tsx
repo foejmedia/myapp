@@ -145,7 +145,7 @@ export default function HadeesOfTheDay() {
           <button type="button" className="hod-text-btn" onClick={copy}>
             {copied ? 'Copied' : 'Copy'}
           </button>
-          <button type="button" className="hod-text-btn" onClick={() => setImageOpen(true)}>Create image</button>
+          <button type="button" className="hod-text-btn" onClick={() => setImageOpen(true)}>Turn into Graphic</button>
           <Link href="/hadees" className="hod-text-btn">More hadith</Link>
         </div>
       </figure>
