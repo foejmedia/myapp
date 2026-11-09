@@ -170,3 +170,83 @@ export function BookArt({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/** Minimal deck illustrations for the Flashcards page: line art over a soft tinted disc. */
+export function DeckArt({ kind, className }: { kind: 'due' | 'practice' | 'learned' | 'saved'; className?: string }) {
+  const tone = { due: '#2563eb', practice: '#ea580c', learned: '#16a34a', saved: '#d97706' }[kind];
+  const soft = { due: '#dbeafe', practice: '#ffedd5', learned: '#dcfce7', saved: '#fef3c7' }[kind];
+  return (
+    <svg viewBox="0 0 96 96" className={`${s.ill} ${className ?? ''}`} aria-hidden>
+      <circle cx="48" cy="50" r="38" fill={soft} className={s.deckDisc} />
+      <g fill="none" stroke={tone} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        {kind === 'due' && (
+          <>
+            <rect x="26" y="28" width="44" height="42" rx="8" fill="#fff" />
+            <path d="M26 40h44M36 22v10M60 22v10" />
+            <g className={s.deckSpin}>
+              <path d="M40 56a8 8 0 1 0 8-8" />
+              <path d="M48 44v6h-6" />
+            </g>
+          </>
+        )}
+        {kind === 'practice' && (
+          <>
+            <circle cx="48" cy="50" r="22" fill="#fff" />
+            <circle cx="48" cy="50" r="13" />
+            <circle cx="48" cy="50" r="4" fill={tone} />
+            <path className={s.deckDart} d="M50 48 L70 28 M64 28h6v6" />
+          </>
+        )}
+        {kind === 'learned' && (
+          <>
+            <rect x="30" y="30" width="36" height="44" rx="7" fill="#fff" transform="rotate(-10 48 52)" opacity="0.7" />
+            <rect x="32" y="26" width="36" height="44" rx="7" fill="#fff" />
+            <path className={s.deckCheck} d="M40 48l6 6 12-13" />
+          </>
+        )}
+        {kind === 'saved' && (
+          <>
+            <path className={s.deckBob} d="M34 24h28v48L48 62 34 72Z" fill="#fff" />
+            <path className={s.deckBob} d="M42 40h12" />
+          </>
+        )}
+      </g>
+    </svg>
+  );
+}
+
+/** Fanned stack of flashcards for "Learn new words" — the top card lifts on hover. */
+export function NewDeckArt({ className }: { className?: string }) {
+  const id = useIds('back', 'front', 'sh');
+  return (
+    <svg viewBox="0 0 180 150" className={`${s.ill} ${className ?? ''}`} aria-hidden>
+      <defs>
+        <linearGradient id={id.back} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#bbf7d0" />
+          <stop offset="1" stopColor="#4ade80" />
+        </linearGradient>
+        <linearGradient id={id.front} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#f0fdf4" />
+        </linearGradient>
+        <radialGradient id={id.sh}>
+          <stop offset="0" stopColor="#000" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#000" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="90" cy="140" rx="60" ry="8" fill={`url(#${id.sh})`} />
+      <rect x="44" y="30" width="78" height="100" rx="14" fill={`url(#${id.back})`} transform="rotate(-14 83 80)" />
+      <rect x="60" y="26" width="78" height="100" rx="14" fill="#86efac" transform="rotate(6 99 76)" />
+      <g className={s.newDeckTop}>
+        <rect x="50" y="20" width="80" height="104" rx="14" fill={`url(#${id.front})`} stroke="#bbf7d0" strokeWidth="2" />
+        <text x="90" y="74" textAnchor="middle" fontSize="34" fill="#15803d" fontFamily="UthmanicHafs, Amiri, serif">
+          رَبّ
+        </text>
+        <rect x="68" y="90" width="44" height="6" rx="3" fill="#bbf7d0" />
+        <rect x="76" y="102" width="28" height="5" rx="2.5" fill="#dcfce7" />
+      </g>
+      <path className={s.illTwinkle} d="M150 22 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#fbbf24" />
+      <path className={s.illTwinkle} d="M30 46 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#86efac" />
+    </svg>
+  );
+}

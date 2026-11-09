@@ -6,7 +6,8 @@ import { shuffle } from '../lib/random';
 import { isDue, needsPractice } from '../lib/srs';
 import { useLearn } from '../store/LearnProvider';
 import CardSession, { type CardMode } from './CardSession';
-import { IconCards } from './Icons';
+import { IconCards, IconChevron } from './Icons';
+import { DeckArt, NewDeckArt } from './Illustrations';
 import Overlay from './Overlay';
 import { PageHeader, Ready } from './ui';
 import s from '../learn.module.css';
@@ -71,26 +72,58 @@ function Inner() {
           </select>
         </label>
       </div>
-      <ul className={s.deckGrid}>
-        {DECKS.map(d => {
-          const n = decks[d.id].length;
-          return (
-            <li key={d.id}>
-              <article className={s.deck}>
-                <IconCards className={`${s.i20} ${s.primaryInk}`} />
-                <h2 className={s.cardTitle}>{d.title}</h2>
-                <p className={s.muted}>{d.body}</p>
-                <p className={s.deckCount}>
-                  <strong>{n}</strong> {n === 1 ? 'card' : 'cards'}
-                </p>
-                <button type="button" className={n ? s.btnPrimary : s.btnGhost} disabled={!n} onClick={() => start(d.id)}>
-                  {n ? `Study ${Math.min(n, size)}` : d.id === 'due' ? 'Nothing due' : 'Empty'}
+      <div className={s.flashLayout}>
+      {/* the one featured card: learn new words */}
+      {(() => {
+        const d = DECKS.find(x => x.id === 'new')!;
+        const n = decks.new.length;
+        return (
+          <article className={`${s.deck} ${s.deckHero}`}>
+            <NewDeckArt className={s.deckHeroArt} />
+            <div className={s.deckHeroBody}>
+              <IconCards className={`${s.i20} ${s.primaryInk} ${s.deckHeroIcon}`} />
+              <h2 className={s.cardTitle}>{d.title}</h2>
+              <p className={s.muted}>{d.body}</p>
+              <p className={s.deckCount}>
+                <strong>{n}</strong> {n === 1 ? 'card' : 'cards'}
+              </p>
+              <button type="button" className={n ? s.btnPrimary : s.btnGhost} disabled={!n} onClick={() => start('new')}>
+                {n ? `Study ${Math.min(n, size)}` : 'All words learned'}
+              </button>
+            </div>
+          </article>
+        );
+      })()}
+
+      {/* your decks: minimal, illustration-led */}
+      <section aria-labelledby="l1m-decks" className={s.deckColumn}>
+        <h2 id="l1m-decks" className={s.deckSectionH}>
+          Your decks
+        </h2>
+        <ul className={s.deckMinimal}>
+          {DECKS.filter(d => d.id !== 'new').map(d => {
+            const n = decks[d.id].length;
+            return (
+              <li key={d.id}>
+                <button
+                  type="button"
+                  className={s.deckRow}
+                  disabled={!n}
+                  onClick={() => start(d.id)}
+                  title={d.body}
+                  aria-label={`${d.title}: ${n} ${n === 1 ? 'card' : 'cards'}. ${d.body} ${n ? `Study ${Math.min(n, size)}` : 'Nothing to study yet'}`}
+                >
+                  <DeckArt kind={d.id as 'due' | 'practice' | 'learned' | 'saved'} className={s.deckRowArt} />
+                  <strong className={s.deckRowTitle}>{d.title}</strong>
+                  <span className={s.deckRowCount}>{n}</span>
+                  <IconChevron className={s.deckRowChev} />
                 </button>
-              </article>
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+      </div>
       {session && (
         <Overlay label={session.title} onClose={() => setSession(null)}>
           <div className={s.lessonCard}>
