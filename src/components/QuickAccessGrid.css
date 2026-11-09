@@ -167,13 +167,14 @@
   }
 }
 
-.qg-sub-short {
+/* tiles are a quarter row wide: the short subtitle fits, the long one is for screen readers */
+.qg-text > .qg-sub-full {
   display: none;
 }
 
-/* ── Wide tiles: half a row each ── */
+/* ── Every tile is the same size: 4 per row on desktop, 2 on phones ── */
 .qg-wide {
-  grid-column: span 2;
+  grid-column: auto;
 }
 
 /* ── Illustration paint ── */
