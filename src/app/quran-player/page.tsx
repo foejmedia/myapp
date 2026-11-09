@@ -21,10 +21,14 @@ import { BottomPlayerBar } from "@/components/quran-player/BottomPlayerBar";
 import { MobilePlayer } from "@/components/quran-player/MobilePlayer";
 import { QueuePanel } from "@/components/quran-player/QueuePanel";
 import { SoundCloudHeroPlayer } from "@/components/quran-player/SoundCloudHeroPlayer";
+import { GlassNowPlaying } from "@/components/quran-player/GlassNowPlaying";
 
 export default function QuranPlayerPage() {
   const [currentReciter, setCurrentReciter] = useState<Reciter>(RECITERS[0]);
-  const [showNowPlaying, setShowNowPlaying] = useState(false);
+  // The glass "Now Playing" view opens whenever a recitation is started by a click,
+  // and replaces the old expanded player (desktop art click / mobile mini player tap).
+  const [glassOpen, setGlassOpen] = useState(false);
+  const openNowPlaying = useCallback((v: boolean) => { if (v) setGlassOpen(true); }, []);
   const [showQueue, setShowQueue] = useState(false);
   const [showSearchView, setShowSearchView] = useState(false);
   const [mobileView, setMobileView] = useState<'home'|'search'|'library'>('home');
@@ -99,11 +103,13 @@ export default function QuranPlayerPage() {
 
   const playTranslationAtRef = useRef<(t: Track, a: number, ph: 'ar' | 'tr') => void>(() => {});
 
-  const handlePlayTrack = async (track: Track) => {
+  /** `open`: show the glass Now Playing view (clicks on a recitation); next/prev/auto-advance pass false. */
+  const handlePlayTrack = async (track: Track, open = true) => {
     if (currentTrack?.id === track.id && currentTrack?.reciterId === track.reciterId) {
       togglePlay();
       return;
     }
+    if (open) setGlassOpen(true);
     if (trRef.current) {
       playTranslationAtRef.current(track, 1, trFirstPhase(trRef.current.mode));
       return;
@@ -134,7 +140,10 @@ export default function QuranPlayerPage() {
     setTr(next);
     try { localStorage.setItem('qp-translation', JSON.stringify(next)); } catch { /* ignore */ }
     const t = track ?? currentTrack ?? tracks[0];
-    if (t) playTranslationAt(t, 1, trFirstPhase(mode));
+    if (t) {
+      setGlassOpen(true);
+      playTranslationAt(t, 1, trFirstPhase(mode));
+    }
   }, [currentTrack, tracks, playTranslationAt]);
 
   const changeTranslationMode = (mode: TrMode) => {
@@ -163,7 +172,7 @@ export default function QuranPlayerPage() {
 
   const playNext = useCallback(async () => {
     const next = getNextTrack();
-    if (next) handlePlayTrack(next);
+    if (next) handlePlayTrack(next, false);
   }, [getNextTrack, handlePlayTrack]);
 
   const playPrev = useCallback(async () => {
@@ -173,7 +182,7 @@ export default function QuranPlayerPage() {
       return;
     }
     const prev = getPrevTrack();
-    if (prev) handlePlayTrack(prev);
+    if (prev) handlePlayTrack(prev, false);
   }, [getPrevTrack, audioRef]);
 
   // Expose playNext and PlayPrev for the native audio 'ended' event
@@ -717,7 +726,7 @@ export default function QuranPlayerPage() {
           isMuted={isMuted} setIsMuted={setIsMuted}
           showQueue={showQueue} setShowQueue={setShowQueue}
           isLiked={isLiked} toggleLike={toggleLike}
-          setShowNowPlaying={setShowNowPlaying}
+          setShowNowPlaying={openNowPlaying}
           duration={duration}
         />
 
@@ -730,7 +739,7 @@ export default function QuranPlayerPage() {
           volume={volume} setVolume={setVolume}
           isMuted={isMuted} setIsMuted={setIsMuted}
           isLiked={isLiked} toggleLike={toggleLike}
-          showNowPlaying={showNowPlaying} setShowNowPlaying={setShowNowPlaying}
+          showNowPlaying={false} setShowNowPlaying={openNowPlaying}
           duration={duration}
         />
         
@@ -749,7 +758,27 @@ export default function QuranPlayerPage() {
 
       </div>
 
-      <QueuePanel 
+      <GlassNowPlaying
+        open={glassOpen}
+        onClose={() => setGlassOpen(false)}
+        audioRef={audioRef}
+        track={displayTrack}
+        isPlaying={isPlaying}
+        isLoading={isLoading}
+        togglePlay={togglePlay}
+        playNext={playNext}
+        playPrev={playPrev}
+        playTrack={handlePlayTrack}
+        isShuffled={isShuffled} setIsShuffled={setIsShuffled}
+        isRepeating={isRepeating} setIsRepeating={setIsRepeating}
+        volume={volume} setVolume={setVolume}
+        isMuted={isMuted} setIsMuted={setIsMuted}
+        isLiked={isLiked} toggleLike={toggleLike}
+        queue={getQueueList(3)}
+        duration={duration}
+      />
+
+      <QueuePanel
         showQueue={showQueue} setShowQueue={setShowQueue}
         currentTrack={currentTrack} queueList={getQueueList(30)}
         playTrack={handlePlayTrack}
