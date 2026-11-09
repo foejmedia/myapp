@@ -6,7 +6,8 @@
  * Nothing here is written by hand. Sources:
  *  - Roots, lemmas and occurrence counts: Quranic Arabic Corpus morphology (corpus.quran.com),
  *    via the corrected mirror github.com/mustafa0x/quran-morphology.
- *  - Arabic word forms, transliteration, word-by-word meanings, word audio, ayah text (Uthmani)
+ *  - Arabic word forms, transliteration, word-by-word meanings, word audio, ayah text (text_qpc_hafs,
+ *    the encoding the site's UthmanicHafs font is made for — same font as Read Quran)
  *    and the Saheeh International translation: Quran.com API v4.
  *  - Chapter names, meanings and ayah counts: Quran.com API v4.
  * Every example is cross-checked: the Corpus segments at a location must spell the same word
@@ -98,15 +99,15 @@ const verseCache = new Map();
 async function verse(key) {
   if (verseCache.has(key)) return verseCache.get(key);
   const url = `${API}/verses/by_key/${key}?language=en&words=true&translations=${TRANSLATION}` +
-    `&fields=text_uthmani&word_fields=text_uthmani,location,audio_url,char_type_name`;
+    `&fields=text_qpc_hafs&word_fields=text_qpc_hafs,location,audio_url,char_type_name`;
   const { verse: v } = await (await get(url)).json();
   const tr = v.translations?.find(t => t.resource_id === TRANSLATION)?.text;
   const out = {
     key,
-    ar: v.text_uthmani,
+    ar: v.text_qpc_hafs,
     translation: tr ? tr.replace(/<sup[^>]*>.*?<\/sup>/gi, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim() : null,
     words: v.words.filter(w => w.char_type_name === 'word').map(w => ({
-      ar: w.text_uthmani, location: w.location, audio: w.audio_url,
+      ar: w.text_qpc_hafs, location: w.location, audio: w.audio_url,
       meaning: w.translation?.text ?? null, translit: w.transliteration?.text ?? null,
     })),
   };
@@ -178,7 +179,7 @@ const meta = {
   generatedAt: new Date().toISOString().slice(0, 10),
   sources: {
     morphology: 'Quranic Arabic Corpus (corpus.quran.com), corrected mirror github.com/mustafa0x/quran-morphology',
-    text: 'Quran.com API v4 — Uthmani text',
+    text: 'Quran.com API v4 — Uthmani Hafs text (text_qpc_hafs, King Fahd Complex), shown in the KFGQPC Uthmanic Hafs font',
     translation: 'Saheeh International (Quran.com resource 20)',
     words: 'Quran.com word-by-word meanings, transliteration and audio',
   },
