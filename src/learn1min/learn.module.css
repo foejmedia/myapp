@@ -1101,7 +1101,7 @@ a.activityRow:hover { border-color: var(--line); }
    scroll container and silently disables `position: sticky` inside it.
    So the app chrome is `position: fixed` (the site navbar is fixed at 66px).
    --------------------------------------------------------------------- */
-.root { --chrome-top: 66px; --header-h: 64px; padding-top: var(--header-h); grid-template-rows: auto; }
+.root { --chrome-top: var(--qcnav-h, 66px); --header-h: 64px; padding-top: var(--header-h); grid-template-rows: auto; }
 .appHeader { position: fixed; top: var(--chrome-top); left: 0; right: 0; height: var(--header-h); min-height: 0; }
 .sidebar {
   position: fixed; top: calc(var(--chrome-top) + var(--header-h)); left: 0; bottom: auto;
@@ -1338,3 +1338,24 @@ a.jCard:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
   .illFloat, .illFlame, .illTwinkle, .illCard:hover .illArrow, .illCard:hover .illShine { animation: none !important; }
   .ringArc, .gaugeArc, .bar, .coralBar > span { transition: none !important; }
 }
+
+/* ---------- small screens: never wider than the viewport ---------- */
+/* A grid column defaults to its content's minimum width; let it shrink instead. */
+.content { grid-template-columns: minmax(0, 1fr); }
+.welcome { width: 100%; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.inputRow input { width: 100%; }
+.profileBtn > span:nth-child(2) { min-width: 0; }
+.profileBtn strong, .profileBtn small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) {
+  .welcome { margin-top: 4px; padding: 20px 16px; border-radius: 20px; gap: 14px; }
+  .welcomeTitle { font-size: 1.6rem !important; }
+  .inputRow { flex-wrap: wrap; padding: 10px; gap: 8px; }
+  .inputRow input { flex: 1 1 160px; min-height: 40px; }
+  .inputRow .btnPrimary { width: 100%; }
+}
+/* the site navbar already has a theme toggle on phones; give the search box the room */
+@media (max-width: 960px) {
+  .appHeader .topActions > .iconBtn { display: none; }
+}
+/* header without a search pill: brand on the left, actions on the right */
+.appHeader .topActions { margin-left: auto; }

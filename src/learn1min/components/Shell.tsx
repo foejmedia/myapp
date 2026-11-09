@@ -7,7 +7,7 @@ import { computeStats } from '../lib/stats';
 import { useLearn } from '../store/LearnProvider';
 import {
   IconCards, IconClose, IconDua, IconFlame, IconHome, IconMenu, IconMoon, IconNotebook, IconPlay, IconQuiz, IconRepeat,
-  IconSearch, IconSun, IconSurah, IconUser, IconWord,
+  IconSun, IconSurah, IconUser, IconWord,
 } from './Icons';
 import { RocketArt } from './Illustrations';
 import SearchDialog, { OPEN_SEARCH_EVENT } from './Search';
@@ -148,10 +148,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </span>
           <strong>Learn in 1 Minute</strong>
         </Link>
-        <button type="button" className={s.searchTrigger} onClick={() => setSearchOpen(true)}>
-          <span>Search words, duas, surahs or your notes…</span>
-          <IconSearch className={`${s.i18} ${s.searchTriggerIcon}`} />
-        </button>
         <div className={s.topActions}>
           <button type="button" className={s.iconBtn} onClick={toggleTheme} aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
             {resolvedTheme === 'dark' ? <IconSun className={s.i18} /> : <IconMoon className={s.i18} />}
