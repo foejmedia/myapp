@@ -13,6 +13,9 @@ import GetStarted from '@/components/GetStarted';
 import FollowUs from '@/components/FollowUs';
 import NavigatePanel from '@/components/NavigatePanel';
 import PrayerStrip from '@/components/PrayerStrip';
+import HomeJourney from '@/components/home-live/HomeJourney';
+import LiveScene from '@/components/home-live/LiveScene';
+import SearchIdle from '@/components/home-live/SearchIdle';
 
 // ── Prayer Times Types ──
 interface PrayerTimesData {
@@ -955,6 +958,9 @@ export default function HomePage() {
               onResetTime={() => { setSessionTime(0); setTotalTime(0); localStorage.setItem('quranTotalTime', '0'); }}
             />
 
+            {/* ── KEEP GROWING: illustrated daily-learning cards (live progress) ── */}
+            <HomeJourney />
+
             {/* ── QUICK ACCESS ── */}
             <QuickAccessGrid onNavigate={openNav} />
 
@@ -988,6 +994,9 @@ export default function HomePage() {
                   <span className="material-symbols-outlined" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'var(--brand-primary)', animation: 'spin 1s linear infinite' }}>progress_activity</span>
                 )}
               </div>
+
+              {/* Before a query: illustration + suggested topics */}
+              {verseQuery.trim().length < 3 && <SearchIdle onPick={setVerseQuery} />}
 
               {/* Result count */}
               {verseCount !== null && verseQuery.trim().length >= 3 && (
@@ -1079,6 +1088,9 @@ export default function HomePage() {
 
             {/* ── TASBEEH COUNTER ── */}
             <TasbeehCounter />
+
+            {/* ── LIVE SKY: follows the visitor's time of day ── */}
+            <LiveScene />
 
             {/* ── GET STARTED ── */}
             <GetStarted />
