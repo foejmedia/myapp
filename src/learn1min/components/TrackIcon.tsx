@@ -1,6 +1,6 @@
-import type { Track } from '../lib/lessons';
+import type { Kind } from '../lib/items';
 import { IconDua, IconSurah, IconWord } from './Icons';
 
-export function TrackIcon({ track, className }: { track: Track; className?: string }) {
-  return track === 'word' ? <IconWord className={className} /> : track === 'dua' ? <IconDua className={className} /> : <IconSurah className={className} />;
+export function KindIcon({ kind, className }: { kind: Kind; className?: string }) {
+  return kind === 'v' ? <IconWord className={className} /> : kind === 'd' ? <IconDua className={className} /> : <IconSurah className={className} />;
 }
