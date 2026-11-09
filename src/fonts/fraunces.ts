@@ -45,3 +45,12 @@ export const frauncesGame = localFont({
   display: 'swap',
   variable: '--gd-font-serif',
 });
+
+export const frauncesLearn = localFont({
+  src: [
+    { path: './fraunces/Fraunces-latin-normal.woff2', weight: '100 900', style: 'normal' },
+    { path: './fraunces/Fraunces-latin-italic.woff2', weight: '100 900', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--l1-serif',
+});

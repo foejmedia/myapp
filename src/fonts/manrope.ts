@@ -79,3 +79,9 @@ export const manropeGame = localFont({
   display: 'swap',
   variable: '--gd-font-ui',
 });
+
+export const manropeLearn = localFont({
+  src: [{ path: './manrope/Manrope-latin-variable.woff2', weight: '200 800', style: 'normal' }],
+  display: 'swap',
+  variable: '--l1-font',
+});

@@ -85,3 +85,12 @@ export const amiriGame = localFont({
   display: 'swap',
   variable: '--gd-font-ar',
 });
+
+export const amiriLearn = localFont({
+  src: [
+    { path: './amiri/Amiri-arabic-400.woff2', weight: '400', style: 'normal' },
+    { path: './amiri/Amiri-arabic-700.woff2', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
+  variable: '--l1-font-ar',
+});
