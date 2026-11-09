@@ -207,3 +207,47 @@ describe('storage migration', () => {
     expect(() => migrate('x')).toThrow();
   });
 });
+
+describe('recent activity', () => {
+  it('lists real actions, newest first, with readable times', async () => {
+    const { recentActivity, relativeTime } = await import('../lib/activity');
+    let d = apply(emptyData(), { type: 'completeLesson', itemId: LESSON_PATH[0], day: '2026-11-09' });
+    d = apply(d, { type: 'toggleSave', itemId: 'd:daily-1', at: '2026-11-10T09:00:00.000Z' });
+    d = apply(d, { type: 'quiz', daily: true, result: { at: '2026-11-10T10:00:00.000Z', day: '2026-11-10', mode: 'daily', score: 4, total: 5 } });
+    const list = recentActivity(d);
+    expect(list.map(a => a.kind)).toEqual(['quiz', 'saved', 'lesson']);
+    expect(list[0].detail).toBe('Scored 4 of 5');
+    const now = new Date('2026-11-10T12:00:00.000Z');
+    expect(relativeTime(list[0], now)).toBe('2 hours ago');
+    expect(recentActivity(emptyData())).toEqual([]);
+  });
+});
+
+describe('achievements and weekly numbers', () => {
+  it('awards only what was done and picks the closest next milestone', async () => {
+    const { achievements } = await import('../lib/achievements');
+    const { computeStats } = await import('../lib/stats');
+    const empty = emptyData();
+    const none = achievements(computeStats(empty, DAY), empty);
+    expect(none.earned).toHaveLength(0);
+    expect(none.latest).toBeNull();
+    let d = apply(empty, { type: 'completeLesson', itemId: LESSON_PATH[0], day: addDays(DAY, -1) });
+    d = apply(d, { type: 'completeLesson', itemId: LESSON_PATH[1], day: DAY });
+    const some = achievements(computeStats(d, DAY), d);
+    expect(some.earned.map(a => a.id)).toEqual(['first-lesson']);
+    expect(some.next?.id).toBe('streak-3'); // 2 of 3 is the closest
+    expect(some.next?.current).toBe(2);
+  });
+
+  it('counts this week and the last seven days', async () => {
+    const { computeStats } = await import('../lib/stats');
+    let d = apply(emptyData(), { type: 'completeLesson', itemId: LESSON_PATH[0], day: DAY }); // 2026-11-10 is a Tuesday
+    d = apply(d, { type: 'setKnown', itemId: 'd:daily-1', known: true, day: addDays(DAY, -1) });
+    d = apply(d, { type: 'setKnown', itemId: 'd:daily-2', known: true, day: addDays(DAY, -9) });
+    const w = computeStats(d, DAY).week;
+    expect(w.last7.map(x => x.count)).toEqual([0, 0, 0, 0, 0, 1, 1]);
+    expect(w.total).toBe(2);
+    expect(w.prev7Total).toBe(1);
+    expect(w.activeThisWeek).toBe(2);
+  });
+});

@@ -196,11 +196,11 @@ export const Skeleton = ({ h = 16, w = '100%', r = 10 }: { h?: number; w?: numbe
   <span className={s.skeleton} style={{ height: h, width: w, borderRadius: r }} aria-hidden />
 );
 
-export function Progress({ value, label, tone = 'primary' }: { value: number; label: string; tone?: 'primary' | 'gold' }) {
+export function Progress({ value, label, tone = 'primary' }: { value: number; label: string; tone?: 'primary' | 'gold' | 'blue' }) {
   const pct = Math.round(Math.max(0, Math.min(1, value)) * 100);
   return (
     <div className={s.progress} role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
-      <span className={tone === 'gold' ? s.progressGold : undefined} style={{ width: `${Math.max(pct, value > 0 ? 2 : 0)}%` }} />
+      <span className={tone === 'gold' ? s.progressGold : tone === 'blue' ? s.progressBlue : undefined} style={{ width: `${Math.max(pct, value > 0 ? 2 : 0)}%` }} />
     </div>
   );
 }

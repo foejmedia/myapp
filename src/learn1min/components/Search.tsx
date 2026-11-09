@@ -51,6 +51,10 @@ export function searchItems(query: string, notes: Record<string, { text: string 
   return hits.sort((a, b) => b.score - a.score).slice(0, 24);
 }
 
+/** Ask the shell to open the search dialog (used by search boxes outside the header). */
+export const OPEN_SEARCH_EVENT = 'l1m:open-search';
+export const openSearch = () => window.dispatchEvent(new Event(OPEN_SEARCH_EVENT));
+
 export default function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { data } = useLearn();
   const router = useRouter();

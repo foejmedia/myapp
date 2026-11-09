@@ -6,21 +6,22 @@ import { useTheme } from '@/components/ThemeProvider';
 import { computeStats } from '../lib/stats';
 import { useLearn } from '../store/LearnProvider';
 import {
-  IconCards, IconDua, IconFlame, IconHome, IconMenu, IconMoon, IconNotebook, IconQuiz, IconRepeat, IconSearch, IconSun,
-  IconSurah, IconUser, IconWord, IconClose,
+  IconCards, IconClose, IconDua, IconFlame, IconHome, IconMenu, IconMoon, IconNotebook, IconPlay, IconQuiz, IconRepeat,
+  IconSearch, IconSun, IconSurah, IconUser, IconWord,
 } from './Icons';
-import SearchDialog from './Search';
+import { RocketArt } from './Illustrations';
+import SearchDialog, { OPEN_SEARCH_EVENT } from './Search';
 import Welcome from './Welcome';
 import s from '../learn.module.css';
 
 const NAV = [
-  { href: '/learn-1-min', label: 'Dashboard', icon: IconHome, mobile: 'Home' },
+  { href: '/learn-1-min', label: 'Home', icon: IconHome },
   { href: '/learn-1-min/vocabulary', label: 'Vocabulary', icon: IconWord, mobile: 'Words' },
-  { href: '/learn-1-min/duas', label: 'Daily Duas', icon: IconDua },
+  { href: '/learn-1-min/duas', label: 'Daily Duas', icon: IconDua, mobile: 'Duas' },
   { href: '/learn-1-min/surahs', label: 'Surahs', icon: IconSurah },
-  { href: '/learn-1-min/flashcards', label: 'Flashcards', icon: IconCards, mobile: 'Cards' },
-  { href: '/learn-1-min/quiz', label: 'Quizzes', icon: IconQuiz, mobile: 'Quiz' },
-  { href: '/learn-1-min/review', label: 'Revision', icon: IconRepeat, mobile: 'Revise' },
+  { href: '/learn-1-min/flashcards', label: 'Flashcards', icon: IconCards },
+  { href: '/learn-1-min/quiz', label: 'Quizzes', icon: IconQuiz },
+  { href: '/learn-1-min/review', label: 'Revision', icon: IconRepeat },
   { href: '/learn-1-min/notebook', label: 'Notebook', icon: IconNotebook },
 ];
 
@@ -44,8 +45,13 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         setSearchOpen(true);
       }
     };
+    const onOpen = () => setSearchOpen(true);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener(OPEN_SEARCH_EVENT, onOpen);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(OPEN_SEARCH_EVENT, onOpen);
+    };
   }, []);
 
   useEffect(() => {
@@ -70,12 +76,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           return (
             <li key={n.href}>
               <Link href={n.href} className={on ? s.navOn : s.navLink} aria-current={on ? 'page' : undefined}>
-                <Icon className={s.i20} />
+                <Icon className={s.i18} />
                 <span>{n.label}</span>
-                {due > 0 && (
+                {due > 0 ? (
                   <span className={s.navBadge} aria-label={`${due} due`}>
                     {due}
                   </span>
+                ) : (
+                  on && <span className={s.navDot} aria-hidden />
                 )}
               </Link>
             </li>
@@ -85,80 +93,102 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     </nav>
   );
 
+  const profileCard = profile && (
+    <div className={s.sideProfile}>
+      <span className={s.sideAvatar} aria-hidden>
+        {profile.name.slice(0, 1).toUpperCase()}
+        {stats && (
+          <span className={s.sideAvatarBadge}>
+            <IconFlame className={s.i12} /> {stats.streak}
+          </span>
+        )}
+      </span>
+      <p className={s.sideHello}>
+        Assalamu alaikum, <strong>{profile.name}</strong>
+      </p>
+    </div>
+  );
+
+  const todayCard = stats && (
+    <div className={s.promo}>
+      <RocketArt className={s.promoRocket} />
+      <p className={s.promoHead}>
+        <IconFlame className={s.i20} /> {stats.streak}-day streak
+      </p>
+      <p className={s.promoSub}>{stats.learnedToday ? 'Today’s lesson is done. Keep going!' : 'Your one-minute lesson is waiting.'}</p>
+      <ul className={s.promoList}>
+        <li>
+          <Link href="/learn-1-min?start=lesson">
+            <IconPlay className={s.i14} /> {stats.learnedToday ? 'Review today’s lesson' : 'Start today’s lesson'}
+          </Link>
+        </li>
+        <li>
+          <Link href="/learn-1-min/review">
+            <IconRepeat className={s.i14} /> Revise {stats.due.length ? `${stats.due.length} due` : 'words'}
+          </Link>
+        </li>
+        <li>
+          <Link href="/learn-1-min/quiz">
+            <IconQuiz className={s.i14} /> Daily challenge
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
+
   return (
     <div className={s.root}>
-      <aside className={s.sidebar}>
+      <header className={s.appHeader}>
+        <button type="button" className={`${s.iconBtn} ${s.onlyMobile}`} onClick={() => setDrawer(true)} aria-label="Open menu">
+          <IconMenu className={s.i20} />
+        </button>
         <Link href="/learn-1-min" className={s.brand}>
           <span className={s.brandMark} aria-hidden>
             ١
           </span>
-          <span>
-            <strong>Learn in 1 Minute</strong>
-            <small>Daily Qur’an learning</small>
-          </span>
+          <strong>Learn in 1 Minute</strong>
         </Link>
+        <button type="button" className={s.searchTrigger} onClick={() => setSearchOpen(true)}>
+          <span>Search words, duas, surahs or your notes…</span>
+          <IconSearch className={`${s.i18} ${s.searchTriggerIcon}`} />
+        </button>
+        <div className={s.topActions}>
+          <button type="button" className={s.iconBtn} onClick={toggleTheme} aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+            {resolvedTheme === 'dark' ? <IconSun className={s.i18} /> : <IconMoon className={s.i18} />}
+          </button>
+          {profile && (
+            <div className={s.menuWrap} ref={menuRef}>
+              <button type="button" className={s.userBtn} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>
+                <span className={s.avatar}>{profile.name.slice(0, 1).toUpperCase()}</span>
+                <span className={s.userText}>
+                  <strong>
+                    {profile.name} <i className={s.onlineDot} aria-hidden />
+                  </strong>
+                  <small>{authKind}</small>
+                </span>
+              </button>
+              {menuOpen && (
+                <div className={s.menu} role="menu">
+                  <Link href="/learn-1-min/account" role="menuitem" className={s.menuItem}>
+                    <IconUser className={s.i18} /> Account & profiles
+                  </Link>
+                  <button type="button" role="menuitem" className={s.menuItem} onClick={() => signOut()}>
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+
+      <aside className={s.sidebar}>
+        {profileCard}
         {nav}
-        {stats && (
-          <div className={s.sideStreak}>
-            <IconFlame className={stats.streak ? s.flameOn : s.flameOff} />
-            <span>
-              <strong>{stats.streak}-day streak</strong>
-              <small>{stats.activeToday ? 'You learned today' : 'Learn today to keep it'}</small>
-            </span>
-          </div>
-        )}
+        {todayCard}
       </aside>
 
       <div className={s.mainCol}>
-        <header className={s.topbar}>
-          <button type="button" className={`${s.iconBtn} ${s.onlyMobile}`} onClick={() => setDrawer(true)} aria-label="Open menu">
-            <IconMenu className={s.i20} />
-          </button>
-          <button type="button" className={s.searchTrigger} onClick={() => setSearchOpen(true)}>
-            <IconSearch className={s.i18} />
-            <span>Search words, duas, surahs…</span>
-            <kbd className={s.kbd}>Ctrl K</kbd>
-          </button>
-          <div className={s.topActions}>
-            <button
-              type="button"
-              className={s.iconBtn}
-              onClick={toggleTheme}
-              aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {resolvedTheme === 'dark' ? <IconSun className={s.i20} /> : <IconMoon className={s.i20} />}
-            </button>
-            {profile && (
-              <div className={s.menuWrap} ref={menuRef}>
-                <button
-                  type="button"
-                  className={s.avatarBtn}
-                  aria-haspopup="menu"
-                  aria-expanded={menuOpen}
-                  onClick={() => setMenuOpen(o => !o)}
-                  aria-label={`Account: ${profile.name}`}
-                >
-                  {profile.name.slice(0, 1).toUpperCase()}
-                </button>
-                {menuOpen && (
-                  <div className={s.menu} role="menu">
-                    <p className={s.menuHead}>
-                      <strong>{profile.name}</strong>
-                      <small>{authKind}</small>
-                    </p>
-                    <Link href="/learn-1-min/account" role="menuitem" className={s.menuItem}>
-                      <IconUser className={s.i18} /> Account & profiles
-                    </Link>
-                    <button type="button" role="menuitem" className={s.menuItem} onClick={() => signOut()}>
-                      Sign out
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </header>
-
         {/* mobile: sticky, scrollable module tabs (the site already has its own bottom bar) */}
         <nav className={s.tabbar} aria-label="Modules">
           {NAV.map(n => {
@@ -172,13 +202,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-
         {saveError && (
           <p className={s.alert} role="alert">
             {saveError}
           </p>
         )}
-
         <main className={s.content} id="l1m-main">
           {status === 'signedOut' ? <Welcome /> : children}
         </main>
@@ -195,8 +223,9 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </div>
             {nav}
             <Link href="/learn-1-min/account" className={s.navLink}>
-              <IconUser className={s.i20} /> <span>Account & profiles</span>
+              <IconUser className={s.i18} /> <span>Account & profiles</span>
             </Link>
+            {todayCard}
           </div>
         </div>
       )}

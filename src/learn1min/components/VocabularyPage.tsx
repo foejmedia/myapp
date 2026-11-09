@@ -61,7 +61,7 @@ function Inner() {
   const card = word ? data.cards[`v:${word.id}`] : undefined;
 
   return (
-    <>
+    <div className={word ? s.vocabOpen : s.vocabPage}>
       <PageHeader
         eyebrow="Module"
         title="Qur’an vocabulary"
@@ -159,7 +159,7 @@ function Inner() {
           </aside>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

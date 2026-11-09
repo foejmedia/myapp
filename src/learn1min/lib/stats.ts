@@ -1,7 +1,7 @@
 /** Everything the dashboard shows, derived from the learner's own saved data (no placeholder numbers). */
 import { CHAPTERS } from '../content/chapters';
 import type { UserData } from '../store/model';
-import { addDays, streaks } from './dates';
+import { addDays, keyToDate, lastSevenDays, streaks } from './dates';
 import { LESSON_PATH, TOTALS, kindOf } from './items';
 import { inLastWeek, isDue, isMastered, needsPractice, type Card } from './srs';
 
@@ -57,7 +57,20 @@ export function computeStats(d: UserData, today: string) {
       dailyToday: d.quiz.daily[today] ?? null,
     },
     savedCount: Object.keys(d.saved).length,
+    week: weekNumbers(d, today, days),
   };
 }
 
 export type Stats = ReturnType<typeof computeStats>;
+
+/** Activity per day for the last 7 days, the 7 before that, and active days since Monday. */
+function weekNumbers(d: UserData, today: string, days: string[]) {
+  const count = (day: string) => d.activity[day] ?? (d.learned[day] ? 1 : 0);
+  const last7 = lastSevenDays(today).map(day => ({ day, count: count(day) }));
+  const prev7Total = Array.from({ length: 7 }, (_, i) => count(addDays(today, -7 - i))).reduce((a, b) => a + b, 0);
+  const sinceMonday = (keyToDate(today).getDay() + 6) % 7; // 0 on Monday
+  const active = new Set(days);
+  const activeThisWeek = Array.from({ length: sinceMonday + 1 }, (_, i) => addDays(today, -i)).filter(k => active.has(k)).length;
+  const total = last7.reduce((a, b) => a + b.count, 0);
+  return { last7, total, prev7Total, activeThisWeek, goal: 5 };
+}
