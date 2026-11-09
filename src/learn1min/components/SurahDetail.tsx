@@ -21,12 +21,21 @@ function useSurah(n: number) {
   useEffect(() => {
     let alive = true;
     setLoad({ state: 'loading' });
-    fetch(`/api/quiz/content?surahs=${n}&lang=en`)
-      .then(async r => {
+    const get = (cache: RequestCache) =>
+      fetch(`/api/quiz/content?surahs=${n}&lang=en`, { cache }).then(async r => {
         if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? 'The Quran text could not be loaded.');
         return r.json() as Promise<Content>;
+      });
+    // Only ever show the surah that was asked for. A stale browser-cached response can
+    // carry another surah, so on a mismatch refetch past the cache before giving up.
+    const pick = (c: Content) => c.surahs?.find(x => x.id === n);
+    get('default')
+      .then(async c => (pick(c) ? c : get('reload')))
+      .then(c => {
+        const surah = pick(c);
+        if (!surah || surah.verses.length !== chapter(n)?.versesCount) throw new Error('The Quran text could not be loaded.');
+        if (alive) setLoad({ state: 'ready', surah, source: c.translationSource });
       })
-      .then(c => alive && setLoad({ state: 'ready', surah: c.surahs[0], source: c.translationSource }))
       .catch(e => alive && setLoad({ state: 'error', message: e instanceof Error ? e.message : 'The Quran text could not be loaded.' }));
     return () => {
       alive = false;
