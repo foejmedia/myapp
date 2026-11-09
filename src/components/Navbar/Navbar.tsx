@@ -180,6 +180,8 @@ export default function Navbar() {
 
   // Watch (/video-gallery) is a full-screen streaming layout with its own side menu
   if (pathname.startsWith('/video-gallery')) return null;
+  // The Quran player is a full-screen app with its own home button
+  if (pathname.startsWith('/quran-player')) return null;
 
   return (
     <>

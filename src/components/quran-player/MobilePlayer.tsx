@@ -25,6 +25,8 @@ interface MobilePlayerProps {
   setShowNowPlaying: (s: boolean) => void;
   audioRef: RefObject<HTMLAudioElement | null>;
   duration: number;
+  /** stop playback and dismiss the mini player */
+  onClose?: () => void;
 }
 
 function MiniProgressBar({ audioRef, duration }: { audioRef: RefObject<HTMLAudioElement | null>, duration: number }) {
@@ -49,7 +51,7 @@ export function MobilePlayer({
   isShuffled, setIsShuffled, isRepeating, setIsRepeating,
   volume, setVolume, isMuted, setIsMuted,
   isLiked, toggleLike, showNowPlaying, setShowNowPlaying,
-  audioRef, duration
+  audioRef, duration, onClose
 }: MobilePlayerProps) {
   
   return (
@@ -63,7 +65,9 @@ export function MobilePlayer({
               <SurahArt number={currentTrack.id} name={currentTrack.englishName} gradient={currentTrack.gradient} size="small" />
             </div>
             <div className="sp-mobile-player-info">
-              <div className="sp-mobile-player-name">{currentTrack.name}</div>
+              <div className="sp-mobile-player-name">
+                <span className="sp-mobile-player-num">{currentTrack.id}.</span> {currentTrack.name}
+              </div>
               <div className="sp-mobile-player-artist">{currentTrack.reciter}</div>
             </div>
             <div className="sp-mobile-player-controls">
@@ -80,6 +84,15 @@ export function MobilePlayer({
                   : <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M7.05 3.606l13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"/></svg>
                 }
               </button>
+              {onClose && (
+                <button
+                  className="sp-mobile-player-btn sp-mobile-player-close"
+                  onClick={e => { e.stopPropagation(); onClose(); }}
+                  aria-label="Close player"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+              )}
             </div>
           </>
         ) : (

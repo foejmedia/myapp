@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
 import "./quranfy-player.css";
 import "./player-controls-fix.css";
 
@@ -159,6 +160,19 @@ export default function QuranPlayerPage() {
     try { localStorage.setItem('qp-translation', JSON.stringify(next)); } catch { /* ignore */ }
     const pos = trPosRef.current;
     if (pos && currentTrack) playTranslationAt(currentTrack, pos.ayah, trFirstPhase(mode));
+  };
+
+  /** Mini player ✕: stop the audio and dismiss the player */
+  const closePlayer = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    trPosRef.current = null;
+    setTrPos(null);
+    setGlassOpen(false);
+    setCurrentTrack(null);
   };
 
   const stopTranslation = async () => {
@@ -373,6 +387,9 @@ export default function QuranPlayerPage() {
           {/* Top Bar */}
           <div className={`sp-topbar${scrolled ? " scrolled" : ""}`}>
             <div className="sp-topbar-left">
+              <Link href="/" className="sp-home-btn" aria-label="Go to home page" title="Home">
+                <Icons.Home />
+              </Link>
               <button
                 className="sp-topbar-nav-btn"
                 disabled={!selectedReciterPlaylist}
@@ -741,6 +758,7 @@ export default function QuranPlayerPage() {
           isLiked={isLiked} toggleLike={toggleLike}
           showNowPlaying={false} setShowNowPlaying={openNowPlaying}
           duration={duration}
+          onClose={closePlayer}
         />
         
         {/* Mobile Nav hidden, already inside shell */}
