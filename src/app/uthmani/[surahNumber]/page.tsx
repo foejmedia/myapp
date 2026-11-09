@@ -20,7 +20,7 @@ export default async function UthmaniPage({
 
   if (!Number.isInteger(id) || id < 1 || id > 114) {
     return (
-      <main style={{ padding: 40, fontFamily: 'Figtree, sans-serif' }}>
+      <main style={{ padding: 40, fontFamily: "var(--font-manrope), sans-serif" }}>
         Surah must be a number from 1 to 114.
       </main>
     );

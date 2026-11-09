@@ -59,7 +59,7 @@ export default function QuranSciencePage() {
     greenBorder: 'rgba(245,158,11,0.18)',
     greenGlow: '0 4px 14px rgba(245,158,11,0.3)',
     shadow: '0 1px 4px rgba(0,0,0,0.06)',
-    font: "'Figtree','Lexend',sans-serif",
+    font: "var(--font-manrope), sans-serif",
     surface: dark ? '#0f2317' : '#f8fafc',
   };
 

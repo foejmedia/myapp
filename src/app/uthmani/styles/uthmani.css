@@ -17,7 +17,7 @@
   --page: #ffffff;
   --hover: #2ca4ab;
   --line: #e9ecef;
-  --font-ui: Figtree, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-ui: var(--font-manrope), "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   background: var(--page);
   color: var(--text);

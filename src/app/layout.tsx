@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar/Navbar';
 import { getOrganizationSchema, getWebsiteSchema } from '@/lib/seoSchemas';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import './globals.css';
+import { manropeSite } from '@/fonts/manrope';
 import ClientWrapper from '@/components/ClientWrapper';
 import QuickAccessWidget from '@/components/QuickAccessWidget';
 import PrayerReminders from '@/components/PrayerReminders';
@@ -68,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className={`scroll-smooth ${manropeSite.variable}`} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
@@ -90,7 +91,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
           rel="stylesheet"
         />
         <link

@@ -31,7 +31,7 @@ body:has(.tarteel-home) .app-shell.no-sidebar > main {
   --muted: #5c5c5c;
   --paper: #f4f4f5;
   --card: #fff;
-  font-family: Figtree, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-manrope), "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--ink);
   background: #fff;
   margin: -0px;

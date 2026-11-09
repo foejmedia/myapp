@@ -28,7 +28,7 @@
   overflow-x: hidden;
   background: var(--nr-bg);
   color: var(--nr-text);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   position: relative;
 }
 

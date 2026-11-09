@@ -18,7 +18,7 @@
   background-image: radial-gradient(circle at 2px 2px, rgba(var(--brand-rgb), 0.05) 1px, transparent 0);
   background-size: 26px 26px;
   color: var(--hz-ink);
-  font-family: 'Figtree', 'Lexend', system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 .dark .hz,
@@ -1386,7 +1386,7 @@
 .hz-focus-tr {
   max-width: 680px;
   margin: 0;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 17px;
   font-style: italic;
   line-height: 1.7;

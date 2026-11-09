@@ -30,7 +30,7 @@
     --sn-border: var(--border-default, rgba(250, 246, 237, 0.08));
     --sn-border-strong: var(--border-strong, rgba(250, 246, 237, 0.12));
     
-    --sn-font: var(--font-sans, 'Figtree', 'Inter', -apple-system, sans-serif);
+    --sn-font: var(--font-sans, var(--font-manrope), -apple-system, sans-serif);
 }
 
 * {

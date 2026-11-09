@@ -13,7 +13,7 @@
     position: relative;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-manrope), sans-serif;
     color: #0f172a;
 }
 
@@ -388,7 +388,7 @@
 }
 
 .hero-title {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: clamp(2.8rem, 7vw, 5rem);
     font-weight: 800;
     line-height: 1.1;
@@ -409,7 +409,7 @@
     color: #64748b;
     line-height: 1.7;
     max-width: 640px;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 
@@ -430,14 +430,14 @@
     font-size: 1rem;
     color: #0f172a;
     font-style: italic;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
 }
 
 .verse-ref {
     color: #94a3b8;
     font-style: normal;
     font-size: 0.85rem;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-manrope), sans-serif;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -527,7 +527,7 @@
 }
 
 .stat-number {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: clamp(2.8rem, 5.5vw, 4.5rem);
     font-weight: 800;
     color: #f59e0b;
@@ -546,7 +546,7 @@
     font-size: 0.875rem;
     color: #64748b;
     line-height: 1.6;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 
@@ -560,7 +560,7 @@
 }
 
 .comparison-title {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: clamp(1.6rem, 3.5vw, 2.2rem);
     font-weight: 700;
     color: #0f172a;
@@ -784,7 +784,7 @@
     color: rgba(15, 189, 116, 0.12);
     line-height: 1;
     flex-shrink: 0;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
 }
 
 .fact-content {
@@ -795,7 +795,7 @@
 }
 
 .fact-content h4 {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 1.3rem;
     font-weight: 700;
     color: #0f172a;
@@ -807,7 +807,7 @@
     color: #64748b;
     line-height: 1.7;
     margin: 0;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 
@@ -815,7 +815,7 @@
     color: #f59e0b;
     font-style: normal;
     font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 0.9rem;
 }
 
@@ -918,7 +918,7 @@
 }
 
 .transliteration {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 1.5rem;
     font-weight: 600;
     font-style: italic;
@@ -960,7 +960,7 @@
 }
 
 .verse-text {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
     font-size: 1rem;
     color: #0f172a;
@@ -981,7 +981,7 @@
     font-size: 1rem;
     color: #475569;
     line-height: 1.75;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 
@@ -1016,7 +1016,7 @@
     font-size: 0.9rem;
     color: #475569;
     line-height: 1.6;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 
@@ -1070,7 +1070,7 @@
 }
 
 .summary-title {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: clamp(2rem, 4.5vw, 3rem);
     font-weight: 700;
     color: #0f172a;
@@ -1079,7 +1079,7 @@
 }
 
 .summary-subtitle {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 1.1rem;
     font-style: italic;
     color: #64748b;
@@ -1221,7 +1221,7 @@
 }
 
 .reflection-translation {
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-size: 1.1rem;
     font-style: italic;
     color: rgba(209, 250, 229, 0.9);
@@ -1234,7 +1234,7 @@
     line-height: 1.8;
     max-width: 700px;
     margin: 0;
-    font-family: 'Newsreader', serif;
+    font-family: var(--font-manrope), sans-serif;
     font-style: italic;
 }
 

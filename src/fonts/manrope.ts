@@ -85,3 +85,10 @@ export const manropeLearn = localFont({
   display: 'swap',
   variable: '--l1-font',
 });
+
+/** Site-wide English font (body text everywhere); see layout.tsx and --font-sans */
+export const manropeSite = localFont({
+  src: [{ path: './manrope/Manrope-latin-variable.woff2', weight: '200 800', style: 'normal' }],
+  display: 'swap',
+  variable: '--font-manrope',
+});

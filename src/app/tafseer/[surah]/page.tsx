@@ -193,7 +193,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
         : ALL_SURAHS;
 
     if (!meta) return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Lexend',sans-serif" }}>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "var(--font-manrope), sans-serif" }}>
             <div style={{ textAlign: 'center' }}>
                 <p style={{ color: '#ef4444', marginBottom: 16 }}>Invalid Surah number.</p>
                 <Link href="/tafseer" style={{ color: '#f59e0b' }}>← Back to Tafseer</Link>
@@ -205,7 +205,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
         <>
             <style>{`
         *{box-sizing:border-box;margin:0;padding:0}
-        .ts-shell{min-height:100vh;background:var(--bg-base);font-family:'Lexend','Figtree',sans-serif;color:var(--text-primary)}
+        .ts-shell{min-height:100vh;background:var(--bg-base);font-family:var(--font-manrope), sans-serif;color:var(--text-primary)}
 
         /* ── HEADER ── */
         .ts-header{position:sticky;top:0;z-index:100;background:var(--glass-bg-strong);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-bottom:1px solid var(--border-default);padding:0;box-shadow:var(--shadow-sm)}
@@ -215,7 +215,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
         .ts-header-surah-btn{display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:0;flex:1;min-width:0;text-align:left}
         .ts-header-name{font-size:16px;font-weight:700;color:var(--text-primary);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .ts-header-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
-        .ts-tafsir-select{padding:7px 10px;border-radius:10px;border:1px solid var(--border-default);background:var(--bg-card);font-size:11.5px;font-family:'Lexend',sans-serif;color:var(--text-secondary);cursor:pointer;outline:none;transition:border-color 0.15s;flex-shrink:0;max-width:160px}
+        .ts-tafsir-select{padding:7px 10px;border-radius:10px;border:1px solid var(--border-default);background:var(--bg-card);font-size:11.5px;font-family:var(--font-manrope), sans-serif;color:var(--text-secondary);cursor:pointer;outline:none;transition:border-color 0.15s;flex-shrink:0;max-width:160px}
         .ts-tafsir-select:hover,.ts-tafsir-select:focus{border-color:var(--brand-primary)}
 
         /* ── BODY ── */
@@ -248,7 +248,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
 
         /* ── VERSE TOP (Number + Arabic) ── */
         .ts-verse-top{padding:20px 20px 0 20px;display:flex;align-items:flex-start;gap:14px}
-        .ts-verse-num{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--brand-primary);background:var(--brand-primary-soft);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--brand-primary);flex-shrink:0;margin-top:6px;font-family:'Lexend',sans-serif}
+        .ts-verse-num{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--brand-primary);background:var(--brand-primary-soft);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--brand-primary);flex-shrink:0;margin-top:6px;font-family:var(--font-manrope), sans-serif}
         .ts-arabic-block{flex:1;direction:rtl;text-align:right}
         .ts-arabic{font-family: "UthmanicHafs", serif;font-size:26px;line-height:2;color:var(--text-arabic)}
         .ts-arabic.is-qcf{line-height:2.1;word-spacing:0.05em;font-feature-settings:normal}
@@ -265,10 +265,10 @@ export default function TafseerSurahPage({ params }: PageProps) {
 
         /* ── ACTIONS ROW (Tafseer button below arabic+translation) ── */
         .ts-actions-row{padding:12px 20px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-        .ts-tafseer-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:1.5px solid var(--brand-primary);background:var(--brand-primary-soft);cursor:pointer;font-size:13px;font-weight:600;color:var(--brand-primary);transition:all 0.18s;font-family:'Lexend',sans-serif;letter-spacing:0.01em}
+        .ts-tafseer-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:1.5px solid var(--brand-primary);background:var(--brand-primary-soft);cursor:pointer;font-size:13px;font-weight:600;color:var(--brand-primary);transition:all 0.18s;font-family:var(--font-manrope), sans-serif;letter-spacing:0.01em}
         .ts-tafseer-btn:hover{background:var(--interactive-hover);border-color:var(--brand-primary-hover);box-shadow:var(--shadow-sm)}
         .ts-tafseer-btn.ts-active{background:var(--brand-primary-soft);border-color:var(--brand-primary-hover);color:var(--brand-primary)}
-        .ts-verse-key-badge{font-size:11px;color:var(--text-muted);font-weight:500;font-family:'Lexend',sans-serif}
+        .ts-verse-key-badge{font-size:11px;color:var(--text-muted);font-weight:500;font-family:var(--font-manrope), sans-serif}
 
         /* ── TAFSIR PANEL ── */
         .ts-tafsir-panel{background:var(--bg-surface);border-top:1.5px solid var(--border-default);padding:22px 22px 22px;animation:tsIn 0.22s ease-out}
@@ -278,18 +278,18 @@ export default function TafseerSurahPage({ params }: PageProps) {
         .ts-tafsir-meta{flex:1;min-width:0}
         .ts-tafsir-title{font-size:12px;font-weight:700;color:var(--brand-primary);text-transform:uppercase;letter-spacing:0.08em;display:block}
         .ts-tafsir-subtitle{font-size:11px;color:var(--text-muted);margin-top:1px}
-        .ts-tafsir-text{font-size:14px;line-height:1.95;color:var(--text-secondary);white-space:pre-line;font-family:'Inter','Lexend',sans-serif}
+        .ts-tafsir-text{font-size:14px;line-height:1.95;color:var(--text-secondary);white-space:pre-line;font-family:var(--font-manrope), sans-serif}
         .ts-tafsir-text::-webkit-scrollbar{width:4px}
         .ts-tafsir-text::-webkit-scrollbar-thumb{background:var(--brand-primary-soft);border-radius:2px}
 
         /* ── SPINNER ── */
         .ts-spinner{width:20px;height:20px;border:2px solid var(--brand-primary-soft);border-top-color:var(--brand-primary);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
-        .ts-loading-row{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:13px;color:var(--text-muted);font-family:'Lexend',sans-serif}
+        .ts-loading-row{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:13px;color:var(--text-muted);font-family:var(--font-manrope), sans-serif}
         @keyframes spin{to{transform:rotate(360deg)}}
 
         /* ── NAVIGATION ── */
         .ts-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;gap:12px;flex-wrap:wrap}
-        .ts-nav-btn{display:flex;align-items:center;gap:8px;padding:13px 20px;border-radius:14px;text-decoration:none;font-size:13px;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border-default);transition:all 0.2s;font-family:'Lexend',sans-serif;box-shadow:var(--shadow-sm)}
+        .ts-nav-btn{display:flex;align-items:center;gap:8px;padding:13px 20px;border-radius:14px;text-decoration:none;font-size:13px;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border-default);transition:all 0.2s;font-family:var(--font-manrope), sans-serif;box-shadow:var(--shadow-sm)}
         .ts-nav-btn:hover{border-color:var(--brand-primary);color:var(--brand-primary);box-shadow:var(--shadow-md);transform:translateY(-1px)}
         .ts-nav-btn-center{background:var(--brand-primary-soft);border-color:var(--brand-primary);color:var(--brand-primary)}
         .ts-nav-btn-center:hover{background:var(--interactive-hover)!important;border-color:var(--brand-primary-hover)!important;color:var(--brand-primary)!important}
@@ -300,7 +300,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
         @keyframes pkIn{from{opacity:0;transform:translateY(-12px)scale(0.97)}to{opacity:1;transform:translateY(0)scale(1)}}
         .ts-picker-header{padding:18px 18px 14px;border-bottom:1px solid var(--border-subtle);flex-shrink:0}
         .ts-picker-search{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border-default);margin-top:12px}
-        .ts-picker-search input{flex:1;background:transparent;border:none;outline:none;font-size:13px;color:var(--text-primary);font-family:'Lexend',sans-serif}
+        .ts-picker-search input{flex:1;background:transparent;border:none;outline:none;font-size:13px;color:var(--text-primary);font-family:var(--font-manrope), sans-serif}
         .ts-picker-list{overflow-y:auto;flex:1}
         .ts-picker-list::-webkit-scrollbar{width:4px}
         .ts-picker-list::-webkit-scrollbar-thumb{background:var(--brand-primary-soft);border-radius:2px}
@@ -485,7 +485,7 @@ export default function TafseerSurahPage({ params }: PageProps) {
                     <div className="ts-picker-box" onClick={e => e.stopPropagation()}>
                         <div className="ts-picker-header">
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', fontFamily: "'Lexend',sans-serif" }}>Select Surah</h2>
+                                <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', fontFamily: "var(--font-manrope), sans-serif" }}>Select Surah</h2>
                                 <button
                                     onClick={() => setShowSurahPicker(false)}
                                     style={{ background: '#f1f5f9', border: 'none', borderRadius: 8, width: 30, height: 30, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}

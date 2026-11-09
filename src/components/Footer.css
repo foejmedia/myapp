@@ -8,7 +8,7 @@
   background: var(--bg-base);
   border-top: 1px solid var(--border-default);
   overflow: hidden;
-  font-family: 'Figtree', 'Lexend', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
 }
 
 /* ── Ambient glow ── */
@@ -99,7 +99,7 @@
 .ftr-verse-en {
   position: relative;
   max-width: 620px;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: clamp(14px, 1.7vw, 17px);
   font-style: italic;
   line-height: 1.6;

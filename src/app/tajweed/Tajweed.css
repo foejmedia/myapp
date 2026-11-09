@@ -14,7 +14,7 @@
   --tj-radius: 18px;
   background: var(--tj-bg);
   color: var(--tj-text);
-  font-family: "Figtree", system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 .tj-wrap {

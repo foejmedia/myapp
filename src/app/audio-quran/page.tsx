@@ -316,7 +316,7 @@ export default function AudioQuranPage() {
   const topReciters = reciters.slice(0, 5);
 
   return (
-    <div className={`audio-quran-root${nowPlayingSurah !== null ? ' aq-player-open' : ''}`} style={{ minHeight: "100vh", background: "var(--aq-bg)", fontFamily: "'Inter', sans-serif" }}>
+    <div className={`audio-quran-root${nowPlayingSurah !== null ? ' aq-player-open' : ''}`} style={{ minHeight: "100vh", background: "var(--aq-bg)", fontFamily: "var(--font-manrope), sans-serif" }}>
 
 
 
@@ -751,7 +751,6 @@ export default function AudioQuranPage() {
 
       {/* ── CSS VARS + ANIMATIONS ── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
         :root {

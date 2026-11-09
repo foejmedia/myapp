@@ -81,7 +81,7 @@ body:has(.quranfy-player-page) .skip-link {
   --sp-topbar-height: 64px;
   --sp-mobile-player-height: 66px;
 
-  font-family: 'Figtree', 'Inter', 'Circular Std', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-manrope), system-ui, -apple-system, sans-serif;
   background: var(--sp-black);
   color: var(--sp-text-primary);
   position: fixed;

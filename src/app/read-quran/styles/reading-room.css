@@ -29,7 +29,7 @@
   flex-direction: column;
   background: var(--rr-paper);
   color: var(--rr-ink);
-  font-family: 'Figtree', 'Lexend', system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 html.rr-dark .rr,
@@ -322,7 +322,7 @@ html.rr-lock body {
 
 .rr-hero h1 {
   margin: 0;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: clamp(26px, 3.4vw, 34px);
   font-weight: 600;
   line-height: 1.15;
@@ -330,7 +330,7 @@ html.rr-lock body {
 
 .rr-hero-meaning {
   margin: 4px 0 14px;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 15px;
   font-style: italic;
   color: rgba(255, 255, 255, 0.82);
@@ -1124,7 +1124,7 @@ html.rr-dark .rr-bismillah img {
 
 .rr-drawer-head h2 {
   margin: 0;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 20px;
   font-weight: 600;
 }
@@ -1349,7 +1349,7 @@ html.rr-dark .rr-bismillah img {
 }
 
 .rr-ws-meaning {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 21px;
   font-weight: 600;
   color: var(--rr-ink);

@@ -87,7 +87,7 @@
 }
 
 .ps-next-name b {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 30px;
   font-weight: 600;
   line-height: 1.1;

@@ -33,7 +33,7 @@
   background: var(--hd-paper);
   background-image: radial-gradient(circle at 2px 2px, rgba(var(--brand-rgb), 0.05) 1px, transparent 0);
   background-size: 26px 26px;
-  font-family: 'Figtree', 'Lexend', system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 .hd .font-arabic,
@@ -90,7 +90,7 @@
 .hd-hero h1 {
   margin: 0 0 10px;
   max-width: 760px;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 500;
   line-height: 1.15;
@@ -858,7 +858,7 @@
   background: var(--hd-card);
   box-shadow: 20px 0 50px rgba(15, 23, 42, 0.2);
   animation: hd-drawer 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  font-family: 'Figtree', 'Lexend', system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 @keyframes hd-drawer {
@@ -877,7 +877,7 @@
 
 .hd-drawer-head b {
   display: block;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 20px;
   font-weight: 600;
 }

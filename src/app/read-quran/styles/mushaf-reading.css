@@ -87,7 +87,7 @@
   font-size: clamp(1rem, 2.5vw, 1.35rem);
   font-weight: 700;
   color: var(--text-primary, #0f172a);
-  font-family: Lexend, Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -95,7 +95,7 @@
   margin: 0;
   font-size: 0.95rem;
   color: var(--text-muted, #64748b);
-  font-family: Lexend, Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 .qc-seo-intro {
@@ -103,7 +103,7 @@
   font-size: 0.8rem;
   line-height: 1.45;
   color: var(--text-muted, #94a3b8);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
 
 .qc-top-controls {
@@ -133,7 +133,7 @@
   color: var(--text-secondary, #475569);
   font-size: 12px;
   font-weight: 600;
-  font-family: Lexend, Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
@@ -238,7 +238,7 @@
 
 .qc-page-link {
   display: inline-block;
-  font-family: Lexend, Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-muted, #94a3b8);
@@ -284,5 +284,5 @@
   text-align: center;
   padding: 40px 16px;
   color: var(--text-muted, #94a3b8);
-  font-family: Lexend, Inter, system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }

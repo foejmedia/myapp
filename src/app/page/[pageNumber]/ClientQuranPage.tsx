@@ -179,7 +179,7 @@ function ClientQuranPage({ pageNumber, translationEdition, audioEdition, ayahs }
     greenGlowSm: '0 2px 8px rgba(245,158,11,0.2)',
     hoverBg: dark ? '#1a2f1f' : '#f0fdf4',
     shadow: '0 1px 4px rgba(0,0,0,0.06)',
-    font: "'Figtree','Lexend',sans-serif",
+    font: "var(--font-manrope), sans-serif",
   };
 
   return (

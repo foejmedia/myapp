@@ -20,7 +20,7 @@
     --vg-radius-lg: 18px;
     --vg-radius-xl: 24px;
     --vg-radius-full: 999px;
-    --vg-font: 'Figtree', 'Lexend', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --vg-font: var(--font-manrope), -apple-system, BlinkMacSystemFont, sans-serif;
     --vg-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -674,7 +674,7 @@
     pointer-events: none;
     transform: scale(0.92);
     transition: opacity 0.22s ease, transform 0.22s ease;
-    font-family: 'Figtree', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, sans-serif;
     color: #ffffff;
 }
 

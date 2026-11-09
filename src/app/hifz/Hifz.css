@@ -28,7 +28,7 @@
   background-clip: text;
 }
 .hifz-heading-en {
-  font-family: 'Inter', 'Open Sans', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 1.1rem;
   color: #028a3e;
   font-weight: 500;
@@ -57,7 +57,7 @@
   font-size: 1.05rem;
   color: #1e293b;
   font-weight: 500;
-  font-family: 'Inter', 'Open Sans', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
 }
 @media (max-width: 600px) {
   .hifz-intro {
@@ -97,7 +97,7 @@
 .islamic-app {
   min-height: 100vh;
   background: var(--bg-primary);
-  font-family: 'Inter', 'Open Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-manrope), system-ui, -apple-system, sans-serif;
   color: var(--text-primary);
   line-height: 1.6;
 }

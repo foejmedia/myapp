@@ -38,7 +38,7 @@
 
 .hc-h1 {
   margin: 0 0 8px;
-  font-family: 'Lora', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: clamp(26px, 3.6vw, 36px);
   font-weight: 500;
   line-height: 1.2;
@@ -166,7 +166,7 @@
 .hc-title {
   margin: 0 0 16px;
   max-width: 460px;
-  font-family: 'Lora', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: clamp(30px, 4.2vw, 44px);
   font-weight: 500;
   line-height: 1.18;

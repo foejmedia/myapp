@@ -327,7 +327,7 @@
 }
 
 .nv__feature b {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 16px;
   font-weight: 600;
 }

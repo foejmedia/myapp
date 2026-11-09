@@ -110,7 +110,7 @@ export function YouTubeModal({ youtubeId, title, onClose }: { youtubeId: string;
                 }
                 .vg-loader-text {
                     color: white; margin-top: 15px; font-size: 13px; 
-                    opacity: 0.7; font-family: 'Lexend', sans-serif;
+                    opacity: 0.7; font-family: var(--font-manrope), sans-serif;
                     letter-spacing: 0.5px;
                 }
                 .vg-modal-close {

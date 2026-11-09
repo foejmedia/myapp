@@ -309,7 +309,7 @@ export default function MushafReadingView({
                         fontSize: 15,
                         lineHeight: 1.7,
                         color: '#475569',
-                        fontFamily: 'Inter, system-ui, sans-serif',
+                        fontFamily: "var(--font-manrope), system-ui, sans-serif",
                       }}
                     >
                       <strong style={{ color: 'var(--brand-primary)' }}>{v.verse_number}. </strong>

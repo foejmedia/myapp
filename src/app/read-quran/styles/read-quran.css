@@ -2,7 +2,7 @@
 /* Fully Responsive, Animated, Glassmorphism Design */
 
 /* ============ FONTS ============ */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
 
 /* UthmanicHafs is loaded once in globals.css from the local woff2. */
 
@@ -44,7 +44,7 @@
   );
 
   /* Typography */
-  --rq-font-sans: "Outfit", "Inter", system-ui, sans-serif;
+  --rq-font-sans: var(--font-manrope), system-ui, sans-serif;
   --rq-font-arabic: "UthmanicHafs", serif;
 
   /* Layout */
@@ -323,7 +323,7 @@
 }
 
 .rq-surah-name {
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--rq-text);
@@ -1310,7 +1310,7 @@
   margin: 0 8px;
   vertical-align: middle;
   font-size: 0.55em;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   color: var(--rq-primary);
   background: rgba(var(--brand-rgb), 0.1);
