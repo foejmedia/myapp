@@ -1,0 +1,250 @@
+/* Namaz Tracker — phone layout (calendar-app style), same lavender palette as the desktop */
+.root {
+  --bg: #ffffff;
+  --panel: #f2f2f7;
+  --card: #ffffff;
+  --line: #e7e7ee;
+  --ink: #1e1b39;
+  --ink-2: #4a4867;
+  --muted: #9a99b2;
+  --lav: #cbc4fd;
+  --lav-soft: #efedff;
+  --lav-ink: #4b3fcf;
+
+  min-height: calc(100vh - 66px);
+  padding-bottom: 140px;
+  background: var(--bg);
+  color: var(--ink);
+}
+:global(html.dark) .root,
+:global([data-theme='dark']) .root {
+  --bg: #111217;
+  --panel: #1c1e26;
+  --card: #1a1c23;
+  --line: #2a2d37;
+  --ink: #eceef4;
+  --ink-2: #c3c6d2;
+  --muted: #7f8496;
+  --lav: #3b3577;
+  --lav-soft: #25233f;
+  --lav-ink: #b3aaff;
+}
+
+/* header */
+.head { display: flex; align-items: center; gap: 4px; padding: 10px 10px 2px 8px; }
+.iconBtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--lav-ink);
+  cursor: pointer;
+}
+.iconBtn:active { background: var(--panel); }
+.root .iconBtn svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.appName { flex: 1; font-size: 18px; font-weight: 600; color: var(--lav-ink); }
+.badge { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #e5484d; border: 2px solid var(--bg); }
+
+.title { margin: 0; padding: 6px 16px 12px; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.title span { color: var(--lav-ink); }
+
+/* month / week */
+.cal { border-bottom: 1px solid var(--line); touch-action: pan-y; }
+.wdRow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 2px 8px 4px; text-align: center; }
+.wdRow span { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); }
+.wdRow .wdOn { color: var(--lav-ink); font-weight: 800; }
+.grid { padding: 0 8px; }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); margin: 1px 0; border-radius: 12px; }
+.weekSel { background: var(--panel); }
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 46px;
+  padding: 3px 0 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.dayOut .num { color: var(--muted); }
+.dayToday .num { color: var(--lav-ink); font-weight: 800; }
+.daySel .num { background: var(--lav-ink); color: #fff; font-weight: 700; }
+.day:focus-visible .num { outline: 2px solid var(--lav-ink); outline-offset: 2px; }
+.dots { display: flex; justify-content: center; gap: 2px; height: 4px; }
+.dots i { display: block; width: 4px; height: 4px; border-radius: 50%; }
+
+.dJ { background: #8b7ff0; }
+.dO { background: #44a873; }
+.dL { background: #e3b23c; }
+.dQ { background: #5e9ad6; }
+.dM { background: #e06464; }
+.dN { background: #cfd0dc; }
+.dF { background: transparent; box-shadow: inset 0 0 0 1.5px #cfd0dc; }
+.dX { background: #b9b9c6; }
+
+.strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 0 6px; }
+.stripDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 104px;
+  padding: 2px 0 0;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+.stripDay:first-child { border-left: 0; }
+.stripNum { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; font-size: 22px; font-weight: 500; }
+.stripSel { background: var(--panel); }
+.stripSel .stripNum { background: var(--lav-ink); color: #fff; font-weight: 700; }
+.mini { position: relative; flex: 1; width: 100%; margin-top: 6px; }
+.mini i { position: absolute; width: 11px; height: 3px; border-radius: 2px; }
+
+.grab { display: block; width: 72px; height: 20px; margin: 2px auto 4px; border: 0; background: none; cursor: pointer; }
+.grab i { display: block; width: 36px; height: 4px; margin: 0 auto; border-radius: 4px; background: #c9cad6; }
+
+/* agenda */
+.agenda { display: flex; flex-direction: column; }
+.section + .section { border-top: 1px solid var(--line); }
+.secHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px 6px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.secHead b { color: var(--lav-ink); font-weight: 800; letter-spacing: 0.02em; }
+.secRight { display: inline-flex; align-items: center; gap: 6px; }
+.secRight small { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.secRight i { font-style: normal; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+.tagX { background: #ececf1; color: #5b5b6b; }
+.tagT { background: #e3eefb; color: #24507a; }
+.tagJ { background: #e3f4ea; color: #1f6b44; }
+.note { margin: 0; padding: 0 16px 4px; font-size: 12.5px; font-style: italic; color: var(--muted); }
+.loading { margin: 0; padding: 12px 16px 18px; color: var(--muted); font-size: 13px; }
+.list { list-style: none; margin: 0; padding: 0 6px 6px; }
+.item {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 6px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.item:active:not(:disabled) { background: var(--panel); }
+.item:disabled { cursor: default; }
+.item:focus-visible { outline: 2px solid var(--lav-ink); outline-offset: -2px; }
+.dot { width: 13px; height: 13px; margin-top: 3px; border-radius: 50%; }
+.itemText { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.itemText small { font-size: 14px; font-weight: 500; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.itemText b { display: flex; align-items: baseline; gap: 7px; font-size: 17px; font-weight: 500; line-height: 1.3; }
+.itemText b [lang='ar'] { font-size: 14px; color: var(--muted); font-family: var(--nt-font-ar, 'Amiri'), serif; }
+.sub { font-size: 12px; color: var(--muted); }
+.itemPast .itemText small,
+.itemPast .itemText b { color: var(--muted); }
+.now { align-self: center; padding: 1px 7px; border-radius: 999px; background: #e5484d; color: #fff; font-size: 10px; font-style: normal; font-weight: 800; letter-spacing: 0.04em; }
+.state { align-self: center; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-style: normal; font-weight: 700; white-space: nowrap; }
+.tJ { background: #e6e2ff; color: #3a2f8f; }
+.tO { background: #d6f0e0; color: #1d5a3c; }
+.tL { background: #fdebc1; color: #6b4a00; }
+.tQ { background: #dceaf9; color: #22507a; }
+.tM { background: #fcdcdd; color: #8e2a2a; }
+.tN { background: var(--panel); color: var(--muted); }
+.tX { background: #ececf1; color: #5b5b6b; }
+:global(html.dark) .root .tJ, :global([data-theme='dark']) .root .tJ { background: #36306b; color: #e1dcff; }
+:global(html.dark) .root .tO, :global([data-theme='dark']) .root .tO { background: #1d4733; color: #c6f1d8; }
+:global(html.dark) .root .tL, :global([data-theme='dark']) .root .tL { background: #4a3a12; color: #fde7b0; }
+:global(html.dark) .root .tQ, :global([data-theme='dark']) .root .tQ { background: #1d3954; color: #d2e6fb; }
+:global(html.dark) .root .tM, :global([data-theme='dark']) .root .tM { background: #4f2326; color: #ffd7d8; }
+:global(html.dark) .root .tX, :global([data-theme='dark']) .root .tX,
+:global(html.dark) .root .tagX, :global([data-theme='dark']) .root .tagX { background: #2a2d37; color: #c3c6d2; }
+:global(html.dark) .root .tagT, :global([data-theme='dark']) .root .tagT { background: #1d3954; color: #d2e6fb; }
+:global(html.dark) .root .tagJ, :global([data-theme='dark']) .root .tagJ { background: #1d4733; color: #c6f1d8; }
+
+/* floating + */
+.fab {
+  position: fixed;
+  right: 18px;
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--lav-ink);
+  box-shadow: 0 10px 26px -8px rgba(30, 27, 70, 0.35);
+  cursor: pointer;
+}
+.root .fab svg { width: 28px; height: 28px; stroke-width: 2.3; }
+.fab:active { transform: scale(0.96); }
+
+/* menu sheet */
+.sheetBack { position: fixed; inset: 0; z-index: 10056; display: flex; align-items: flex-end; background: rgba(20, 18, 45, 0.42); }
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 6px 12px calc(18px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  background: var(--card);
+  color: var(--ink);
+}
+.sheetGrab { width: 36px; height: 4px; margin: 4px auto 10px; border-radius: 4px; background: var(--line); }
+.sheetItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+  font-size: 15.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.sheetItem:active { background: var(--panel); }
+.root .sheetItem svg { width: 22px; height: 22px; color: var(--lav-ink); }
+.sheetItem em { margin-left: auto; font-style: normal; font-size: 12.5px; font-weight: 700; color: #c0443e; }
+
+/* qaza view */
+.qazaWrap { padding: 4px 14px 0; }
+.back { display: inline-flex; align-items: center; gap: 4px; padding: 6px 0 12px; border: 0; background: none; color: var(--lav-ink); font-size: 14px; font-weight: 700; cursor: pointer; }
+.root .back svg { width: 18px; height: 18px; }
+
+/* dark: the selected circle is light lavender, so its number goes dark */
+:global(html.dark) .root .daySel .num, :global([data-theme='dark']) .root .daySel .num,
+:global(html.dark) .root .stripSel .stripNum, :global([data-theme='dark']) .root .stripSel .stripNum { color: #14121f; }
+
+/* inside the tracker page (tabs, top bar and banner above): run edge to edge of the padded column */
+.embedded { margin: 0 -14px; min-height: 0; }
+.embedded .title { padding-top: 2px; }

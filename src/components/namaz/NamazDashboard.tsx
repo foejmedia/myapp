@@ -18,6 +18,7 @@ import {
 } from '@/lib/prayerTimes';
 import BannerArt, { type Phase } from './BannerArt';
 import MiniCalendar from './MiniCalendar';
+import MobileCalendar, { type MobileAction } from './MobileCalendar';
 import WeekGrid, { windowOf } from './WeekGrid';
 import { BLOCK_LABEL, FILTERS, Icons, STATUS_OPTIONS, longDate, shortDate, type Filter } from './shared';
 import s from './namaz.module.css';
@@ -214,9 +215,14 @@ export default function NamazDashboard() {
   /* fetch the months those days fall in (plus today's month for the banner) */
   const monthIds = useMemo(() => {
     const ids = new Set<string>();
-    [...days, ...(now ? [now] : [])].forEach(d => ids.add(`${d.getFullYear()}-${d.getMonth()}`));
+    const extra: Date[] = [];
+    if (selected) {
+      const sel = fromKey(selected);
+      extra.push(addDays(sel, 1), addDays(sel, -sel.getDay()), addDays(sel, 6 - sel.getDay()));
+    }
+    [...days, ...extra, ...(now ? [now] : [])].forEach(d => ids.add(`${d.getFullYear()}-${d.getMonth()}`));
     return [...ids];
-  }, [days, now]);
+  }, [days, now, selected]);
   useEffect(() => {
     if (!loc) return;
     monthIds.forEach(id => {
@@ -710,168 +716,220 @@ export default function NamazDashboard() {
     </div>
   );
 
+  const railNode = (
+    <nav className={s.rail} aria-label="Namaz tracker">
+      <span className={s.logo} aria-hidden="true">
+        <span lang="ar">ص</span>
+      </span>
+      {rail.map(r => {
+        const Icon = Icons[r.icon];
+        return (
+          <button key={r.id} type="button" className={r.on ? s.railOn : s.railBtn} aria-current={r.on ? 'page' : undefined} onClick={r.act} title={r.label}>
+            <Icon />
+            <span>{r.label}</span>
+          </button>
+        );
+      })}
+      <button type="button" className={`${s.railBtn} ${s.railBottom}`} onClick={doExport} title="Export backup">
+        <Icons.Download />
+        <span>Export</span>
+      </button>
+    </nav>
+  );
+
+  const topbarNode = (
+    <header className={s.topbar}>
+      <div className={s.titleBlock}>
+        <h1>Namaz Tracker</h1>
+        <button type="button" className={s.locBtn} onClick={() => setDialog('settings')}>
+          <Icons.Pin /> {locState === 'ok' && loc ? loc.name : locState === 'loading' ? 'Finding your location…' : 'Set location'}
+        </button>
+      </div>
+      <div className={s.topRight}>
+        <button type="button" className={`${s.pill} ${reminders.on ? s.pillOn : ''}`} onClick={() => setDialog('reminders')}>
+          <Icons.Bell /> Reminders <i className={s.pillDot} aria-hidden="true" />
+          <span className={s.srOnly}>{reminders.on ? 'on' : 'off'}</span>
+        </button>
+        <div className={s.menuWrap}>
+          <button type="button" className={s.bellBtn} aria-expanded={menu === 'bell'} aria-label="Today’s prayers" onClick={() => setMenu(menu === 'bell' ? null : 'bell')}>
+            <Icons.Bell />
+            {unloggedToday > 0 && <i className={s.badge}>{unloggedToday}</i>}
+          </button>
+          {menu === 'bell' && (
+            <div className={`${s.menu} ${s.bellMenu}`} role="menu">
+              <p className={s.menuTitle}>Today’s prayers</p>
+              {tToday ? (
+                PRAYERS.map(p => {
+                  const w = windowOf(tToday, p.key);
+                  const at = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Math.floor(w.start / 60), w.start % 60);
+                  const code = log[today]?.[p.key];
+                  const isNext = next?.p.key === p.key;
+                  return (
+                    <div key={p.key} className={`${s.bellRow} ${isNext ? s.bellNext : ''}`}>
+                      <span>
+                        <b>{p.label}</b> {to12h(at)}
+                      </span>
+                      <em className={s['st' + (code ?? (at > now ? 'F' : 'N'))]}>{at > now ? (isNext ? 'Next' : 'Later') : BLOCK_LABEL[code ?? 'none']}</em>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className={s.muted}>Set your location to see times.</p>
+              )}
+              <button type="button" className={s.linkBtn} onClick={() => { setMenu(null); setDialog('reminders'); }}>
+                Reminder settings →
+              </button>
+            </div>
+          )}
+        </div>
+        <span className={s.me}>
+          <span className={s.avatar} aria-hidden="true"><Icons.User /></span>
+          <span className={s.meText}>
+            <b>My prayers</b>
+            <small>Saved on this device</small>
+          </span>
+        </span>
+      </div>
+    </header>
+  );
+
+  const bannerNode = (
+    <section className={s.banner} aria-label="Today">
+      <BannerArt phase={phase} id={uid} />
+      <div className={s.bannerText}>
+        <h2>
+          {now.toLocaleDateString('en', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+          {hToday && <span> · {hToday.day} {hToday.name} {hToday.year}</span>}
+        </h2>
+        <p>
+          {locState === 'missing'
+            ? 'Set your location to see today’s prayer times'
+            : tToday
+              ? `${upcoming.length} ${upcoming.length === 1 ? 'prayer' : 'prayers'} left today${nextLine ? ` · ${nextLine}` : ''}`
+              : 'Loading today’s prayer times…'}
+        </p>
+        <span className={s.goalPill}>
+          Goal: {PRAYERS.find(p => p.key === extras.goal.prayer)!.label} on time · <b>{goal.done}/{goal.target}</b> days this week
+        </span>
+      </div>
+      <div className={s.menuWrap}>
+        <button type="button" className={s.bannerMenuBtn} aria-label="Banner options" aria-expanded={menu === 'banner'} onClick={() => setMenu(menu === 'banner' ? null : 'banner')}>
+          <Icons.Dots />
+        </button>
+        {menu === 'banner' && (
+          <div className={`${s.menu} ${s.menuRight}`} role="menu">
+            <button type="button" role="menuitem" onClick={() => { setMenu(null); useGps(); }}><Icons.Pin /> Use my precise location</button>
+            <button type="button" role="menuitem" onClick={() => { setMenu(null); window.print(); }}><Icons.Print /> Print this month</button>
+            <button type="button" role="menuitem" onClick={() => { setMenu(null); setDialog('settings'); }}><Icons.Settings /> Settings</button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+
   return (
     <div className={s.app}>
-      {/* rail (bottom-of-header tabs on phones) */}
-      <nav className={s.rail} aria-label="Namaz tracker">
-        <span className={s.logo} aria-hidden="true">
-          <span lang="ar">ص</span>
-        </span>
-        {rail.map(r => {
-          const Icon = Icons[r.icon];
-          return (
-            <button key={r.id} type="button" className={r.on ? s.railOn : s.railBtn} aria-current={r.on ? 'page' : undefined} onClick={r.act} title={r.label}>
-              <Icon />
-              <span>{r.label}</span>
-            </button>
-          );
-        })}
-        <button type="button" className={`${s.railBtn} ${s.railBottom}`} onClick={doExport} title="Export backup">
-          <Icons.Download />
-          <span>Export</span>
-        </button>
-      </nav>
+      {cols === 1 ? (
+        <>
+        {railNode}
+        <div className={s.main}>
+        {topbarNode}
+        {bannerNode}
+        <MobileCalendar
+          embedded
+          now={now}
+          selected={selected}
+          onSelect={k => { setSelected(k); setCalMonth(new Date(fromKey(k).getFullYear(), fromKey(k).getMonth(), 1)); }}
+          log={log}
+          extras={extras}
+          times={times}
+          owedTotal={owedTotal}
+          unloggedToday={unloggedToday}
+          locationMissing={locState === 'missing'}
+          missingNode={missingLocation}
+          qazaNode={qazaManager}
+          view={view}
+          onBack={() => setView('tracker')}
+          onOpenPrayer={(day, p, el) => setPop({ kind: 'block', day, p, rect: el.getBoundingClientRect() })}
+          onOpenDay={(day, el) => setPop({ kind: 'day', day, rect: el.getBoundingClientRect() })}
+          onLog={logNow}
+          onAction={(a: MobileAction) => {
+            if (a === 'qaza') setView('qaza');
+            else if (a === 'insights') setInsights(true);
+            else if (a === 'reminders') setDialog('reminders');
+            else if (a === 'settings') setDialog('settings');
+            else if (a === 'export') doExport();
+            else window.print();
+          }}
+        />
+        </div>
+        </>
+      ) : (
+        <>
+        {/* rail (bottom-of-header tabs on phones) */}
+        {railNode}
 
-      <div className={s.main}>
-        {/* top bar */}
-        <header className={s.topbar}>
-          <div className={s.titleBlock}>
-            <h1>Namaz Tracker</h1>
-            <button type="button" className={s.locBtn} onClick={() => setDialog('settings')}>
-              <Icons.Pin /> {locState === 'ok' && loc ? loc.name : locState === 'loading' ? 'Finding your location…' : 'Set location'}
-            </button>
-          </div>
-          <div className={s.topRight}>
-            <button type="button" className={`${s.pill} ${reminders.on ? s.pillOn : ''}`} onClick={() => setDialog('reminders')}>
-              <Icons.Bell /> Reminders <i className={s.pillDot} aria-hidden="true" />
-              <span className={s.srOnly}>{reminders.on ? 'on' : 'off'}</span>
-            </button>
-            <div className={s.menuWrap}>
-              <button type="button" className={s.bellBtn} aria-expanded={menu === 'bell'} aria-label="Today’s prayers" onClick={() => setMenu(menu === 'bell' ? null : 'bell')}>
-                <Icons.Bell />
-                {unloggedToday > 0 && <i className={s.badge}>{unloggedToday}</i>}
-              </button>
-              {menu === 'bell' && (
-                <div className={`${s.menu} ${s.bellMenu}`} role="menu">
-                  <p className={s.menuTitle}>Today’s prayers</p>
-                  {tToday ? (
-                    PRAYERS.map(p => {
-                      const w = windowOf(tToday, p.key);
-                      const at = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Math.floor(w.start / 60), w.start % 60);
-                      const code = log[today]?.[p.key];
-                      const isNext = next?.p.key === p.key;
-                      return (
-                        <div key={p.key} className={`${s.bellRow} ${isNext ? s.bellNext : ''}`}>
-                          <span>
-                            <b>{p.label}</b> {to12h(at)}
-                          </span>
-                          <em className={s['st' + (code ?? (at > now ? 'F' : 'N'))]}>{at > now ? (isNext ? 'Next' : 'Later') : BLOCK_LABEL[code ?? 'none']}</em>
-                        </div>
-                      );
-                    })
+        <div className={s.main}>
+          {/* top bar */}
+          {topbarNode}
+
+          {/* banner */}
+          {bannerNode}
+
+          <div className={s.columns}>
+            <aside className={s.left}>
+              <MiniCalendar month={calMonth} onMonth={setCalMonth} selected={selected} onSelect={pickDay} today={now} log={log} extras={extras} />
+              {qazaCard}
+            </aside>
+
+            <div className={s.right} id={`${uid}-grid`}>
+              {view === 'qaza' ? (
+                qazaManager
+              ) : (
+                <>
+                  {toolbar}
+                  {locState === 'missing' ? (
+                    missingLocation
+                  ) : timesError && !Object.keys(times).length ? (
+                    <div className={s.emptyTimes}>
+                      <h3>Prayer times couldn’t be loaded</h3>
+                      <p>Check your connection and try again.</p>
+                      <button type="button" className={s.primary} onClick={() => { setTimesError(false); setMonths({}); }}>Try again</button>
+                    </div>
                   ) : (
-                    <p className={s.muted}>Set your location to see times.</p>
+                    <WeekGrid
+                      days={days}
+                      now={now}
+                      times={times}
+                      log={log}
+                      extras={extras}
+                      filter={filter}
+                      rangeLabel={rangeLabel}
+                      onBlock={(day, p, el) => setPop({ kind: 'block', day, p, rect: el.getBoundingClientRect() })}
+                      onDay={(day, el) => setPop({ kind: 'day', day, rect: el.getBoundingClientRect() })}
+                      onPrev={() => shift(-1)}
+                      onNext={() => shift(1)}
+                      onToggleSunnah={(day, k: SunnahKey) => patch(x => ({ ...x, sunnah: toggleIn(x.sunnah, day, k) }))}
+                      onToggleRamadan={(day, k: RamadanKey) => patch(x => ({ ...x, ramadan: toggleIn(x.ramadan, day, k) }))}
+                    />
                   )}
-                  <button type="button" className={s.linkBtn} onClick={() => { setMenu(null); setDialog('reminders'); }}>
-                    Reminder settings →
-                  </button>
-                </div>
+                  <ul className={s.legend} aria-label="Colours">
+                    {(['J', 'O', 'L', 'Q', 'M', 'N'] as const).map(c => (
+                      <li key={c}>
+                        <i className={`${s.swatch} ${s['st' + c]}`} />
+                        {c === 'N' ? 'Not logged' : BLOCK_LABEL[c]}
+                      </li>
+                    ))}
+                    <li><i className={`${s.swatch} ${s.stX}`} />Excused</li>
+                  </ul>
+                </>
               )}
             </div>
-            <span className={s.me}>
-              <span className={s.avatar} aria-hidden="true"><Icons.User /></span>
-              <span className={s.meText}>
-                <b>My prayers</b>
-                <small>Saved on this device</small>
-              </span>
-            </span>
-          </div>
-        </header>
-
-        {/* banner */}
-        <section className={s.banner} aria-label="Today">
-          <BannerArt phase={phase} id={uid} />
-          <div className={s.bannerText}>
-            <h2>
-              {now.toLocaleDateString('en', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
-              {hToday && <span> · {hToday.day} {hToday.name} {hToday.year}</span>}
-            </h2>
-            <p>
-              {locState === 'missing'
-                ? 'Set your location to see today’s prayer times'
-                : tToday
-                  ? `${upcoming.length} ${upcoming.length === 1 ? 'prayer' : 'prayers'} left today${nextLine ? ` · ${nextLine}` : ''}`
-                  : 'Loading today’s prayer times…'}
-            </p>
-            <span className={s.goalPill}>
-              Goal: {PRAYERS.find(p => p.key === extras.goal.prayer)!.label} on time · <b>{goal.done}/{goal.target}</b> days this week
-            </span>
-          </div>
-          <div className={s.menuWrap}>
-            <button type="button" className={s.bannerMenuBtn} aria-label="Banner options" aria-expanded={menu === 'banner'} onClick={() => setMenu(menu === 'banner' ? null : 'banner')}>
-              <Icons.Dots />
-            </button>
-            {menu === 'banner' && (
-              <div className={`${s.menu} ${s.menuRight}`} role="menu">
-                <button type="button" role="menuitem" onClick={() => { setMenu(null); useGps(); }}><Icons.Pin /> Use my precise location</button>
-                <button type="button" role="menuitem" onClick={() => { setMenu(null); window.print(); }}><Icons.Print /> Print this month</button>
-                <button type="button" role="menuitem" onClick={() => { setMenu(null); setDialog('settings'); }}><Icons.Settings /> Settings</button>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <div className={s.columns}>
-          <aside className={s.left}>
-            <MiniCalendar month={calMonth} onMonth={setCalMonth} selected={selected} onSelect={pickDay} today={now} log={log} extras={extras} />
-            {qazaCard}
-          </aside>
-
-          <div className={s.right} id={`${uid}-grid`}>
-            {view === 'qaza' ? (
-              qazaManager
-            ) : (
-              <>
-                {toolbar}
-                {locState === 'missing' ? (
-                  missingLocation
-                ) : timesError && !Object.keys(times).length ? (
-                  <div className={s.emptyTimes}>
-                    <h3>Prayer times couldn’t be loaded</h3>
-                    <p>Check your connection and try again.</p>
-                    <button type="button" className={s.primary} onClick={() => { setTimesError(false); setMonths({}); }}>Try again</button>
-                  </div>
-                ) : (
-                  <WeekGrid
-                    days={days}
-                    now={now}
-                    times={times}
-                    log={log}
-                    extras={extras}
-                    filter={filter}
-                    rangeLabel={rangeLabel}
-                    onBlock={(day, p, el) => setPop({ kind: 'block', day, p, rect: el.getBoundingClientRect() })}
-                    onDay={(day, el) => setPop({ kind: 'day', day, rect: el.getBoundingClientRect() })}
-                    onPrev={() => shift(-1)}
-                    onNext={() => shift(1)}
-                    onToggleSunnah={(day, k: SunnahKey) => patch(x => ({ ...x, sunnah: toggleIn(x.sunnah, day, k) }))}
-                    onToggleRamadan={(day, k: RamadanKey) => patch(x => ({ ...x, ramadan: toggleIn(x.ramadan, day, k) }))}
-                  />
-                )}
-                <ul className={s.legend} aria-label="Colours">
-                  {(['J', 'O', 'L', 'Q', 'M', 'N'] as const).map(c => (
-                    <li key={c}>
-                      <i className={`${s.swatch} ${s['st' + c]}`} />
-                      {c === 'N' ? 'Not logged' : BLOCK_LABEL[c]}
-                    </li>
-                  ))}
-                  <li><i className={`${s.swatch} ${s.stX}`} />Excused</li>
-                </ul>
-              </>
-            )}
           </div>
         </div>
-      </div>
+
+        </>
+      )}
 
       {popover}
 
