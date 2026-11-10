@@ -805,3 +805,23 @@
   .block:hover:not(.stF) { transform: none; }
   .colLoading { animation: none; }
 }
+
+/* colour palette picked on the homepage (src/styles/palettes.css); prayer-status colours stay as they are */
+:global(html[data-palette]) .app {
+  --bg: var(--pal-surface);
+  --panel: var(--pal-surface-2);
+  --card: var(--pal-surface);
+  --line: var(--pal-line);
+  --ink: var(--pal-ink);
+  --ink-2: var(--pal-ink-2);
+  --muted: var(--pal-ink-3);
+  --lav: var(--pal-accent-mid);
+  --lav-soft: var(--pal-accent-soft);
+  --lav-ink: var(--pal-accent-ink);
+  --primary: var(--pal-accent-mid);
+  --primary-ink: var(--pal-ink);
+  --hover: var(--pal-surface-2);
+}
+/* the neutral blocks (not logged / not yet) follow the palette too */
+:global(html[data-palette]) .app .stN { --b: var(--pal-surface-2); --t: var(--pal-ink-2); --e: var(--pal-line); }
+:global(html[data-palette]) .app .stF { --b: color-mix(in srgb, var(--pal-surface) 70%, var(--pal-bg)); --t: var(--pal-ink-3); --e: var(--pal-line); }

@@ -15,7 +15,7 @@ export type Outcome = { correct: number; total: number; firstTry: boolean };
 type Handlers = { onDone: (o: Outcome) => void; onAnswer?: (o: Outcome) => void };
 
 /** how long the feedback stays on screen before the next question opens by itself */
-export const ADVANCE_MS = 1800;
+export const ADVANCE_MS = 4000;
 
 /** Holds the outcome, starts the auto-advance timer, and makes sure onDone runs only once */
 function useAdvance(onDone: (o: Outcome) => void) {

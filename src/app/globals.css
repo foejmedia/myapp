@@ -7,6 +7,7 @@
 
 /* ============ DESIGN SYSTEM IMPORT ============ */
 @import "../styles/design-system.css";
+@import "../styles/palettes.css";
 
 /* Uthmanic Hafs — the only Quran text face (same file as /uthmani) */
 @font-face {

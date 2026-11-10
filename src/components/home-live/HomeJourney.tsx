@@ -7,7 +7,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { dayKey, streaks } from '@/learn1min/lib/dates';
-import { BookGlowArt, CardsArt, CupArt, SaplingArt } from './art';
+import { BookGlowArt, CardsArt, CupArt } from './art';
 import s from './homeLive.module.css';
 
 type Live = {
@@ -18,7 +18,6 @@ type Live = {
   dailyScore: { score: number; total: number } | null;
   due: number;
   wordsLearned: number;
-  dhikr: number;
 };
 
 function readJSON<T>(key: string): T | null {
@@ -45,7 +44,6 @@ function readLive(): Live {
   const activity = data?.activity ?? {};
   const days = new Set([...Object.keys(learned), ...Object.entries(activity).filter(([, n]) => n > 0).map(([k]) => k)]);
   const cards = Object.entries(data?.cards ?? {}).filter(([id]) => id.startsWith('v:'));
-  const garden = readJSON<{ totals?: Record<string, number> }>('garden-of-dhikr:v1');
   return {
     signedIn: !!data,
     streak: streaks(days, today).current,
@@ -54,7 +52,6 @@ function readLive(): Live {
     dailyScore: data?.quiz?.daily?.[today] ?? null,
     due: cards.filter(([, c]) => typeof c.due === 'string' && c.due <= today).length,
     wordsLearned: cards.length,
-    dhikr: Object.values(garden?.totals ?? {}).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0),
   };
 }
 
@@ -71,7 +68,7 @@ export default function HomeJourney() {
     };
   }, []);
 
-  const hasProgress = !!live && (live.signedIn || live.dhikr > 0);
+  const hasProgress = !!live && live.signedIn;
 
   return (
     <section className={s.journey} aria-labelledby="hl-journey">
@@ -114,15 +111,6 @@ export default function HomeJourney() {
           </span>
         </Link>
 
-        <Link href="/game" className={`${s.card} ${s.mint}`}>
-          <SaplingArt className={s.art} />
-          <span className={s.cardBody}>
-            <span className={s.cardLabel}>Garden of Dhikr</span>
-            <strong className={s.cardTitle}>{live && live.dhikr > 0 ? `${live.dhikr.toLocaleString()} remembrances planted` : 'Plant with your tongue'}</strong>
-            <span className={s.cardSub}>Every dhikr grows something in a living garden</span>
-            <span className={s.cardCta}>Open the garden →</span>
-          </span>
-        </Link>
 
         <Link href={live && live.due > 0 ? '/learn-1-min/review' : '/learn-1-min/flashcards'} className={`${s.card} ${s.lavender}`}>
           <CardsArt className={s.art} />

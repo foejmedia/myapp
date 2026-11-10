@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/components/ThemeProvider';
+import PalettePicker from '@/components/PalettePicker';
 import { trackSurahVisit, getRecentSurahs } from '@/lib/recentSurahs';
 import HeroCarousel from '@/components/HeroCarousel';
 import HadeesOfTheDay from '@/components/HadeesOfTheDay';
@@ -588,7 +589,7 @@ export default function HomePage() {
   const todayAyah = AYAHS_OF_DAY[new Date().getDate() % AYAHS_OF_DAY.length];
 
   const S = {
-    shell: { display: 'flex', flexDirection: 'column' as const, flex: 1, background: dark ? 'var(--bg-base)' : '#ffffff', fontFamily: "var(--font-manrope), sans-serif" },
+    shell: { display: 'flex', flexDirection: 'column' as const, flex: 1, background: dark ? 'var(--bg-base)' : 'var(--pal-bg, #ffffff)', fontFamily: "var(--font-manrope), sans-serif" },
     card: { background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' },
     text: { color: 'var(--text-primary)' },
     muted: { color: 'var(--text-muted)' },
@@ -921,7 +922,7 @@ export default function HomePage() {
           </div>
         </header>}
         {/* MAIN — scrollable content only */}
-        <main className="hp-scroll hp-dot" style={{ background: dark ? 'var(--bg-base)' : '#ffffff' }}>
+        <main className="hp-scroll hp-dot" style={{ background: dark ? 'var(--bg-base)' : 'var(--pal-bg, #ffffff)' }}>
           {/* ── HERO: greeting + featured slides ── */}
           <HeroCarousel />
 
@@ -939,6 +940,9 @@ export default function HomePage() {
           />
 
           <div className="hp-content" style={{ maxWidth: 1100, margin: '0 auto' }}>
+
+            {/* ── COLOUR THEME: recolours the whole app ── */}
+            <PalettePicker />
 
             {/* ── HADEES OF THE DAY ── */}
             <HadeesOfTheDay />
