@@ -32,8 +32,10 @@ Nothing religious is written by hand in this feature.
   is Quran.com's meaning *in that ayah*, and the UI says so.
   The Corpus asks that its data is credited with a link to corpus.quran.com — keep the source note.
 * **Chapters** — `data/chapters.json` (names, meanings, ayah counts) from Quran.com, same script.
-* **Duas** — the site's own `public/data/duas/*.json`, used as stored. Audio is offered only for
-  Qur'anic duas (the ayah recitation); hadith duas have no verified recording yet.
+* **Duas** — the site's own `public/data/duas/*.json`, used as stored. Audio: Qur'anic duas use the
+  ayah recitation; hadith duas use the Hisn al-Muslim recording (hisnmuslim.com) when the Arabic text
+  matches, linked by `scripts/build-dua-audio.mjs` → `data/dua-audio.json` (re-run it after editing duas).
+  `/api/dua-audio/[id]` serves a downloadable MP3 for any dua that has audio.
 * **Surah text** — loaded at runtime from `/api/quiz/content` (the Quiz feature's validated
   Quran.com loader). If it fails, nothing partial is shown.
 * **Recitation** — Mishary Rashid Alafasy (Quran.com CDN); word audio from Quran.com.

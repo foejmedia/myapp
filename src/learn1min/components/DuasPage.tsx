@@ -106,7 +106,7 @@ function Inner() {
                     <SaveButton itemId={id} />
                   </div>
                   <DuaBody d={d} />
-                  {d.ayat.length === 0 && <p className={s.fine}>Recited audio for hadith duas is not available yet.</p>}
+                  {d.ayat.length === 0 && !d.hisn && <p className={s.fine}>No verified recording of this dua yet.</p>}
                   <div className={s.duaFoot}>
                     <button
                       type="button"

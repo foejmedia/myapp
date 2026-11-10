@@ -1,0 +1,108 @@
+{
+ "anx-1": {
+  "url": "https://www.hisnmuslim.com/audio/ar/139.mp3",
+  "hisnId": 139
+ },
+ "anx-2": {
+  "url": "https://www.hisnmuslim.com/audio/ar/121.mp3",
+  "hisnId": 121
+ },
+ "anx-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/122.mp3",
+  "hisnId": 122,
+  "longer": true
+ },
+ "daily-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/105.mp3",
+  "hisnId": 105
+ },
+ "daily-4": {
+  "url": "https://www.hisnmuslim.com/audio/ar/1.mp3",
+  "hisnId": 1
+ },
+ "daily-5": {
+  "url": "https://www.hisnmuslim.com/audio/ar/18.mp3",
+  "hisnId": 18
+ },
+ "daily-7": {
+  "url": "https://www.hisnmuslim.com/audio/ar/10.mp3",
+  "hisnId": 10
+ },
+ "daily-8": {
+  "url": "https://www.hisnmuslim.com/audio/ar/6.mp3",
+  "hisnId": 6
+ },
+ "family-5": {
+  "url": "https://www.hisnmuslim.com/audio/ar/190.mp3",
+  "hisnId": 190
+ },
+ "forg-1": {
+  "url": "https://www.hisnmuslim.com/audio/ar/79.mp3",
+  "hisnId": 79
+ },
+ "health-2": {
+  "url": "https://www.hisnmuslim.com/audio/ar/82.mp3",
+  "hisnId": 82,
+  "longer": true
+ },
+ "health-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/148.mp3",
+  "hisnId": 148
+ },
+ "me-2": {
+  "url": "https://www.hisnmuslim.com/audio/ar/78.mp3",
+  "hisnId": 78,
+  "longer": true
+ },
+ "me-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/79.mp3",
+  "hisnId": 79,
+  "longer": true
+ },
+ "me-5": {
+  "url": "https://www.hisnmuslim.com/audio/ar/86.mp3",
+  "hisnId": 86
+ },
+ "me-6": {
+  "url": "https://www.hisnmuslim.com/audio/ar/87.mp3",
+  "hisnId": 87
+ },
+ "prot-1": {
+  "url": "https://www.hisnmuslim.com/audio/ar/97.mp3",
+  "hisnId": 97
+ },
+ "ram-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/176.mp3",
+  "hisnId": 176
+ },
+ "ram-6": {
+  "url": "https://www.hisnmuslim.com/audio/ar/184.mp3",
+  "hisnId": 184
+ },
+ "salah-1": {
+  "url": "https://www.hisnmuslim.com/audio/ar/28.mp3",
+  "hisnId": 28
+ },
+ "salah-3": {
+  "url": "https://www.hisnmuslim.com/audio/ar/116.mp3",
+  "hisnId": 116,
+  "longer": true
+ },
+ "salah-5": {
+  "url": "https://www.hisnmuslim.com/audio/ar/53.mp3",
+  "hisnId": 53,
+  "longer": true
+ },
+ "salah-6": {
+  "url": "https://www.hisnmuslim.com/audio/ar/48.mp3",
+  "hisnId": 48
+ },
+ "suc-2": {
+  "url": "https://www.hisnmuslim.com/audio/ar/95.mp3",
+  "hisnId": 95
+ },
+ "suc-5": {
+  "url": "https://www.hisnmuslim.com/audio/ar/136.mp3",
+  "hisnId": 136
+ }
+}

@@ -26,6 +26,7 @@ export const IconCheck = I(<path d="m5 12.5 4.5 4.5L19 7.5" />);
 export const IconPlay = I(<path d="M7 4.5v15l12-7.5z" />);
 export const IconPause = I(<path d="M8 4.5v15M16 4.5v15" />);
 export const IconSpeaker = I(<><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></>);
+export const IconDownload = I(<><path d="M12 4v11M7 10.5l5 5 5-5" /><path d="M5 19.5h14" /></>);
 export const IconLock = I(<><rect x="5" y="10.5" width="14" height="10" rx="2.5" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" /></>);
 export const IconArrow = I(<path d="M5 12h14M13 6l6 6-6 6" />);
 export const IconChevron = I(<path d="m9 5 7 7-7 7" />);

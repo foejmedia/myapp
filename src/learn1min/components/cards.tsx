@@ -2,9 +2,9 @@
 /** Content cards for a word, a dua and a surah — used by the daily lesson and the module pages. */
 import Link from 'next/link';
 import { ayahAudio, chapter, type ChapterInfo } from '../content/chapters';
-import type { Dua } from '../content/duas';
+import { duaDownloadHref, hasDuaAudio, type Dua } from '../content/duas';
 import { POS_LABEL, meaningVerse, type VocabExample, type VocabWord } from '../content/vocabulary';
-import { IconArrow } from './Icons';
+import { IconArrow, IconDownload } from './Icons';
 import { AudioButton, NoteEditor, SaveButton } from './ui';
 import s from '../learn.module.css';
 
@@ -114,7 +114,25 @@ export function DuaBody({ d }: { d: Dua }) {
         <span className={s.refPill}>{d.reference}</span>
         {d.ayat.length > 0 &&
           d.ayat.map(k => <AudioButton key={k} src={ayahAudio(k)} label={`recitation of ${k}`} text={d.ayat.length > 1 ? `Ayah ${k}` : 'Listen to the ayah'} small />)}
+        {d.hisn && <AudioButton src={d.hisn.url} label={`recitation of ${d.title}`} text="Listen" small />}
+        {hasDuaAudio(d) && (
+          <a
+            href={duaDownloadHref(d)}
+            download
+            className={s.downloadBtn}
+            aria-label={`Download the audio of ${d.title}`}
+            title="Download audio (MP3)"
+            onClick={e => e.stopPropagation()}
+          >
+            <IconDownload className={s.i18} />
+          </a>
+        )}
       </div>
+      {d.hisn && (
+        <p className={s.fine}>
+          Recitation from Hisn al-Muslim{d.hisn.longer ? ' — the recording is the full dua, which continues past the text above.' : '.'}
+        </p>
+      )}
     </>
   );
 }

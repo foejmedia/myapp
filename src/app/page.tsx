@@ -609,6 +609,7 @@ export default function HomePage() {
         .feat-card:hover .feat-icon-img{transform:scale(1.15) rotate(5deg) translateY(-5px);}
         .hp-dot{background-image:radial-gradient(circle at 2px 2px,rgba(var(--brand-rgb),0.06) 1px,transparent 0);background-size:24px 24px}
         .font-arabic{font-family: "UthmanicHafs", serif}
+        @media (max-width:767px){.hp-search{display:none}}
         .filter-btn{padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.15s}
         .tc-btn{cursor:pointer;border:none;outline:none;background:none;-webkit-tap-highlight-color:transparent;transition:transform 0.08s ease;user-select:none}
         .tc-btn:active{transform:scale(0.93)}
@@ -964,8 +965,8 @@ export default function HomePage() {
             {/* ── QUICK ACCESS ── */}
             <QuickAccessGrid onNavigate={openNav} />
 
-            {/* ── SEARCH QURAN ── */}
-            <section style={{ marginBottom: 32 }}>
+            {/* ── SEARCH QURAN (desktop/tablet; phones use the Quick Access tile → /search-quran) ── */}
+            <section className="hp-search" style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'var(--brand-primary)' }}>search</span>
                 <h2 style={{ margin: 0, fontWeight: 700, fontSize: 19, ...S.text }}>Search Quran</h2>

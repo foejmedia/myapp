@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const res = await fetch(url, { next: { revalidate: 3600 } });
+    // alquran.cloud answers 404 when nothing matches: that's an empty result, not a failure
+    if (res.status === 404) {
+      return NextResponse.json({ code: 200, status: 'OK', data: { count: 0, matches: [] } });
+    }
     if (!res.ok) {
       return NextResponse.json({ error: 'Upstream API error' }, { status: 502 });
     }

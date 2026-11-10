@@ -1,8 +1,11 @@
 /**
  * Daily duas from the site's own collection (public/data/duas). Text and references are used
- * exactly as stored there. Audio is offered only where the dua is an ayah of the Qur'an, using
- * that ayah's recitation; hadith duas have no verified recording yet.
+ * exactly as stored there. Audio:
+ *  - Qur'anic duas: the recitation of those ayat (Alafasy).
+ *  - Hadith duas: the Hisn al-Muslim recording, linked only when the Arabic text matches
+ *    (see scripts/build-dua-audio.mjs → data/dua-audio.json). Others have no recording.
  */
+import hisnAudio from '../data/dua-audio.json';
 import categoriesFile from '../../../public/data/duas/categories.json';
 import anxiety from '../../../public/data/duas/anxiety.json';
 import daily from '../../../public/data/duas/daily.json';
@@ -29,9 +32,12 @@ export type Dua = {
   source: string;            // "Quran" | "Hadith"
   /** ayah keys this dua is taken from, when it is a Qur'anic dua */
   ayat: string[];
+  /** Hisn al-Muslim recording for a hadith dua; `longer`: the recording is the full dua, which goes on past this text */
+  hisn: { url: string; longer: boolean } | null;
 };
 
-type RawDua = Omit<Dua, 'ayat'>;
+type RawDua = Omit<Dua, 'ayat' | 'hisn'>;
+const HISN = hisnAudio as Record<string, { url: string; hisnId: number; longer?: boolean }>;
 type RawCategory = { id: string; title: string; description: string };
 
 // Everyday duas first.
@@ -53,7 +59,19 @@ export function ayatFromReference(ref: string): string[] {
 const seen = new Set<string>();
 export const DUAS: Dua[] = FILES.flatMap(f => f.duas)
   .filter(d => d.arabic && !seen.has(d.arabic) && seen.add(d.arabic))
-  .map(d => ({ ...d, ayat: d.source === 'Quran' ? ayatFromReference(d.reference) : [] }));
+  .map(d => {
+    const h = d.source === 'Quran' ? undefined : HISN[d.id];
+    return {
+      ...d,
+      ayat: d.source === 'Quran' ? ayatFromReference(d.reference) : [],
+      hisn: h ? { url: h.url, longer: !!h.longer } : null,
+    };
+  });
+
+/** True when the dua has any recording to play or download. */
+export const hasDuaAudio = (d: Dua) => d.ayat.length > 0 || !!d.hisn;
+/** Same-origin download link: the server joins the recording(s) into one MP3. */
+export const duaDownloadHref = (d: Dua) => `/api/dua-audio/${encodeURIComponent(d.id)}`;
 
 export const DUA_BY_ID: Record<string, Dua> = Object.fromEntries(DUAS.map(d => [d.id, d]));
 

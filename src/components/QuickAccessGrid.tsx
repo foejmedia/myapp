@@ -5,7 +5,7 @@ import './QuickAccessGrid.css';
 
 type Key =
   | 'read' | 'mushaf' | 'nav' | 'hifz' | 'radio' | 'wbw' | 'tafseer' | 'dua'
-  | 'tra' | 'namaz' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
+  | 'search' | 'tra' | 'namaz' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
 
 interface Tile {
   key: Key;
@@ -32,6 +32,7 @@ const TILES: Tile[] = [
   { key: 'wbw', label: 'Word by Word', sub: 'Arabic Learning', href: '/read-quran/1?mode=word-by-word', from: '#22d3ee', to: '#0e7490' },
   { key: 'tafseer', label: 'Tafseer', sub: 'Ayah Explanations', href: '/tafseer', from: '#a78bfa', to: '#5b21b6' },
   { key: 'dua', label: 'Duas', sub: 'Daily Supplications', short: 'Supplications', href: '/dua', from: '#f472b6', to: '#be185d' },
+  { key: 'search', label: 'Search Quran', sub: 'Find any ayah by topic', short: 'Find any ayah', href: '/search-quran', from: '#34d399', to: '#047857', wide: true },
   { key: 'tra', label: 'Translation Audio', sub: 'Hear each ayah in your language', short: 'In your language', href: '/translation-audio', from: '#2dd4bf', to: '#0f766e', wide: true },
   { key: 'namaz', label: 'Namaz Tracker', sub: 'Log your five prayers and qaza', short: 'Daily prayers', href: '/namaz-tracker', from: '#34d399', to: '#047857', wide: true },
   { key: 'tasbih', label: 'Tasbeeh Garden', sub: 'Every count plants a flower', short: 'Dhikr counter', href: '/tasbih', from: '#4ade80', to: '#15803d', wide: true },
@@ -145,6 +146,18 @@ function Art({ k }: { k: Key }) {
               <rect className="a" x="34" y="64" width="20" height="8" rx="3" transform="rotate(-16 44 68)" />
             </g>
           ))}
+        </g>
+      );
+    case 'search':
+      return (
+        <g>
+          <rect className="w o" x="28" y="14" width="50" height="54" rx="7" />
+          <path className="l" d="M37 27h30M37 35h30M37 43h20M37 51h24" />
+          <g className="qa-float">
+            <circle className="s o" cx="78" cy="46" r="13" />
+            <path className="l" d="M71 44a7 7 0 0 1 7-6" />
+            <path className="o thick" d="M88 56l9 9" />
+          </g>
         </g>
       );
     case 'tra':
