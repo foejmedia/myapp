@@ -186,3 +186,36 @@ export async function enableReminders(lead?: number): Promise<NotificationPermis
   saveReminderSettings({ enabled: true, lead: lead ?? s.lead });
   return permission;
 }
+
+// ---------- a whole month of times (week grid) ----------
+
+/** One day's times, plus sunrise (the end of Fajr's window) */
+export type DayWindows = DayTimes & { Sunrise: string };
+export type PrayerMonth = Record<string, DayWindows>; // key = YYYY-MM-DD
+
+const MONTH_KEY = 'prayerMonthCache';
+type MonthCache = Record<string, PrayerMonth>; // key = "lat,lng,YYYY-MM"
+const monthId = (loc: PrayerLocation, y: number, m: number) =>
+  `${loc.lat.toFixed(2)},${loc.lng.toFixed(2)},${y}-${pad(m + 1)}`;
+
+/** Every day of a month (m is 0-based), from Aladhan's calendar endpoint; cached per place and month */
+export async function getPrayerMonth(loc: PrayerLocation, y: number, m: number): Promise<PrayerMonth> {
+  const id = monthId(loc, y, m);
+  const cache = readJson<MonthCache>(MONTH_KEY) ?? {};
+  if (cache[id]) return cache[id];
+  const json = await fetchJson<{ data: { timings: Record<string, string>; date: { gregorian: { date: string } } }[] }>(
+    `https://api.aladhan.com/v1/calendar/${y}/${m + 1}?latitude=${loc.lat}&longitude=${loc.lng}`,
+    12000,
+  );
+  const out: PrayerMonth = {};
+  for (const d of json.data) {
+    const [dd, mm, yy] = d.date.gregorian.date.split('-');
+    const t = {} as DayWindows;
+    [...PRAYER_KEYS, 'Sunrise' as const].forEach(p => { t[p] = d.timings[p].split(' ')[0]; });
+    out[`${yy}-${mm}-${dd}`] = t;
+  }
+  // keep the cache small: this month and its neighbours are what the grid needs
+  const keep = Object.keys(cache).slice(-5);
+  writeJson(MONTH_KEY, { ...Object.fromEntries(keep.map(k => [k, cache[k]])), [id]: out });
+  return out;
+}

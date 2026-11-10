@@ -1,0 +1,10 @@
+/* Namaz Tracker "Print this month": only the log table is printed */
+.nz-print-sheet { display: none; }
+@media print {
+  body * { visibility: hidden; }
+  .nz-print-sheet, .nz-print-sheet * { visibility: visible; }
+  .nz-print-sheet { display: block; position: absolute; top: 0; left: 0; width: 100%; color: #000; font: 11px/1.4 system-ui, sans-serif; }
+  .nz-print-sheet h1 { font-size: 16px; margin: 0 0 10px; }
+  .nz-print-sheet table { width: 100%; border-collapse: collapse; }
+  .nz-print-sheet th, .nz-print-sheet td { border: 1px solid #999; padding: 3px 5px; text-align: left; }
+}
