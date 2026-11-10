@@ -106,7 +106,7 @@ export default function QuestionView({ q, index, total, response, onResponse, ve
       )}
 
       {!done ? (
-        <button type="button" className="qz-btn primary wide" disabled={!complete} onClick={onSubmit}>
+        q.kind === 'mcq' ? null : <button type="button" className="qz-btn primary wide" disabled={!complete} onClick={onSubmit}>
           Submit answer
         </button>
       ) : (

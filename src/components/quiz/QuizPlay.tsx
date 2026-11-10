@@ -100,6 +100,12 @@ export default function QuizPlay() {
     saveProgress(next);
   };
 
+  // multiple choice is marked the moment an option is tapped: one attempt, no changing the answer
+  useEffect(() => {
+    if (q?.kind === 'mcq' && typeof response === 'string' && !verdict) submit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
   const advance = () => {
     if (!questions || !progress || !level) return;
     if (i + 1 < questions.length) {

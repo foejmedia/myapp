@@ -1,6 +1,6 @@
 'use client';
 /** Runs a list of questions with a progress bar, then shows the score and what to revise. */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { describe } from '../lib/items';
 import type { Question } from '../lib/quiz';
 import { questionWeight } from '../lib/quiz';
@@ -21,19 +21,27 @@ export default function QuizRunner({
 }) {
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
-  const [missed, setMissed] = useState<string[]>([]);
   const [finished, setFinished] = useState<Summary | null>(null);
   const total = questions.reduce((n, q) => n + questionWeight(q), 0);
+  // refs so the auto-advance (which fires from a timer) always sees the latest tally
+  const tally = useRef({ score: 0, missed: [] as string[], answered: -1 });
+
+  /** called the moment a question is answered: the mark is final */
+  const answer = (o: Outcome) => {
+    const t = tally.current;
+    if (t.answered === i) return;
+    t.answered = i;
+    t.score += o.correct;
+    const q = questions[i];
+    if (!o.firstTry && q.kind !== 'match') t.missed = [...t.missed, q.itemId];
+    setScore(t.score);
+  };
 
   const next = (o: Outcome) => {
-    const q = questions[i];
-    const newScore = score + o.correct;
-    const newMissed = o.firstTry || q.kind === 'match' ? missed : [...missed, q.itemId];
-    setScore(newScore);
-    setMissed(newMissed);
+    answer(o); // no-op if already counted
     if (i + 1 < questions.length) setI(i + 1);
     else {
-      const sum = { score: newScore, total, missed: newMissed };
+      const sum = { score: tally.current.score, total, missed: tally.current.missed };
       setFinished(sum);
       onFinish(sum);
     }
@@ -96,7 +104,7 @@ export default function QuizRunner({
           <span key={q.id} className={k < i ? s.stepDone : k === i ? s.stepNow : s.step} />
         ))}
       </div>
-      <QuestionView key={questions[i].id} q={questions[i]} onDone={next} />
+      <QuestionView key={questions[i].id} q={questions[i]} onAnswer={answer} onDone={next} />
     </div>
   );
 }
