@@ -1,0 +1,302 @@
+/* "Learn the Qur'an" meadow section — light by default, a starry dusk in dark mode */
+.meadow {
+  --mh-sky-top: #f3f7fb;
+  --mh-sky-bottom: #fbfcf6;
+  --mh-glow: rgba(255, 241, 206, 0.8);
+  --mh-ring: rgba(31, 42, 55, 0.07);
+  --mh-star: 0;
+  --mh-hill-far: #d5e4ec;
+  --mh-mosque: #b6c9d5;
+  --mh-hill-mid: #c3dbc9;
+  --mh-field-top: #a9d18e;
+  --mh-field-bottom: #6dac58;
+  --mh-far-flower: rgba(255, 255, 255, 0.95);
+  --mh-grass-base: #5b9c49;
+  --mh-blade-1: #4b8c3c;
+  --mh-blade-2: #6db055;
+  --mh-blade-3: #8cc86e;
+  --mh-leaf-1: #7fb069;
+  --mh-leaf-2: #9bc77e;
+  --mh-leaf-3: #5c944f;
+  --mh-leaf-4: #b7d892;
+  --mh-branch: #7a5a3e;
+  --mh-title: #17202b;
+  --mh-title-2: #6b7f90;
+  --mh-lead: #4b5563;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 1200 / 640;
+  min-height: 560px;
+  margin-bottom: 36px;
+  border-radius: 28px;
+  border: 1px solid var(--border-default, #e8ece8);
+  background: var(--mh-sky-bottom);
+}
+
+:global(html.dark) .meadow,
+:global([data-theme='dark']) .meadow {
+  --mh-sky-top: #0a1420;
+  --mh-sky-bottom: #14261f;
+  --mh-glow: rgba(140, 170, 255, 0.12);
+  --mh-ring: rgba(255, 255, 255, 0.06);
+  --mh-star: 0.85;
+  --mh-hill-far: #1c2f3d;
+  --mh-mosque: #2e465a;
+  --mh-hill-mid: #1e3a2b;
+  --mh-field-top: #2f5d34;
+  --mh-field-bottom: #1b3920;
+  --mh-far-flower: rgba(255, 255, 255, 0.45);
+  --mh-grass-base: #1d3d22;
+  --mh-blade-1: #2d6633;
+  --mh-blade-2: #3c7b43;
+  --mh-blade-3: #4d8f51;
+  --mh-leaf-1: #2f5d34;
+  --mh-leaf-2: #3f7044;
+  --mh-leaf-3: #234a29;
+  --mh-leaf-4: #4f7f4f;
+  --mh-branch: #3d2c20;
+  --mh-title: #f1f5f9;
+  --mh-title-2: #9fb4c6;
+  --mh-lead: #cbd5e1;
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* ── text over the sky ── */
+.content {
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 44px 20px 0;
+  text-align: center;
+}
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 5px 14px 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-card, #fff) 75%, transparent);
+  border: 1px solid var(--border-default, #e8ece8);
+  backdrop-filter: blur(6px);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mh-lead);
+}
+.kickerAr {
+  font-family: 'UthmanicHafs', serif;
+  font-size: 17px;
+  line-height: 1;
+  color: #c8963e;
+}
+.title {
+  margin: 0;
+  font-size: clamp(32px, 4.6vw, 52px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--mh-title);
+}
+.title span {
+  display: block;
+  color: var(--mh-title-2);
+}
+.lead {
+  margin: 16px auto 0;
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--mh-lead);
+}
+.ctas {
+  display: inline-flex;
+  margin-top: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 28px -14px rgba(16, 80, 50, 0.55);
+}
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.primary {
+  border-radius: 12px 0 0 12px;
+  background: var(--brand-primary, #059669);
+  color: #fff;
+  border: 1px solid var(--brand-primary, #059669);
+}
+.primary:hover {
+  background: var(--brand-primary-hover, #047857);
+}
+.secondary {
+  border-radius: 0 12px 12px 0;
+  background: var(--bg-card, #fff);
+  color: var(--mh-title);
+  border: 1px solid color-mix(in srgb, var(--brand-primary, #059669) 45%, transparent);
+  border-left: 0;
+}
+.secondary:hover {
+  background: color-mix(in srgb, var(--brand-primary, #059669) 8%, var(--bg-card, #fff));
+}
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-primary, #059669) 45%, transparent);
+  outline-offset: 2px;
+}
+.facts {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: var(--mh-title-2);
+}
+
+/* ── illustration paint ── */
+.skyTop { stop-color: var(--mh-sky-top); }
+.skyBottom { stop-color: var(--mh-sky-bottom); }
+.glowIn { stop-color: var(--mh-glow); }
+.glowOut { stop-color: var(--mh-glow); stop-opacity: 0; }
+.fieldTop { stop-color: var(--mh-field-top); }
+.fieldBottom { stop-color: var(--mh-field-bottom); }
+.stars { fill: #fff; opacity: var(--mh-star); }
+.rings { fill: none; stroke: var(--mh-ring); stroke-width: 1.2; }
+.birds { fill: none; stroke: var(--mh-title-2); stroke-width: 1.6; stroke-linecap: round; opacity: 0.6; }
+.hillFar { fill: var(--mh-hill-far); }
+.hillMid { fill: var(--mh-hill-mid); }
+.mosque { fill: var(--mh-mosque); }
+.farFlowers { fill: var(--mh-far-flower); }
+.grassBase { fill: var(--mh-grass-base); }
+.blade1, .blade2, .blade3 { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.blade1 { stroke: var(--mh-blade-1); }
+.blade2 { stroke: var(--mh-blade-2); }
+.blade3 { stroke: var(--mh-blade-3); }
+.petal { fill: #fff; }
+.flowerEye { fill: #f3c544; }
+.leaf1 { fill: var(--mh-leaf-1); }
+.leaf2 { fill: var(--mh-leaf-2); }
+.leaf3 { fill: var(--mh-leaf-3); }
+.leaf4 { fill: var(--mh-leaf-4); }
+.branch { fill: none; stroke: var(--mh-branch); stroke-linecap: round; }
+
+.bookA { fill: #c97b63; }
+.bookB { fill: #7aa6c2; }
+.bookC { fill: #e0b764; }
+.bookD { fill: #9b89c4; }
+.bookPages { fill: #fbf7ee; opacity: 0.85; }
+
+.shirtWhite { fill: #f7f8fa; stroke: #dde3ea; stroke-width: 1.2; }
+.shirtBlue { fill: #d9e6f4; stroke: #c3d3e6; stroke-width: 1.2; }
+.dressCream { fill: #efe5d6; stroke: #dfd2bf; stroke-width: 1.2; }
+.hijab { fill: #b88ea8; }
+.hijabShade { fill: rgba(0, 0, 0, 0.13); }
+.shade { fill: rgba(110, 130, 160, 0.18); }
+.fold { fill: none; stroke: rgba(110, 130, 160, 0.35); stroke-width: 1.4; stroke-linecap: round; }
+.skin { fill: #dfb08b; }
+.hair { fill: #2a2d33; }
+.hairShine { fill: none; stroke: rgba(255, 255, 255, 0.2); stroke-width: 2.5; stroke-linecap: round; }
+.kufi { fill: #fdfdfd; stroke: #dbe0e6; stroke-width: 1.2; }
+.wood { fill: none; stroke: #8a5a36; stroke-linecap: round; }
+.cover { fill: #1f7a5a; }
+.page { fill: #fffdf6; }
+.pageLine { fill: none; stroke: rgba(31, 42, 55, 0.28); stroke-width: 1.1; stroke-linecap: round; }
+
+:global(html.dark) .meadow .shirtWhite,
+:global([data-theme='dark']) .meadow .shirtWhite { fill: #c9d1da; stroke: #aab4bf; }
+:global(html.dark) .meadow .shirtBlue,
+:global([data-theme='dark']) .meadow .shirtBlue { fill: #9fb2c8; stroke: #8798ad; }
+:global(html.dark) .meadow .dressCream,
+:global([data-theme='dark']) .meadow .dressCream { fill: #c4b8a6; stroke: #a99d8b; }
+:global(html.dark) .meadow .hijab,
+:global([data-theme='dark']) .meadow .hijab { fill: #8f6c83; }
+:global(html.dark) .meadow .petal,
+:global([data-theme='dark']) .meadow .petal { fill: #d9dde3; }
+
+/* ── gentle life ── */
+.sway {
+  transform-box: fill-box;
+  transform-origin: 0 0;
+  animation: mh-sway 8s ease-in-out infinite;
+}
+.grass {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: mh-grass 5s ease-in-out infinite;
+}
+.bob {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: mh-bob 3.6s ease-in-out infinite;
+}
+.birds {
+  animation: mh-birds 14s ease-in-out infinite;
+}
+@keyframes mh-sway {
+  50% { transform: rotate(1.5deg); }
+}
+@keyframes mh-grass {
+  50% { transform: skewX(-2deg); }
+}
+@keyframes mh-bob {
+  50% { transform: rotate(6deg) translateY(-1px); }
+}
+@keyframes mh-birds {
+  50% { transform: translate(28px, -10px); }
+}
+
+/* ── phones: text on top, the scene below (cropped to the middle) ── */
+@media (max-width: 640px) {
+  .meadow {
+    aspect-ratio: auto;
+    min-height: 570px;
+    border-radius: 22px;
+    background: var(--mh-sky-top);
+    /* text centred in the sky; the bottom 150px is kept clear for the students and hills */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 150px;
+  }
+  /* the meadow as a band along the bottom: less zoom, more of the scene */
+  .art {
+    top: auto;
+    bottom: 0;
+    height: 330px;
+  }
+  /* only slivers of the corner trees would show at this width */
+  .trees {
+    display: none;
+  }
+  .content {
+    width: 100%;
+    padding-top: 24px;
+  }
+  .lead {
+    font-size: 14px;
+  }
+  .primary,
+  .secondary {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sway,
+  .grass,
+  .bob,
+  .birds {
+    animation: none;
+  }
+}

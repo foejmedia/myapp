@@ -14,6 +14,7 @@ import FollowUs from '@/components/FollowUs';
 import NavigatePanel from '@/components/NavigatePanel';
 import PrayerStrip from '@/components/PrayerStrip';
 import HomeJourney from '@/components/home-live/HomeJourney';
+import MeadowHero from '@/components/home-live/MeadowHero';
 import LiveScene from '@/components/home-live/LiveScene';
 import SearchIdle from '@/components/home-live/SearchIdle';
 
@@ -958,6 +959,9 @@ export default function HomePage() {
               formatTime={fmtTime}
               onResetTime={() => { setSessionTime(0); setTotalTime(0); localStorage.setItem('quranTotalTime', '0'); }}
             />
+
+            {/* ── LEARN THE QUR'AN: illustrated meadow invitation ── */}
+            <MeadowHero />
 
             {/* ── KEEP GROWING: illustrated daily-learning cards (live progress) ── */}
             <HomeJourney />
