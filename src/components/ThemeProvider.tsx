@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { PALETTE_KEY, paletteById, type PaletteId } from '@/lib/palette';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -10,9 +9,6 @@ interface ThemeContextType {
   resolvedTheme: 'light' | 'dark';
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
-  /** the colour palette picked on the homepage (null = the original look) */
-  palette: PaletteId | null;
-  setPalette: (id: PaletteId | null) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -23,7 +19,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
   const [mounted, setMounted] = useState(false);
-  const [palette, setPaletteState] = useState<PaletteId | null>(null);
 
   // Get system preference
   const getSystemTheme = useCallback((): 'light' | 'dark' => {
@@ -72,13 +67,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
     const resolved = resolveTheme(newTheme);
-    // switching light/dark by hand leaves a palette of the other mode behind
-    const current = paletteById(document.documentElement.getAttribute('data-palette'));
-    if (current && current.mode !== resolved) {
-      document.documentElement.removeAttribute('data-palette');
-      setPaletteState(null);
-      try { localStorage.removeItem(PALETTE_KEY); } catch { /* ignore */ }
-    }
     setResolvedTheme(resolved);
     applyTheme(resolved);
     
@@ -89,30 +77,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       console.warn('Failed to save theme preference:', e);
     }
   }, [resolveTheme, applyTheme]);
-
-  // Pick a colour palette: it fixes light/dark and recolours the app through --pal-* variables
-  const setPalette = useCallback((id: PaletteId | null) => {
-    const root = document.documentElement;
-    const p = paletteById(id);
-    root.classList.add('palette-switching');
-    if (p) {
-      root.setAttribute('data-palette', p.id);
-      setThemeState(p.mode);
-      setResolvedTheme(p.mode);
-      applyTheme(p.mode);
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', p.meta);
-    } else {
-      root.removeAttribute('data-palette');
-    }
-    setPaletteState(p ? p.id : null);
-    try {
-      if (p) {
-        localStorage.setItem(PALETTE_KEY, p.id);
-        localStorage.setItem(STORAGE_KEY, p.mode);
-      } else localStorage.removeItem(PALETTE_KEY);
-    } catch { /* ignore */ }
-    setTimeout(() => root.classList.remove('palette-switching'), 450);
-  }, [applyTheme]);
 
   // Toggle between light and dark
   const toggleTheme = useCallback(() => {
@@ -129,14 +93,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(initialTheme);
     setResolvedTheme(resolved);
     applyTheme(resolved);
-    let saved: string | null = null;
-    try { saved = localStorage.getItem(PALETTE_KEY); } catch { /* ignore */ }
-    const p = paletteById(saved);
-    if (p && p.mode === resolved) {
-      document.documentElement.setAttribute('data-palette', p.id);
-      setPaletteState(p.id);
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', p.meta);
-    }
     setMounted(true);
   }, [resolveTheme, applyTheme]);
 
@@ -160,7 +116,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // The theme init script in layout.tsx prevents any flash of wrong theme
   // before this component mounts.
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme, palette, setPalette }}>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -175,8 +131,6 @@ export function useTheme() {
       resolvedTheme: 'dark' as const,
       setTheme: () => {},
       toggleTheme: () => {},
-      palette: null,
-      setPalette: () => {},
     };
   }
   return context;

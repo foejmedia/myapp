@@ -248,17 +248,3 @@
 /* inside the tracker page (tabs, top bar and banner above): run edge to edge of the padded column */
 .embedded { margin: 0 -14px; min-height: 0; }
 .embedded .title { padding-top: 2px; }
-
-/* colour palette picked on the homepage (src/styles/palettes.css); prayer-status colours stay as they are */
-:global(html[data-palette]) .root {
-  --bg: var(--pal-surface);
-  --panel: var(--pal-surface-2);
-  --card: var(--pal-surface);
-  --line: var(--pal-line);
-  --ink: var(--pal-ink);
-  --ink-2: var(--pal-ink-2);
-  --muted: var(--pal-ink-3);
-  --lav: var(--pal-accent-mid);
-  --lav-soft: var(--pal-accent-soft);
-  --lav-ink: var(--pal-accent-ink);
-}

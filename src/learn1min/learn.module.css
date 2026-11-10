@@ -1478,24 +1478,3 @@ a.jCard:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 @keyframes nextFill { to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .autoNext::after { animation: none; } }
 .matchLost small { display: block; margin-top: 2px; font-family: var(--font-sans, inherit); font-size: 0.78rem; font-weight: 600; color: var(--ok); direction: ltr; }
-
-/* colour palette picked on the homepage (src/styles/palettes.css). Correct/wrong colours stay green/red. */
-:global(html[data-palette]) .root {
-  --bg: var(--pal-bg);
-  --chrome: var(--pal-chrome);
-  --surface: var(--pal-surface);
-  --surface-2: var(--pal-surface-2);
-  --ink: var(--pal-ink);
-  --ink-2: var(--pal-ink-2);
-  --ink-3: var(--pal-ink-3);
-  --line: var(--pal-line);
-  --line-2: var(--pal-surface-2);
-  --primary: var(--pal-accent);
-  --primary-hover: var(--pal-accent-hover);
-  --on-primary: var(--pal-on-accent);
-  --primary-soft: var(--pal-accent-soft);
-  --primary-border: var(--pal-accent-border);
-  --primary-ink: var(--pal-accent-ink);
-  --grad: linear-gradient(135deg, var(--pal-accent-hover) 0%, var(--pal-accent) 100%);
-  --focus: rgba(var(--pal-accent-rgb), 0.4);
-}
