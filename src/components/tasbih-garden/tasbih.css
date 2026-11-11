@@ -1,12 +1,13 @@
 /* =========================================================
    TASBEEH GARDEN — /tasbih
-   Every count plants a flower. Light theme only (like the design).
+   Every count opens a lotus on the pond. Light theme only (like the design).
    ========================================================= */
 
 .tg {
-  --green: #3f9a5a;
-  --green-d: #2d7a45;
-  --mint: #c6f0d0;
+  --green: #2a9d87;
+  --green-d: #1f7f6c;
+  --mint: #cdeee6;
+  --dawn: #ffd9b3;
   --ink: #141a16;
   --text-primary: var(--ink);
   min-height: 100vh;
@@ -29,15 +30,15 @@
   display: grid;
   grid-template-columns: 48px 1fr 48px;
   align-items: center;
-  padding: 14px 16px;
-  background: linear-gradient(180deg, #b3a8e6 0%, #e6b8c6 100%);
+  padding: 14px max(16px, calc(50% - 240px)); /* buttons line up with the 480px column below */
+  background: linear-gradient(180deg, #d4efe9 0%, #ffe6cf 100%);
 }
 .tg-top h1 {
   text-align: center;
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  color: #2b2b33;
+  color: #1f4d44;
 }
 
 .tg-icon {
@@ -68,7 +69,7 @@
   font-weight: 700;
   color: #b42318;
 }
-.tg :focus-visible { outline: 3px solid #7c6fd6; outline-offset: 2px; }
+.tg :focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
 
 .tg-wrap {
   max-width: 480px;
@@ -83,9 +84,9 @@
 .tg-card {
   position: relative;
   aspect-ratio: 1 / 1.02;
-  border-radius: 14px;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(30, 60, 40, 0.14);
+  box-shadow: 0 10px 28px rgba(30, 80, 70, 0.16);
   isolation: isolate;
 }
 .tg-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -96,7 +97,7 @@
   left: 6px;
   width: 15%;
   fill: none;
-  stroke: #7cc59a;
+  stroke: #5fb6a2;
   stroke-width: 2.4;
   stroke-linecap: round;
   pointer-events: none;
@@ -121,21 +122,22 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.tg-dhikr:hover { background: rgba(255, 255, 255, 0.45); }
+.tg-dhikr:hover { background: rgba(255, 255, 255, 0.5); }
 .tg-dhikr-label {
   font-size: clamp(1.6rem, 7vw, 2.2rem);
-  font-weight: 500;
-  color: #2c6e3c;
+  font-weight: 600;
+  color: #1f5a4f;
+  letter-spacing: -0.01em;
   line-height: 1.15;
   overflow-wrap: break-word;
 }
-.tg-dhikr-ar { font-size: clamp(1.1rem, 5vw, 1.45rem); color: #3c7f4c; line-height: 1.5; }
+.tg-dhikr-ar { font-size: clamp(1.1rem, 5vw, 1.45rem); color: #2a7f6e; line-height: 1.5; }
 .tg-dhikr-edit {
   position: absolute;
   top: 2px;
   right: -20px;
   font-size: 16px;
-  color: #3f9a5a;
+  color: var(--green);
   opacity: 0.55;
 }
 
@@ -148,7 +150,7 @@
   gap: 8px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: #3c6a48;
+  color: #2a5f55;
 }
 .tg-meta > span {
   display: inline-flex;
@@ -156,7 +158,7 @@
   gap: 4px;
   padding: 3px 9px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.65);
 }
 .tg-meta b { font-weight: 800; }
 .tg-rounds .material-symbols-outlined { font-size: 14px; }
@@ -173,35 +175,48 @@
   font-weight: 800;
   font-size: 0.9rem;
   white-space: nowrap;
-  box-shadow: 0 6px 20px rgba(30, 80, 50, 0.18);
+  box-shadow: 0 6px 20px rgba(30, 80, 70, 0.18);
   animation: tg-toast 2.2s ease forwards;
 }
 
-/* flowers */
-.tg-stem { fill: none; stroke: #3d8f3e; stroke-width: 2.2; stroke-linecap: round; }
-.tg-leaf { fill: #55b04f; }
-.tg-leaf-b { fill: #4aa046; }
-.tg-sway {
+/* lotus pond */
+.tg-pad-leaf { fill: #4c9c6a; }
+.tg-pad-hi { fill: #78bb8a; opacity: 0.75; }
+.tg-pad-shade { fill: #2d7a66; opacity: 0.35; }
+.tg-pad-vein { fill: none; stroke: #357f52; stroke-width: 1; opacity: 0.7; }
+.tg-bob {
   transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: tg-sway 4s ease-in-out infinite alternate;
+  transform-origin: 50% 50%;
+  animation: tg-bob 3.6s ease-in-out infinite alternate;
 }
-.tg-grow {
+.tg-pad {
   transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: tg-grow 0.65s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  transform-origin: 50% 50%;
+  animation: tg-pad 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
 }
 .tg-head {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: tg-bloom 0.5s 0.25s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  animation: tg-bloom 0.55s 0.2s cubic-bezier(0.3, 1.6, 0.5, 1) both;
 }
+.tg-reeds path {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tg-sway 5s ease-in-out infinite alternate;
+}
+.tg-reeds path:nth-child(2n) { animation-delay: -1.7s; }
+.tg-reeds path:nth-child(3n) { animation-delay: -3.1s; }
 
-.tg-sun { animation: tg-sun 3.2s ease forwards; }
+.tg-sunburst { animation: tg-sun 3.2s ease forwards; }
+.tg-ripple {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: tg-ripple 2.4s ease-out forwards;
+}
 .tg-bfly { animation: tg-fly 3.4s ease-in-out forwards; }
-.tg-bfly ellipse { transform-box: fill-box; transform-origin: 50% 50%; animation: tg-flap 0.18s ease-in-out infinite alternate; }
-.tg-bfly ellipse:nth-child(1) { transform-origin: 100% 50%; }
-.tg-bfly ellipse:nth-child(2) { transform-origin: 0% 50%; }
+.tg-bfly ellipse { transform-box: fill-box; transform-origin: 50% 50%; animation: tg-flap 0.12s ease-in-out infinite alternate; }
+.tg-bfly ellipse:nth-child(1), .tg-bfly ellipse:nth-child(3) { transform-origin: 100% 50%; }
+.tg-bfly ellipse:nth-child(2), .tg-bfly ellipse:nth-child(4) { transform-origin: 0% 50%; }
 .tg-bfly-0 { --sx: 40px; --sy: 300px; --ex: 140px; --ey: 90px; }
 .tg-bfly-1 { --sx: 200px; --sy: 320px; --ex: 260px; --ey: 70px; animation-delay: 0.25s; }
 .tg-bfly-2 { --sx: 320px; --sy: 290px; --ex: 200px; --ey: 120px; animation-delay: 0.5s; }
@@ -214,7 +229,7 @@
   justify-items: center;
   margin-top: 14px;
 }
-.tg-controls h2 { font-size: 1.45rem; font-weight: 700; }
+.tg-controls h2 { font-size: 1.35rem; font-weight: 800; color: #1f4d44; letter-spacing: -0.01em; }
 
 .tg-dial {
   width: calc(100% + 32px);
@@ -248,9 +263,9 @@
   margin: 8px auto 0;
 }
 .tg-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
-.tg-tick { stroke: #bfe5c8; stroke-width: 2.6; transition: stroke 0.25s; }
+.tg-tick { stroke: #c9e8e1; stroke-width: 2.6; transition: stroke 0.25s; }
 .tg-tick.on { stroke: var(--green-d); }
-.tg-track { fill: none; stroke: #cfd3d1; stroke-width: 7; }
+.tg-track { fill: none; stroke: #e3ebe8; stroke-width: 7; }
 .tg-prog {
   fill: none;
   stroke: var(--green-d);
@@ -267,20 +282,20 @@
   align-content: center;
   border: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, #a6e5b3 0%, #7fcf96 55%, #6cc287 100%);
-  box-shadow: inset 0 -8px 16px rgba(20, 90, 50, 0.18), 0 8px 22px rgba(60, 150, 90, 0.28);
+  background: radial-gradient(circle at 40% 30%, #9fe0d2 0%, #4fbba6 58%, #3aa892 100%);
+  box-shadow: inset 0 -8px 16px rgba(20, 90, 75, 0.2), 0 10px 24px rgba(42, 157, 135, 0.3);
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
   transition: transform 0.08s ease, box-shadow 0.12s;
 }
-.tg-tap:active { transform: scale(0.95); box-shadow: inset 0 -4px 10px rgba(20, 90, 50, 0.22), 0 3px 10px rgba(60, 150, 90, 0.25); }
+.tg-tap:active { transform: scale(0.95); box-shadow: inset 0 -4px 10px rgba(20, 90, 75, 0.24), 0 3px 10px rgba(42, 157, 135, 0.25); }
 .tg-num {
   font-size: clamp(3.6rem, 18vw, 5.2rem);
   font-weight: 800;
   line-height: 1;
   color: #ffffff;
-  text-shadow: 0 2px 6px rgba(20, 90, 50, 0.25);
+  text-shadow: 0 2px 6px rgba(20, 90, 75, 0.25);
   font-variant-numeric: tabular-nums;
   animation: tg-pop 0.22s ease-out;
 }
@@ -299,7 +314,7 @@
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  border: 1px solid #d6e6db;
+  border: 1px solid #cfe6e0;
   border-radius: 99px;
   background: #fff;
   font-weight: 700;
@@ -350,7 +365,7 @@
   text-align: left;
   cursor: pointer;
 }
-.tg-sheet li button.on { border-color: var(--green); background: #effaf2; }
+.tg-sheet li button.on { border-color: var(--green); background: #ecf8f5; }
 .tg-sheet-txt { display: grid; gap: 2px; min-width: 0; }
 .tg-sheet-txt b { font-size: 0.95rem; }
 .tg-sheet-txt small { font-size: 0.75rem; color: #5a6760; }
@@ -380,9 +395,11 @@
 .tg-custom button:disabled { opacity: 0.45; cursor: default; }
 
 /* ---------- keyframes ---------- */
-@keyframes tg-grow { from { transform: scale(0.2, 0); } to { transform: none; } }
+@keyframes tg-pad { from { transform: scale(0); } to { transform: none; } }
 @keyframes tg-bloom { from { transform: scale(0); } to { transform: none; } }
-@keyframes tg-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+@keyframes tg-bob { from { transform: translateY(-1.2px); } to { transform: translateY(1.2px); } }
+@keyframes tg-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes tg-ripple { 0% { transform: scale(0.3); opacity: 0.9; } 100% { transform: scale(6); opacity: 0; } }
 @keyframes tg-pop { from { transform: scale(1.18); } to { transform: none; } }
 @keyframes tg-spin { from { transform: rotate(-180deg); } to { transform: none; } }
 @keyframes tg-fade { from { opacity: 0; } }
@@ -400,7 +417,7 @@
   85% { opacity: 1; }
   100% { transform: translate(var(--ex), var(--ey)) scale(0.8); opacity: 0; }
 }
-@keyframes tg-flap { from { transform: scaleX(1); } to { transform: scaleX(0.25); } }
+@keyframes tg-flap { from { transform: scaleY(1); } to { transform: scaleY(0.3); } }
 
 @media (prefers-reduced-motion: reduce) {
   .tg *, .tg-sheet, .tg-sheet-bg { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
