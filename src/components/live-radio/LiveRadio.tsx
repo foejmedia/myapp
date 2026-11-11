@@ -67,6 +67,8 @@ export default function LiveRadio() {
   const [current, setCurrent] = useState<LiveStation | null>(null);
   const [status, setStatus] = useState<Status>('idle');
   const [volume, setVolume] = useState(0.9);
+  /** false on iPhone/iPad, where a page can't set the volume (only the hardware buttons can) */
+  const [canVolume, setCanVolume] = useState(true);
   const [elapsed, setElapsed] = useState(0);
   const [sheet, setSheet] = useState(false);
   /** the station the tuning knob is resting on mid-drag (played when released) */
@@ -79,6 +81,12 @@ export default function LiveRadio() {
     setRecent(readJson<string[]>(RECENT_KEY, []));
     const prefs = readJson<{ volume?: number }>(PREF_KEY, {});
     if (typeof prefs.volume === 'number') setVolume(prefs.volume);
+    // iOS ignores writes to `volume` and reads back 1; the volume effect below sets the real level afterwards
+    const a = audioRef.current;
+    if (a) {
+      a.volume = 0.5;
+      if (Math.abs(a.volume - 0.5) > 0.01) setCanVolume(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -325,8 +333,11 @@ export default function LiveRadio() {
                     min={0}
                     max={1}
                     step={0.05}
+                    nudge={0.1}
                     onChange={setVolume}
-                    readout={`${Math.round(volume * 100)}`}
+                    disabled={!canVolume}
+                    readout={canVolume ? `${Math.round(volume * 100)}` : '—'}
+                    hint={canVolume ? undefined : 'Use the phone’s buttons'}
                   />
                   <div className="rd-transport">
                     <button type="button" className="rd-step" onClick={() => step(-1)} aria-label="Previous station" disabled={!band.length}><Icon name="fast_rewind" /></button>
@@ -339,6 +350,7 @@ export default function LiveRadio() {
                     value={tune ?? Math.max(0, bandIndex)}
                     min={0}
                     max={Math.max(0, band.length - 1)}
+                    degPerStep={12}
                     onChange={setTune}
                     onCommit={v => { if (band[v] && band[v].id !== current?.id) play(band[v]); setTune(null); }}
                     disabled={band.length < 2}
@@ -460,7 +472,7 @@ export default function LiveRadio() {
           </div>
           <div className="lr-player-end">
             {favButton(current)}
-            <label className="lr-vol">
+            <label className="lr-vol" hidden={!canVolume}>
               <Icon name={volume === 0 ? 'volume_off' : volume < 0.5 ? 'volume_down' : 'volume_up'} />
               <input type="range" min={0} max={1} step={0.05} value={volume} onChange={e => setVolume(Number(e.target.value))}
                 aria-label="Volume" style={{ ['--v' as string]: `${volume * 100}%` }} />
