@@ -50,6 +50,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { href: '/dua', label: 'Duas', icon: 'volunteer_activism', desc: 'Supplications for every moment' },
       { href: '/hadees', label: 'Hadith', icon: 'history_edu', desc: "The Prophet's ﷺ sayings" },
+      { href: '/my-schedule', label: 'My Schedule', icon: 'calendar_month', desc: 'Plan your day around the prayers' },
     ],
     feature: { title: 'Morning & evening', text: 'Short duas to begin and end your day with remembrance.', href: '/dua', cta: 'View duas' },
   },

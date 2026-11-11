@@ -5,7 +5,7 @@ import './QuickAccessGrid.css';
 
 type Key =
   | 'read' | 'mushaf' | 'nav' | 'hifz' | 'radio' | 'wbw' | 'tafseer' | 'dua'
-  | 'search' | 'tra' | 'namaz' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
+  | 'search' | 'tra' | 'namaz' | 'schedule' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
 
 interface Tile {
   key: Key;
@@ -35,6 +35,7 @@ const TILES: Tile[] = [
   { key: 'search', label: 'Search Quran', sub: 'Find any ayah by topic', short: 'Find any ayah', href: '/search-quran', from: '#34d399', to: '#047857', wide: true },
   { key: 'tra', label: 'Translation Audio', sub: 'Hear each ayah in your language', short: 'In your language', href: '/translation-audio', from: '#2dd4bf', to: '#0f766e', wide: true },
   { key: 'namaz', label: 'Namaz Tracker', sub: 'Log your five prayers and qaza', short: 'Daily prayers', href: '/namaz-tracker', from: '#34d399', to: '#047857', wide: true },
+  { key: 'schedule', label: 'My Schedule', sub: 'Plan your day around the prayers', short: 'Plan your day', href: '/my-schedule', from: '#a5b4fc', to: '#4338ca', wide: true },
   { key: 'tasbih', label: 'Tasbeeh Garden', sub: 'Every count plants a flower', short: 'Dhikr counter', href: '/tasbih', from: '#4ade80', to: '#15803d', wide: true },
   { key: 'qibla', label: 'Qibla Compass', sub: 'Find the direction of the Kaaba', short: 'Kaaba direction', href: '/qibla', from: '#fbbf24', to: '#b45309', wide: true },
   { key: 'mosques', label: 'Mosques Near You', sub: 'Nearby mosques and directions', short: 'Find nearby', href: '/mosques', from: '#34d399', to: '#065f46', wide: true },
@@ -180,6 +181,18 @@ function Art({ k }: { k: Key }) {
             <circle key={i} className={i < 4 ? 'a' : 's'} cx={40 + i * 10} cy="46" r="3.6" />
           ))}
           <path className="l" d="M38 57h28" />
+        </g>
+      );
+    case 'schedule':
+      return (
+        <g>
+          <rect className="w o" x="28" y="14" width="64" height="54" rx="8" />
+          <path className="o" d="M44 10v9M76 10v9" />
+          <path className="l" d="M28 28h64" />
+          <rect className="a" x="36" y="34" width="22" height="9" rx="3" />
+          <rect className="s" x="62" y="34" width="22" height="16" rx="3" />
+          <rect className="s" x="36" y="47" width="22" height="13" rx="3" />
+          <rect className="a" x="62" y="54" width="22" height="7" rx="3" />
         </g>
       );
     case 'tasbih':

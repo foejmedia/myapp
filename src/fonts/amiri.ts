@@ -77,13 +77,13 @@ export const amiriTooba = localFont({
   variable: '--tb-font-ar',
 });
 
-export const amiriGame = localFont({
+export const amiriSchedule = localFont({
   src: [
     { path: './amiri/Amiri-arabic-400.woff2', weight: '400', style: 'normal' },
     { path: './amiri/Amiri-arabic-700.woff2', weight: '700', style: 'normal' },
   ],
   display: 'swap',
-  variable: '--gd-font-ar',
+  variable: '--sc-font-ar',
 });
 
 export const amiriLearn = localFont({

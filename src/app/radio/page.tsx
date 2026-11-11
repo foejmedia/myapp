@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { manropeRadio as manrope } from '@/fonts/manrope';
 import { amiriRadio as amiri } from '@/fonts/amiri';
+import { frauncesRadio as fraunces } from '@/fonts/fraunces';
 import LiveRadio from '@/components/live-radio/LiveRadio';
 
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RadioPage() {
   return (
-    <div className={`${manrope.variable} ${amiri.variable}`}>
+    <div className={`${manrope.variable} ${amiri.variable} ${fraunces.variable}`}>
       <LiveRadio />
     </div>
   );

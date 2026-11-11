@@ -46,6 +46,16 @@ export const frauncesGame = localFont({
   variable: '--gd-font-serif',
 });
 
+/** Live radio: the nameplate, dial numbers and programme-guide headings */
+export const frauncesRadio = localFont({
+  src: [
+    { path: './fraunces/Fraunces-latin-normal.woff2', weight: '100 900', style: 'normal' },
+    { path: './fraunces/Fraunces-latin-italic.woff2', weight: '100 900', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--lr-serif',
+});
+
 export const frauncesLearn = localFont({
   src: [
     { path: './fraunces/Fraunces-latin-normal.woff2', weight: '100 900', style: 'normal' },

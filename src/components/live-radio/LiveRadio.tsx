@@ -1,11 +1,16 @@
 'use client';
+/**
+ * Live Quran Radio, styled as a vintage valve radio: a glowing tuning dial with the
+ * stations printed along the band, rotary knobs, push-button bands and a speaker grille.
+ * Below the set is the "programme guide": shelves and lists of every station.
+ */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORIES, type Category, type LiveResponse, type LiveStation } from '@/lib/radio/live';
 import { Bars, Cover, Icon, Row, Tile, detail } from './parts';
+import { Dial, Keys, Knob, Lamp, type Status } from './RadioSet';
 import './LiveRadio.css';
 
 type View = 'home' | 'all' | 'favourites' | Category;
-type Status = 'idle' | 'connecting' | 'playing' | 'paused' | 'error';
 
 const PAGE = 40;
 const SHELF = 14;
@@ -19,7 +24,7 @@ const readJson = <T,>(key: string, fallback: T): T => {
 const writeJson = (key: string, value: unknown) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* ignore */ } };
 
 /** Lower-case, accents and Arabic diacritics removed, for search */
-const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ًͯ-ٰٟ]/g, '');
+const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ًͯ-ٰٟ]/g, '');
 
 const clock = (sec: number) => {
   const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
@@ -27,8 +32,24 @@ const clock = (sec: number) => {
 };
 
 const STATUS_TEXT: Record<Status, string> = {
-  idle: '', connecting: 'Connecting…', playing: 'Live', paused: 'Paused', error: 'Not responding',
+  idle: '', connecting: 'Tuning…', playing: 'On air', paused: 'Standby', error: 'No signal',
 };
+
+/** Short band names for the push-buttons */
+const KEY_LABEL: Record<Category, string> = { recitation: 'Recitation', translation: 'Translation', tafsir: 'Tafsir', station: 'World' };
+
+/** true below `px` wide: the dial prints fewer names on phones */
+function useNarrow(px = 640) {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${px}px)`);
+    const on = () => setNarrow(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, [px]);
+  return narrow;
+}
 
 export default function LiveRadio() {
   const [data, setData] = useState<LiveResponse | null>(null);
@@ -48,7 +69,10 @@ export default function LiveRadio() {
   const [volume, setVolume] = useState(0.9);
   const [elapsed, setElapsed] = useState(0);
   const [sheet, setSheet] = useState(false);
+  /** the station the tuning knob is resting on mid-drag (played when released) */
+  const [tune, setTune] = useState<number | null>(null);
   const listTop = useRef<HTMLDivElement>(null);
+  const narrow = useNarrow();
 
   useEffect(() => {
     setFavs(readJson<string[]>(FAV_KEY, []));
@@ -113,6 +137,14 @@ export default function LiveRadio() {
     return q ? base.filter(s => norm(`${s.name} ${s.nameAr ?? ''} ${s.country ?? ''}`).includes(q)) : base;
   }, [q, view, stations, favStations, byCategory, country]);
 
+  /** the stations along the dial: what's listed, else the tuned station's band, else recitations */
+  const band = useMemo(
+    () => (listed.length ? listed : current ? byCategory.get(current.category) ?? stations : byCategory.get('recitation') ?? stations),
+    [listed, current, byCategory, stations],
+  );
+  const bandIndex = current ? band.findIndex(s => s.id === current.id) : -1;
+  useEffect(() => setTune(null), [band]);
+
   const toggleFav = (id: string) => setFavs(f => {
     const next = f.includes(id) ? f.filter(x => x !== id) : [id, ...f];
     writeJson(FAV_KEY, next);
@@ -124,7 +156,7 @@ export default function LiveRadio() {
     setQuery('');
     setShown(PAGE);
     if (v !== 'station') setCountry('');
-    window.setTimeout(() => listTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+    if (v !== 'home') window.setTimeout(() => listTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
   };
 
   // ---------- playback ----------
@@ -163,13 +195,12 @@ export default function LiveRadio() {
     else play(target);
   }, [current, status, pause, play]);
 
-  /** next/previous within what's on screen, else all stations */
+  /** next/previous along the dial */
   const step = useCallback((dir: 1 | -1) => {
-    const list = listed.length ? listed : current ? byCategory.get(current.category) ?? stations : stations;
-    if (!list.length) return;
-    const i = current ? list.findIndex(s => s.id === current.id) : -1;
-    play(list[(i + dir + list.length) % list.length]);
-  }, [listed, byCategory, stations, current, play]);
+    if (!band.length) return;
+    const i = current ? band.findIndex(s => s.id === current.id) : -1;
+    play(band[(i + dir + band.length) % band.length]);
+  }, [band, current, play]);
 
   useEffect(() => {
     if (!('mediaSession' in navigator) || !current) return;
@@ -204,7 +235,10 @@ export default function LiveRadio() {
   const isOn = (s: LiveStation) => current?.id === s.id;
   const playing = status === 'playing';
   const busy = status === 'playing' || status === 'connecting';
-  const hero = current ?? recentStations[0] ?? byCategory.get('recitation')?.[0] ?? stations[0] ?? null;
+  /** what the dial readout shows: the station under the knob mid-drag, else the tuned one, else the first on the band */
+  const shownStation = tune != null ? band[tune] ?? null : current ?? recentStations[0] ?? band[0] ?? null;
+  /** where the needle rests: mid-drag position, else the tuned station, else (switched off) whatever the readout shows */
+  const dialIndex = tune ?? (current ? bandIndex : shownStation ? band.findIndex(s => s.id === shownStation.id) : -1);
 
   /** `id` is where "See all" goes; recently played has no full list */
   const shelves: { id: View | null; title: string; list: LiveStation[] }[] = [
@@ -213,12 +247,13 @@ export default function LiveRadio() {
     ...CATEGORIES.map(c => ({ id: c.id, title: c.label, list: byCategory.get(c.id) ?? [] })),
   ].filter(s => s.list.length);
 
-  const tabs: { id: View; label: string; n?: number }[] = [
+  const keys: { id: View; label: string; n?: number }[] = [
     { id: 'home', label: 'Home' },
     ...(favStations.length ? [{ id: 'favourites' as const, label: 'Favourites', n: favStations.length }] : []),
-    ...CATEGORIES.filter(c => byCategory.get(c.id)?.length).map(c => ({ id: c.id, label: c.label, n: byCategory.get(c.id)!.length })),
+    ...CATEGORIES.filter(c => byCategory.get(c.id)?.length).map(c => ({ id: c.id, label: KEY_LABEL[c.id], n: byCategory.get(c.id)!.length })),
     { id: 'all', label: 'All', n: stations.length },
   ];
+  const listTitle = q ? `Results for “${query.trim()}”` : view === 'all' ? 'All stations' : view === 'favourites' ? 'Your favourites' : CATEGORIES.find(c => c.id === view)?.label ?? '';
 
   const playButton = (s: LiveStation, cls = '') => (
     <button type="button" className={`lr-bigplay ${cls}`} onClick={() => (status === 'error' && isOn(s) ? play(s) : toggle(s))}
@@ -229,10 +264,17 @@ export default function LiveRadio() {
 
   const liveLine = current && (
     <span className={`lr-liveline st-${status}`}>
-      <span className="lr-livepill">{playing ? <><i className="lr-dot" /> LIVE</> : STATUS_TEXT[status]}</span>
+      <span className="lr-livepill">{playing ? <><i className="lr-dot" /> ON AIR</> : STATUS_TEXT[status]}</span>
       <span className="lr-track"><i /></span>
       <span className="lr-elapsed" aria-label="Listening time">{clock(elapsed)}</span>
     </span>
+  );
+
+  const favButton = (s: LiveStation, cls = 'lr-iconbtn') => (
+    <button type="button" className={`${cls}${favs.includes(s.id) ? ' is-fav' : ''}`} onClick={() => toggleFav(s.id)}
+      aria-label={favs.includes(s.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={favs.includes(s.id)}>
+      <Icon name="favorite" />
+    </button>
   );
 
   return (
@@ -246,128 +288,166 @@ export default function LiveRadio() {
       />
 
       <div className="lr-wrap">
-        {/* ---------- hero ---------- */}
-        <section className="lr-hero" aria-label={current ? 'Now playing' : 'Featured station'}>
-          {hero && <div className="lr-hero-bg" style={{ ['--hero-img' as string]: hero.image ? `url("${hero.image}")` : 'none' }}><Cover s={hero} size="xl" /></div>}
-          <div className="lr-hero-inner">
-            {hero ? <Cover s={hero} size="xl" /> : <span className="lr-cover xl lr-skel" />}
-            <div className="lr-hero-text">
-              <p className="lr-eyebrow">{current ? (status === 'error' ? 'Station not responding' : 'Now playing') : recentStations.length ? 'Pick up where you left off' : 'Live Quran Radio'}</p>
-              <h1>{hero?.name ?? 'Live Quran Radio'}</h1>
-              {hero?.nameAr && <p className="lr-hero-ar" lang="ar" dir="rtl">{hero.nameAr}</p>}
-              <p className="lr-hero-sub">{hero ? detail(hero) : 'Loading stations…'}{data && ` · ${stations.length} live stations`}</p>
-              {current && isOn(hero!) ? <div className="lr-hero-live">{liveLine}<Bars on={playing} big /></div> : null}
-              {hero && (
-                <div className="lr-hero-actions">
-                  {playButton(hero)}
-                  <button type="button" className={`lr-iconbtn${favs.includes(hero.id) ? ' is-fav' : ''}`} onClick={() => toggleFav(hero.id)}
-                    aria-label={favs.includes(hero.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={favs.includes(hero.id)}>
-                    <Icon name="favorite" />
-                  </button>
-                  {status === 'error' && <button type="button" className="lr-pill" onClick={() => step(1)}><Icon name="skip_next" /> Try next station</button>}
+        {/* ---------- the radio set ---------- */}
+        <section className={`rd st-${status}`} aria-label={current ? 'Now playing' : 'Radio'}>
+          <div className="rd-cabinet">
+            <header className="rd-plate">
+              <span className="rd-brand">Learn Quran</span>
+              <span className="rd-model">Live Quran Radio · {data ? `${stations.length} stations` : 'loading'}</span>
+            </header>
+
+            <Dial band={band} index={dialIndex} status={tune != null ? 'connecting' : status} onTune={play} maxNames={narrow ? 6 : 12}>
+              <Lamp status={tune != null ? 'connecting' : status} />
+              <span className="rd-read-name">
+                {shownStation ? (
+                  <>
+                    <b>{shownStation.name}</b>
+                    <small>{shownStation.nameAr ? <span lang="ar" dir="rtl">{shownStation.nameAr}</span> : detail(shownStation)}</small>
+                  </>
+                ) : (
+                  <b>{loadError ? 'No signal' : 'Warming up…'}</b>
+                )}
+              </span>
+              <span className="rd-read-time" aria-label="Listening time">{current && status !== 'idle' ? clock(elapsed) : '--:--'}</span>
+            </Dial>
+
+            <div className="rd-face">
+              <div className="rd-grille" aria-hidden="true">
+                <Bars on={playing} big />
+              </div>
+
+              <div className="rd-panel">
+                <Keys items={keys} on={q ? null : view} onPick={open} />
+                <div className="rd-controls">
+                  <Knob
+                    label="Volume"
+                    value={volume}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    onChange={setVolume}
+                    readout={`${Math.round(volume * 100)}`}
+                  />
+                  <div className="rd-transport">
+                    <button type="button" className="rd-step" onClick={() => step(-1)} aria-label="Previous station" disabled={!band.length}><Icon name="fast_rewind" /></button>
+                    {shownStation ? playButton(shownStation) : <button type="button" className="lr-bigplay" disabled aria-label="Play"><Icon name="play_arrow" /></button>}
+                    <button type="button" className="rd-step" onClick={() => step(1)} aria-label="Next station" disabled={!band.length}><Icon name="fast_forward" /></button>
+                  </div>
+                  <Knob
+                    label="Tuning"
+                    big
+                    value={tune ?? Math.max(0, bandIndex)}
+                    min={0}
+                    max={Math.max(0, band.length - 1)}
+                    onChange={setTune}
+                    onCommit={v => { if (band[v] && band[v].id !== current?.id) play(band[v]); setTune(null); }}
+                    disabled={band.length < 2}
+                    readout={band.length ? `${(tune ?? Math.max(0, bandIndex)) + 1} / ${band.length}` : '–'}
+                  />
                 </div>
-              )}
+                {shownStation && (
+                  <div className="rd-extra">
+                    {favButton(shownStation, 'rd-fav')}
+                    {status === 'error' && <button type="button" className="lr-pill" onClick={() => step(1)}><Icon name="skip_next" /> Try next station</button>}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+          <div className="rd-feet" aria-hidden="true"><i /><i /></div>
         </section>
 
-        {/* ---------- search + tabs ---------- */}
-        <div className="lr-bar" ref={listTop}>
-          <label className="lr-search">
-            <Icon name="search" />
-            <input type="search" value={query} onChange={e => { setQuery(e.target.value); setShown(PAGE); }}
-              placeholder="Search reciter, station or country" aria-label="Search stations" />
-          </label>
-          <div className="lr-tabs" role="tablist" aria-label="Browse">
-            {tabs.map(t => (
-              <button key={t.id} type="button" role="tab" aria-selected={!q && view === t.id}
-                className={`lr-tab${!q && view === t.id ? ' is-on' : ''}`} onClick={() => open(t.id)}>
-                {t.label}{t.n != null && <span>{t.n}</span>}
-              </button>
-            ))}
+        {/* ---------- programme guide ---------- */}
+        <div className="lr-guide">
+          <div className="lr-bar" ref={listTop}>
+            <h2 className="lr-guide-title">Programme guide</h2>
+            <label className="lr-search">
+              <Icon name="search" />
+              <input type="search" value={query} onChange={e => { setQuery(e.target.value); setShown(PAGE); }}
+                placeholder="Find a reciter, station or country" aria-label="Search stations" />
+            </label>
           </div>
-        </div>
 
-        {data?.missing.length ? (
-          <p className="lr-note" role="status"><Icon name="info" /> {data.missing.join(' and ')} couldn’t be reached, so some stations are missing for now.</p>
-        ) : null}
+          {data?.missing.length ? (
+            <p className="lr-note" role="status"><Icon name="info" /> {data.missing.join(' and ')} couldn’t be reached, so some stations are missing for now.</p>
+          ) : null}
 
-        {/* ---------- body ---------- */}
-        {loadError ? (
-          <div className="lr-state" role="alert">
-            <Icon name="wifi_off" />
-            <h2>Couldn’t load live stations</h2>
-            <p>{loadError}</p>
-            <button type="button" className="lr-pill primary" onClick={() => setAttempt(a => a + 1)}><Icon name="refresh" /> Try again</button>
-          </div>
-        ) : !data ? (
-          <div className="lr-shelf"><div className="lr-shelf-row">{Array.from({ length: 7 }, (_, i) => <span key={i} className="lr-tile-skel" />)}</div></div>
-        ) : !q && view === 'home' ? (
-          shelves.map(sh => (
-            <section key={sh.title} className="lr-shelf" aria-label={sh.title}>
-              <header>
-                <h2>{sh.title}</h2>
-                {sh.id && sh.list.length > 4 && <button type="button" className="lr-seeall" onClick={() => open(sh.id!)}>See all</button>}
-              </header>
-              <ul className="lr-shelf-row">
-                {sh.list.slice(0, SHELF).map(s => (
-                  <Tile key={s.id} s={s} active={isOn(s)} playing={isOn(s) && playing} onPlay={() => toggle(s)} />
-                ))}
-              </ul>
-            </section>
-          ))
-        ) : (
-          <section className="lr-list" aria-label="Stations">
-            <header className="lr-list-head">
-              <h2>{q ? `Results for “${query.trim()}”` : tabs.find(t => t.id === view)?.label}</h2>
-              <span>{listed.length} station{listed.length === 1 ? '' : 's'}</span>
-              {!q && view === 'station' && countries.length > 1 && (
-                <select className="lr-select" value={country} onChange={e => { setCountry(e.target.value); setShown(PAGE); }} aria-label="Country">
-                  <option value="">All countries</option>
-                  {countries.map(([cc, c]) => <option key={cc} value={cc}>{c.name} ({c.n})</option>)}
-                </select>
-              )}
-            </header>
-            {listed.length === 0 ? (
-              <div className="lr-state">
-                <Icon name="search_off" />
-                <h2>No stations found</h2>
-                <p>Try another search or category.</p>
-                <button type="button" className="lr-pill" onClick={() => open('home')}>Back to home</button>
-              </div>
-            ) : (
-              <>
-                <ol className="lr-rows">
-                  {listed.slice(0, shown).map((s, i) => (
-                    <Row key={s.id} s={s} index={i} active={isOn(s)} playing={isOn(s) && playing} connecting={isOn(s) && status === 'connecting'}
-                      fav={favs.includes(s.id)} onPlay={() => toggle(s)} onFav={() => toggleFav(s.id)} />
+          {loadError ? (
+            <div className="lr-state" role="alert">
+              <Icon name="wifi_off" />
+              <h2>Couldn’t load live stations</h2>
+              <p>{loadError}</p>
+              <button type="button" className="lr-pill primary" onClick={() => setAttempt(a => a + 1)}><Icon name="refresh" /> Try again</button>
+            </div>
+          ) : !data ? (
+            <div className="lr-shelf"><div className="lr-shelf-row">{Array.from({ length: 7 }, (_, i) => <span key={i} className="lr-tile-skel" />)}</div></div>
+          ) : !q && view === 'home' ? (
+            shelves.map(sh => (
+              <section key={sh.title} className="lr-shelf" aria-label={sh.title}>
+                <header>
+                  <h2>{sh.title}</h2>
+                  {sh.id && sh.list.length > 4 && <button type="button" className="lr-seeall" onClick={() => open(sh.id!)}>See all</button>}
+                </header>
+                <ul className="lr-shelf-row">
+                  {sh.list.slice(0, SHELF).map(s => (
+                    <Tile key={s.id} s={s} active={isOn(s)} playing={isOn(s) && playing} onPlay={() => toggle(s)} />
                   ))}
-                </ol>
-                {listed.length > shown && (
-                  <button type="button" className="lr-pill lr-more" onClick={() => setShown(n => n + PAGE)}>Show more ({listed.length - shown} left)</button>
+                </ul>
+              </section>
+            ))
+          ) : (
+            <section className="lr-list" aria-label="Stations">
+              <header className="lr-list-head">
+                <h2>{listTitle}</h2>
+                <span>{listed.length} station{listed.length === 1 ? '' : 's'}</span>
+                {!q && view === 'station' && countries.length > 1 && (
+                  <select className="lr-select" value={country} onChange={e => { setCountry(e.target.value); setShown(PAGE); }} aria-label="Country">
+                    <option value="">All countries</option>
+                    {countries.map(([cc, c]) => <option key={cc} value={cc}>{c.name} ({c.n})</option>)}
+                  </select>
                 )}
-              </>
-            )}
-          </section>
-        )}
+              </header>
+              {listed.length === 0 ? (
+                <div className="lr-state">
+                  <Icon name="search_off" />
+                  <h2>No stations found</h2>
+                  <p>Try another search or band.</p>
+                  <button type="button" className="lr-pill" onClick={() => open('home')}>Back to home</button>
+                </div>
+              ) : (
+                <>
+                  <ol className="lr-rows">
+                    {listed.slice(0, shown).map((s, i) => (
+                      <Row key={s.id} s={s} index={i} active={isOn(s)} playing={isOn(s) && playing} connecting={isOn(s) && status === 'connecting'}
+                        fav={favs.includes(s.id)} onPlay={() => toggle(s)} onFav={() => toggleFav(s.id)} />
+                    ))}
+                  </ol>
+                  {listed.length > shown && (
+                    <button type="button" className="lr-pill lr-more" onClick={() => setShown(n => n + PAGE)}>Show more ({listed.length - shown} left)</button>
+                  )}
+                </>
+              )}
+            </section>
+          )}
 
-        <footer className="lr-foot">
-          <p>
-            Streams from <a href="https://mp3quran.net" target="_blank" rel="noopener noreferrer">MP3Quran.net</a> and the{' '}
-            <a href="https://www.radio-browser.info" target="_blank" rel="noopener noreferrer">Radio Browser</a> community directory.
-            Stations are run by their broadcasters; some may be offline at times. Tip: press Space to play or pause.
-          </p>
-        </footer>
+          <footer className="lr-foot">
+            <p>
+              Streams from <a href="https://mp3quran.net" target="_blank" rel="noopener noreferrer">MP3Quran.net</a> and the{' '}
+              <a href="https://www.radio-browser.info" target="_blank" rel="noopener noreferrer">Radio Browser</a> community directory.
+              Stations are run by their broadcasters; some may be offline at times. Tip: press Space to play or pause, and turn the tuning knob with the mouse wheel.
+            </p>
+          </footer>
+        </div>
       </div>
 
-      {/* ---------- player bar ---------- */}
+      {/* ---------- player bar (follows you down the page) ---------- */}
       {current && (
         <section className={`lr-player st-${status}`} aria-label="Player">
           <button type="button" className="lr-player-info" onClick={() => setSheet(true)} aria-label="Open now playing">
             <Cover s={current} size="xs" />
             <span>
               <b>{current.name}</b>
-              <small>{status === 'error' ? 'Not responding — try another station' : current.nameAr ?? detail(current)}</small>
+              <small>{status === 'error' ? 'No signal — try another station' : current.nameAr ?? detail(current)}</small>
             </span>
           </button>
           <div className="lr-player-mid">
@@ -379,16 +459,13 @@ export default function LiveRadio() {
             {liveLine}
           </div>
           <div className="lr-player-end">
-            <button type="button" className={`lr-iconbtn${favs.includes(current.id) ? ' is-fav' : ''}`} onClick={() => toggleFav(current.id)}
-              aria-label={favs.includes(current.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={favs.includes(current.id)}>
-              <Icon name="favorite" />
-            </button>
+            {favButton(current)}
             <label className="lr-vol">
               <Icon name={volume === 0 ? 'volume_off' : volume < 0.5 ? 'volume_down' : 'volume_up'} />
               <input type="range" min={0} max={1} step={0.05} value={volume} onChange={e => setVolume(Number(e.target.value))}
                 aria-label="Volume" style={{ ['--v' as string]: `${volume * 100}%` }} />
             </label>
-            <button type="button" className="lr-iconbtn" onClick={() => { stop(); setCurrent(null); setSheet(false); }} aria-label="Close player"><Icon name="close" /></button>
+            <button type="button" className="lr-iconbtn" onClick={() => { stop(); setCurrent(null); setSheet(false); }} aria-label="Switch off"><Icon name="power_settings_new" /></button>
           </div>
         </section>
       )}
@@ -396,13 +473,11 @@ export default function LiveRadio() {
       {/* ---------- full-screen now playing (phones) ---------- */}
       {current && sheet && (
         <div className="lr-sheet" role="dialog" aria-modal="true" aria-label="Now playing">
-          <div className="lr-sheet-bg" style={{ ['--hero-img' as string]: current.image ? `url("${current.image}")` : 'none' }}><Cover s={current} size="xl" /></div>
           <div className="lr-sheet-inner">
             <header>
               <button type="button" className="lr-iconbtn" onClick={() => setSheet(false)} aria-label="Close"><Icon name="keyboard_arrow_down" /></button>
               <span>Now playing</span>
-              <button type="button" className={`lr-iconbtn${favs.includes(current.id) ? ' is-fav' : ''}`} onClick={() => toggleFav(current.id)}
-                aria-label={favs.includes(current.id) ? 'Remove from favourites' : 'Add to favourites'}><Icon name="favorite" /></button>
+              {favButton(current)}
             </header>
             <Cover s={current} size="xl" />
             <div className="lr-sheet-text">
@@ -410,7 +485,7 @@ export default function LiveRadio() {
               {current.nameAr && <p lang="ar" dir="rtl">{current.nameAr}</p>}
               <small>{detail(current)}</small>
             </div>
-            <Bars on={playing} big />
+            <div className="lr-sheet-grille"><Bars on={playing} big /></div>
             {liveLine}
             <div className="lr-ctrls big">
               <button type="button" className="lr-iconbtn" onClick={() => step(-1)} aria-label="Previous station"><Icon name="skip_previous" /></button>
