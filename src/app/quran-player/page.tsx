@@ -738,6 +738,7 @@ export default function QuranPlayerPage() {
       <GlassNowPlaying
         open={glassOpen}
         onClose={() => setGlassOpen(false)}
+        onStop={closePlayer}
         audioRef={audioRef}
         track={displayTrack}
         isPlaying={isPlaying}

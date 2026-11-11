@@ -9,7 +9,6 @@ import LearnSteps from '@/components/LearnSteps';
 import TodayPanel from '@/components/TodayPanel';
 import QuickAccessGrid from '@/components/QuickAccessGrid';
 import TasbeehCounter from '@/components/TasbeehCounter';
-import GetStarted from '@/components/GetStarted';
 import FollowUs from '@/components/FollowUs';
 import NavigatePanel from '@/components/NavigatePanel';
 import PrayerStrip from '@/components/PrayerStrip';
@@ -1096,9 +1095,6 @@ export default function HomePage() {
 
             {/* ── LIVE SKY: follows the visitor's time of day ── */}
             <LiveScene />
-
-            {/* ── GET STARTED ── */}
-            <GetStarted />
 
             {/* ── FOLLOW US ── */}
             <FollowUs />

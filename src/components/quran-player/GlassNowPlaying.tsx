@@ -13,7 +13,10 @@ import "./GlassNowPlaying.css";
 
 type Props = {
   open: boolean;
+  /** minimise: hide this view, keep playing (the mini player stays) */
   onClose: () => void;
+  /** close: stop playback and dismiss the player */
+  onStop: () => void;
   audioRef: RefObject<HTMLAudioElement | null>;
   track: Track | null;
   isPlaying: boolean;
@@ -179,6 +182,21 @@ export function GlassNowPlaying(p: Props) {
       <div className="gnp-bg" style={{ background: art }} aria-hidden />
       <div className="gnp-veil" aria-hidden />
 
+      <div className="gnp-bar" role="toolbar" aria-label="Player window">
+        <button type="button" className="gnp-win" onClick={onClose} aria-label="Minimise player, keep playing" title="Minimise (Esc)">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
+          </svg>
+          <span>Minimise</span>
+        </button>
+        <button type="button" className="gnp-win danger" onClick={p.onStop} aria-label="Close player and stop playback" title="Close and stop">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+          <span>Close</span>
+        </button>
+      </div>
+
       <div className="gnp-grid">
         {/* ---------- left: visualizer + up next ---------- */}
         <div className="gnp-col gnp-left">
@@ -231,7 +249,7 @@ export function GlassNowPlaying(p: Props) {
         {/* ---------- centre: now playing ---------- */}
         <section className="gnp-card gnp-main" aria-label="Now playing">
           <div className="gnp-top">
-            <button ref={closeRef} type="button" className="gnp-round sm" onClick={onClose} aria-label="Close now playing">
+            <button ref={closeRef} type="button" className="gnp-round sm" onClick={onClose} aria-label="Minimise player, keep playing" title="Minimise">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="m6 9 6 6 6-6" />
               </svg>

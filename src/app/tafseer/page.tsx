@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { TargetArt } from '@/learn1min/components/Illustrations';
 import './tafseer.css';
 
 const SURAHS = [
@@ -137,10 +138,10 @@ const FEATURED = [1, 2, 18, 36, 55, 67, 112, 113, 114];
 const LAST_KEY = 'tafseer-last-surah';
 
 const COMMENTARIES = [
-  { name: 'Ibn Kathir', tag: 'English', text: 'Classical, hadith-based commentary by Hafiz Ibn Kathir.', icon: 'menu_book' },
-  { name: 'ابن كثير', tag: 'العربية', text: 'The original Arabic text of Tafsir Ibn Kathir.', icon: 'translate', rtl: true },
-  { name: "Ma'arif al-Qur'an", tag: 'English', text: 'Mufti Muhammad Shafi Usmani: scholarship with modern lessons.', icon: 'local_library' },
-  { name: 'Tazkirul Quran', tag: 'English', text: 'Maulana Wahiduddin Khan: a reflective, contemporary reading.', icon: 'lightbulb' },
+  { name: 'Ibn Kathir', tag: 'English', text: 'Classical, hadith-based commentary by Hafiz Ibn Kathir.', icon: 'menu_book', tone: 'green' },
+  { name: 'ابن كثير', tag: 'العربية', text: 'The original Arabic text of Tafsir Ibn Kathir.', icon: 'translate', rtl: true, tone: 'blue' },
+  { name: "Ma'arif al-Qur'an", tag: 'English', text: 'Mufti Muhammad Shafi Usmani: scholarship with modern lessons.', icon: 'local_library', tone: 'orange' },
+  { name: 'Tazkirul Quran', tag: 'English', text: 'Maulana Wahiduddin Khan: a reflective, contemporary reading.', icon: 'lightbulb', tone: 'gold' },
 ];
 
 type Filter = 'All' | 'Meccan' | 'Medinan' | 'Popular';
@@ -192,62 +193,71 @@ export default function TafseerIndexPage() {
 
   return (
     <main className="tz">
-      {/* ── Hero ── */}
-      <section className="tz-hero">
-        <div className="tz-wrap">
-          <span className="tz-kicker font-arabic">تفسير القرآن</span>
-          <h1>Understand every ayah</h1>
-          <p>Read the Quran with explanations from classical and contemporary scholars, ayah by ayah, in English and Arabic.</p>
+      <div className="tz-wrap">
+        {/* ── Hero ── */}
+        <section className="tz-hero" aria-labelledby="tz-title">
+          <div className="tz-hero-text">
+            <p className="tz-kicker">
+              Tafseer <span lang="ar" dir="rtl" style={{ fontFamily: ARABIC_FONT }}>تفسير القرآن</span>
+            </p>
+            <h1 id="tz-title">Understand every <em>ayah</em></h1>
+            <p className="tz-lead">Read the Quran with explanations from classical and contemporary scholars, ayah by ayah, in English and Arabic.</p>
 
-          <div className="tz-search">
-            <span className="material-symbols-outlined">search</span>
-            <input
-              type="search"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search surah name or number"
-              aria-label="Search surahs"
-            />
-            {search && (
-              <button onClick={() => setSearch('')} aria-label="Clear search"><span className="material-symbols-outlined">close</span></button>
-            )}
+            <div className="tz-search">
+              <span className="material-symbols-outlined">search</span>
+              <input
+                type="search"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search surah name, meaning or number"
+                aria-label="Search surahs"
+              />
+              {search && (
+                <button onClick={() => setSearch('')} aria-label="Clear search"><span className="material-symbols-outlined">close</span></button>
+              )}
+            </div>
+
+            <ul className="tz-stats">
+              <li><b>114</b> surahs</li>
+              <li><b>6,236</b> ayahs</li>
+              <li><b>4</b> commentaries</li>
+            </ul>
           </div>
 
-          <ul className="tz-stats">
-            <li><b>114</b><span>surahs</span></li>
-            <li><b>6,236</b><span>ayahs</span></li>
-            <li><b>4</b><span>commentaries</span></li>
-          </ul>
-        </div>
-      </section>
+          <div className="tz-hero-art" aria-hidden="true">
+            <TargetArt className="tz-art" />
+          </div>
+        </section>
 
-      <div className="tz-wrap tz-body">
         {/* ── Continue ── */}
         {lastSurah && !search && (
           <Link href={`/tafseer/${lastSurah.num}`} className="tz-continue">
-            <span className="tz-continue-icon material-symbols-outlined">bookmark</span>
+            <span className="tz-tile tone-gold"><span className="material-symbols-outlined">bookmark</span></span>
             <span className="tz-continue-text">
               <small>Continue where you left off</small>
               <b>{lastSurah.num}. {lastSurah.name}</b>
             </span>
-            <span className="tz-continue-ar" style={{ fontFamily: ARABIC_FONT }}>{lastSurah.ar}</span>
-            <span className="material-symbols-outlined">arrow_forward</span>
+            <span className="tz-continue-ar" lang="ar" style={{ fontFamily: ARABIC_FONT }}>{lastSurah.ar}</span>
+            <span className="tz-go material-symbols-outlined">arrow_forward</span>
           </Link>
         )}
 
         {/* ── Commentaries ── */}
         {!search && (
-          <section aria-label="Available commentaries" className="tz-comms">
-            {COMMENTARIES.map(c => (
-              <div key={c.name} className="tz-comm">
-                <span className="tz-comm-icon material-symbols-outlined">{c.icon}</span>
-                <div>
-                  <b dir={c.rtl ? 'rtl' : undefined}>{c.name}</b>
-                  <small>{c.tag}</small>
+          <section aria-labelledby="tz-comms-h" className="tz-section">
+            <h2 id="tz-comms-h" className="tz-h2">Four commentaries, side by side</h2>
+            <div className="tz-comms">
+              {COMMENTARIES.map(c => (
+                <div key={c.name} className="tz-comm">
+                  <span className="tz-comm-top">
+                    <span className={`tz-tile tone-${c.tone}`}><span className="material-symbols-outlined">{c.icon}</span></span>
+                    <span className={`tz-pill tone-${c.tone}`}>{c.tag}</span>
+                  </span>
+                  <b dir={c.rtl ? 'rtl' : undefined} style={c.rtl ? { fontFamily: ARABIC_FONT } : undefined}>{c.name}</b>
                   <p>{c.text}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </section>
         )}
 
@@ -281,7 +291,7 @@ export default function TafseerIndexPage() {
         {/* ── Grid ── */}
         {filtered.length === 0 ? (
           <div className="tz-empty">
-            <span className="material-symbols-outlined">search_off</span>
+            <span className="tz-tile tone-green big"><span className="material-symbols-outlined">search_off</span></span>
             <h3>No surahs found</h3>
             <p>Try another name, number or meaning.</p>
             <button onClick={clear}>Clear search and filters</button>
@@ -290,15 +300,15 @@ export default function TafseerIndexPage() {
           <div className="tz-grid">
             {filtered.map((s, i) => (
               <Link key={s.num} href={`/tafseer/${s.num}`} className="tz-card" style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}>
-                <span className="tz-num"><b>{s.num}</b></span>
+                <span className="tz-num">{s.num}</span>
                 <span className="tz-card-main">
-                  <span className="tz-name">{s.name}</span>
+                  <span className="tz-name">
+                    {s.name}
+                    {FEATURED.includes(s.num) && <span className="tz-star material-symbols-outlined" title="Popular">star</span>}
+                  </span>
                   <span className="tz-meaning">{s.meaning}</span>
                   <span className="tz-meta">
-                    <span className={`tz-type ${s.t === 'Meccan' ? 'meccan' : 'medinan'}`}>
-                      <span className="material-symbols-outlined">{s.t === 'Meccan' ? 'wb_sunny' : 'location_city'}</span>
-                      {s.t}
-                    </span>
+                    <span className={`tz-pill ${s.t === 'Meccan' ? 'tone-orange' : 'tone-blue'}`}>{s.t}</span>
                     <span>{s.v} ayahs</span>
                   </span>
                 </span>
@@ -311,3 +321,4 @@ export default function TafseerIndexPage() {
     </main>
   );
 }
+
