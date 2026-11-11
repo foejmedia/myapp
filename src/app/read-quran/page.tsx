@@ -9,10 +9,11 @@ import PageExplorer from '@/components/PageExplorer';
 import './styles/library.css';
 
 const MODES = [
-  { icon: 'translate', title: 'Translation', text: 'Arabic with English meaning', href: '/read-quran/1', anim: 'flip', from: '#34d399', to: '#059669' },
+  { icon: 'translate', title: 'Translation', text: 'Arabic with English meaning', href: '/read-quran/1?mode=translation', anim: 'flip', from: '#34d399', to: '#059669' },
   { icon: 'text_fields', title: 'Word by Word', text: 'Understand every word', href: '/read-quran/1?mode=word-by-word', anim: 'grow', from: '#22d3ee', to: '#0e7490' },
   { icon: 'auto_stories', title: 'Mushaf', text: 'Page by page, 604 pages', href: '/quran-pages', anim: 'page', from: '#fbbf24', to: '#b45309' },
   { icon: 'headphones', title: 'Listen', text: 'Recitation with audio', href: '/quran-player', anim: 'beat', from: '#a78bfa', to: '#6d28d9' },
+  { icon: 'menu_book', title: 'Tafseer', text: 'Explanation of every ayah', href: '/tafseer', anim: 'open', from: '#fb7185', to: '#be123c' },
 ];
 
 const RING_R = 30;

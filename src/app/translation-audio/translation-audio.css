@@ -91,7 +91,15 @@
 .ta-ar.is-qcf { line-height: 2.1; word-spacing: 0.05em; font-feature-settings: normal; }
 .ta-qcf-end { color: var(--ta-accent); }
 .ta-tr { margin: 0; font-size: 1rem; line-height: 1.75; color: var(--ta-muted); transition: color 0.2s ease; }
-.ta-tr[dir="rtl"] { font-size: 1.1rem; line-height: 2; }
+/* Urdu and Persian: a Naskh font that has every letter, so words join and space correctly */
+.ta-tr[dir="rtl"] {
+  font-family: var(--ta-font-ar), var(--font-manrope), system-ui, sans-serif;
+  font-size: 1.2rem;
+  line-height: 2.1;
+  text-align: right;
+  word-spacing: 0.04em;
+}
+.ta-lang span[dir='rtl'] { font-family: var(--ta-font-ar), 'Amiri', serif; font-size: 0.95rem; }
 .ta-ar.hot, .ta-tr.hot { color: var(--ta-accent-2); }
 .ta-tr.hot { font-weight: 600; }
 html.rr-dark .ta-ar.hot, html.rr-dark .ta-tr.hot, .dark .ta-ar.hot, .dark .ta-tr.hot { color: #5eead4; }
@@ -132,3 +140,36 @@ html.rr-dark .ta-ar.hot, html.rr-dark .ta-tr.hot, .dark .ta-ar.hot, .dark .ta-tr
   .ta-seg button { padding: 8px 10px; font-size: 0.78rem; }
 }
 @media (prefers-reduced-motion: reduce) { .ta *, .ta-skel i { transition: none !important; animation: none !important; } }
+
+/* pages of 20 ayahs */
+.ta-pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 4px 0 14px; }
+.ta-pager-range { font-size: 0.85rem; color: var(--ta-muted); white-space: nowrap; }
+.ta-pager-range b { color: var(--ta-ink); }
+.ta-pager-nums { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; max-width: 100%; padding: 2px; }
+.ta-pager-nums::-webkit-scrollbar { display: none; }
+.ta-pager-nums button {
+  position: relative; flex: none; min-width: 36px; height: 36px; padding: 0 8px; border-radius: 10px;
+  border: 1.5px solid var(--ta-line); background: var(--ta-card); color: var(--ta-ink);
+  font: inherit; font-size: 0.88rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.ta-pager-nums button:hover { border-color: var(--ta-accent); }
+.ta-pager-nums button.on { background: var(--ta-accent); border-color: var(--ta-accent); color: #fff; }
+.ta-pager-nums button.live::after {
+  content: ''; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%;
+  background: #f59e0b; box-shadow: 0 0 0 2px var(--ta-card);
+}
+.ta-pagenav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 24px; font-size: 0.88rem; color: var(--ta-muted); }
+.ta-pagenav button {
+  display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 14px; border-radius: 12px;
+  border: 1.5px solid var(--ta-line); background: var(--ta-card); color: var(--ta-accent-2);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.ta-pagenav button:disabled { opacity: 0.4; cursor: default; }
+.ta-pagenav button .material-symbols-outlined { font-size: 20px; }
+@media (max-width: 560px) {
+  .ta-pager { flex-direction: column; align-items: stretch; gap: 8px; }
+}
+/* the page strip scrolls inside the column instead of widening it */
+.ta-main { min-width: 0; }
+.ta-pager, .ta-pager-nums { min-width: 0; }

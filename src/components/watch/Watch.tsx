@@ -8,10 +8,8 @@ import Player from './Player';
 import { readList, readProgress, resumeAt, snap, toggleList, type Progress, type Snap } from './store';
 import './watch.css';
 
-type Tab = 'home' | 'search' | 'list' | RowId;
+type Tab = 'home' | 'list' | RowId;
 const SHELF_SIZE = 20;
-
-const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ًͯ-ٰٟ]/g, '');
 
 /** One newest video per channel, so the spotlight isn't six uploads from the same channel */
 function spotlight(videos: Video[]) {
@@ -25,12 +23,11 @@ export default function Watch() {
   const params = useSearchParams();
   const watching = params?.get('v') ?? null;
   const tabParam = params?.get('tab') as Tab | null;
-  const tab: Tab = tabParam && (['home', 'search', 'list', ...ROWS.map(r => r.id)] as string[]).includes(tabParam) ? tabParam : 'home';
+  const tab: Tab = tabParam && (['home', 'list', ...ROWS.map(r => r.id)] as string[]).includes(tabParam) ? tabParam : 'home';
 
   const [data, setData] = useState<CatalogResponse | null>(null);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
-  const [query, setQuery] = useState('');
   const [list, setList] = useState<Snap[]>([]);
   const [progress, setProgress] = useState<Record<string, Progress>>({});
 
@@ -77,11 +74,6 @@ export default function Watch() {
     .sort((a, b) => b.at - a.at)
     .map(p => ({ v: { ...p.v, ...byId.get(p.v.id) }, pct: p.t / p.d })), [progress, byId]);
 
-  const results = useMemo(() => {
-    const q = norm(query.trim());
-    return q ? videos.filter(v => norm(`${v.title} ${v.channel} ${v.summary}`).includes(q)) : [];
-  }, [videos, query]);
-
   const current: (Partial<Video> & Snap) | null = watching
     ? byId.get(watching) ?? list.find(x => x.id === watching) ?? progress[watching]?.v ?? (/^[\w-]{11}$/.test(watching) ? { id: watching, title: 'Video', channel: '', row: 'recitation', short: false } : null)
     : null;
@@ -104,9 +96,8 @@ export default function Watch() {
     ? <ul className="wt-grid">{cards(vs)}</ul>
     : <div className="wt-state"><Icon name="video_library" /><p>{empty}</p></div>;
 
+  // Home (the LearnQuran homepage) is a link in the rail; the Watch logo returns to the start of Watch
   const nav: { id: Tab; label: string; icon: string }[] = [
-    { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'search', label: 'Search', icon: 'search' },
     ...ROWS.map(r => ({ id: r.id as Tab, label: r.short, icon: r.icon })),
     { id: 'list', label: 'My List', icon: 'bookmark' },
   ];
@@ -155,23 +146,6 @@ export default function Watch() {
         })}
       </>
     );
-  } else if (tab === 'search') {
-    body = (
-      <section className="wt-page" aria-label="Search">
-        <label className="wt-search">
-          <Icon name="search" />
-          <input autoFocus type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search titles, reciters and scholars" aria-label="Search videos" />
-        </label>
-        {query.trim() ? grid(results, `Nothing matches “${query.trim()}”.`) : (
-          <div className="wt-suggest">
-            <p>Popular searches</p>
-            {['Surah Al-Kahf', 'Surah Al-Mulk', 'Ramadan', 'Seerah', 'Tafsir', 'Kids'].map(s => (
-              <button key={s} type="button" className="wt-chip" onClick={() => setQuery(s)}>{s}</button>
-            ))}
-          </div>
-        )}
-      </section>
-    );
   } else if (tab === 'list') {
     body = (
       <section className="wt-page" aria-label="My List">
@@ -198,9 +172,12 @@ export default function Watch() {
   return (
     <div className="wt">
       <nav className="wt-rail" aria-label="Watch">
-        <Link href="/" className="wt-brand" title="Back to LearnQuran">
+        <button type="button" className="wt-brand" title="Watch: start" onClick={() => go({ tab: 'home' })}>
           <Icon name="smart_display" />
-          <span className="wt-brand-text"><b>Watch</b><span className="wt-brand-sub">← LearnQuran home</span></span>
+          <span className="wt-brand-text"><b>Watch</b></span>
+        </button>
+        <Link href="/" className="wt-rail-item" title="LearnQuran homepage">
+          <Icon name="home" /><span>Home</span>
         </Link>
         {nav.map(n => (
           <button key={n.id} type="button" className={`wt-rail-item${tab === n.id ? ' is-on' : ''}`} aria-current={tab === n.id ? 'page' : undefined}

@@ -98,7 +98,8 @@ export default function MemorizeQuranPage() {
     // ── Home ──
     const [view, setView] = useState<'home' | 'session'>('home');
     const [query, setQuery] = useState('');
-    const [filter, setFilter] = useState<'All' | 'Meccan' | 'Medinan' | 'Started'>('All');
+    // surah list: Quran order (1 → 114), reverse order (114 → 1, from An-Nas), or only the surahs already started
+    const [filter, setFilter] = useState<'asc' | 'desc' | 'started'>('asc');
 
     // ── Session ──
     const [chapterId, setChapterId] = useState(1);
@@ -329,14 +330,18 @@ export default function MemorizeQuranPage() {
         setPlayerHidden(true);
     };
 
-    const step = (delta: number) => {
-        const target = Math.min(Math.max((currentIndex >= 0 ? currentIndex : 0) + delta, 0), verses.length - 1);
+    /** Go to an ayah of the range: plays it if audio is on, otherwise selects it and scrolls to it. */
+    const jumpTo = (index: number) => {
+        const target = Math.min(Math.max(index, 0), verses.length - 1);
+        if (target < 0) return;
         if (isPlaying) playFrom(target);
         else {
             setCurrentIndex(target);
             document.getElementById(`hz-verse-${verses[target]?.number}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     };
+    // before any ayah is selected (index -1), "next" goes to the first ayah
+    const step = (delta: number) => jumpTo((currentIndex >= 0 ? currentIndex : delta > 0 ? -1 : 0) + delta);
 
     // ── Session helpers ──
     const openSession = (id: number, from?: number, to?: number, startMode: Mode = 'listen') => {
@@ -474,14 +479,9 @@ export default function MemorizeQuranPage() {
     const filtered = chapters.filter(c => {
         const q = query.trim().toLowerCase();
         const matchQ = !q || c.name.toLowerCase().includes(q) || c.nameTranslation.toLowerCase().includes(q) || c.nameArabic.includes(query.trim()) || String(c.id) === q;
-        const place = (c.revelationPlace ?? '').toLowerCase();
-        const matchF =
-            filter === 'All' ||
-            (filter === 'Meccan' && (place === 'makkah' || place === 'mecca')) ||
-            (filter === 'Medinan' && (place === 'madinah' || place === 'medina')) ||
-            (filter === 'Started' && startedCount(store, c.id) > 0);
+        const matchF = filter !== 'started' || startedCount(store, c.id) > 0;
         return matchQ && matchF;
-    });
+    }).sort((a, b) => (filter === 'desc' ? b.id - a.id : a.id - b.id));
 
     if (loading) {
         return (
@@ -583,9 +583,13 @@ export default function MemorizeQuranPage() {
                                     <span className="material-symbols-outlined">search</span>
                                     <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Name, meaning or number" aria-label="Search surahs" />
                                 </label>
-                                <div className="hz-seg" role="tablist" aria-label="Filter">
-                                    {(['All', 'Meccan', 'Medinan', 'Started'] as const).map(f => (
-                                        <button key={f} role="tab" aria-selected={filter === f} className={filter === f ? 'on' : ''} onClick={() => setFilter(f)}>{f}</button>
+                                <div className="hz-seg" role="tablist" aria-label="Order">
+                                    {([
+                                        ['asc', '1 → 114', 'Quran order, Al-Fatihah to An-Nas'],
+                                        ['desc', '114 → 1', 'Reverse order, starting from An-Nas'],
+                                        ['started', 'Started', 'Only surahs you have started'],
+                                    ] as const).map(([id, label, hint]) => (
+                                        <button key={id} role="tab" aria-selected={filter === id} className={filter === id ? 'on' : ''} onClick={() => setFilter(id)} title={hint} aria-label={hint}>{label}</button>
                                     ))}
                                 </div>
                             </div>
@@ -873,18 +877,32 @@ export default function MemorizeQuranPage() {
             {verses.length > 0 && !focus && !playerHidden && (
                 <div className="hz-player" role="region" aria-label="Recitation player">
                     <div className="hz-player-info">
-                        <b>{current ? `Ayah ${current.number}` : `Ayah ${fromVerse}–${toVerse}`}<span> · {reciterName}</span></b>
+                        {/* numbering: which ayah, out of how many; pick a number to jump straight to it */}
+                        <span className="hz-player-nav">
+                            <label className="hz-player-num">
+                                <select
+                                    value={currentIndex >= 0 ? currentIndex : ''}
+                                    onChange={e => jumpTo(Number(e.target.value))}
+                                    aria-label="Go to ayah"
+                                >
+                                    {currentIndex < 0 && <option value="" disabled>Ayah {fromVerse}–{toVerse}</option>}
+                                    {verses.map((v, i) => <option key={v.key} value={i}>Ayah {v.number}</option>)}
+                                </select>
+                                <span className="material-symbols-outlined" aria-hidden="true">expand_more</span>
+                            </label>
+                            <span className="hz-player-of">{currentIndex >= 0 ? `${currentIndex + 1} of ${verses.length}` : `${verses.length} ayahs`}</span>
+                        </span>
                         <small>
-                            {current ? `Repeat ${currentRepeat} of ${repeatCount}` : `${verses.length} ayahs · ${repeatCount}× each`}
+                            {reciterName} · {current ? `repeat ${currentRepeat} of ${repeatCount}` : `${repeatCount}× each`}
                             {loopEnabled && ' · looping'}
                             {playbackRate !== 1 && ` · ${playbackRate}×`}
                         </small>
                         <span className="hz-player-track"><span style={{ width: `${verses.length ? ((Math.max(currentIndex, 0) + (current ? currentRepeat / repeatCount : 0)) / verses.length) * 100 : 0}%` }} /></span>
                     </div>
                     <div className="hz-player-ctrls">
-                        <button className="hz-pbtn" onClick={() => step(-1)} disabled={currentIndex <= 0} aria-label="Previous ayah"><span className="material-symbols-outlined">skip_previous</span></button>
+                        <button className="hz-pbtn" onClick={() => step(-1)} disabled={currentIndex <= 0} aria-label="Previous ayah" title="Previous ayah"><span className="material-symbols-outlined">skip_previous</span></button>
                         <button className="hz-pbtn main" onClick={handlePlayPause} aria-label={isPlaying ? 'Pause' : 'Play'}><span className="material-symbols-outlined">{isPlaying ? 'pause' : 'play_arrow'}</span></button>
-                        <button className="hz-pbtn" onClick={() => step(1)} disabled={currentIndex >= verses.length - 1} aria-label="Next ayah"><span className="material-symbols-outlined">skip_next</span></button>
+                        <button className="hz-pbtn" onClick={() => step(1)} disabled={verses.length === 0 || currentIndex >= verses.length - 1} aria-label="Next ayah" title="Next ayah"><span className="material-symbols-outlined">skip_next</span></button>
                         <button className={`hz-pbtn${loopEnabled ? ' on' : ''}`} onClick={() => setLoopEnabled(l => !l)} aria-label="Loop range" aria-pressed={loopEnabled}><span className="material-symbols-outlined">repeat</span></button>
                     </div>
                     <button className="hz-player-close" onClick={closePlayer} aria-label="Close player" title="Close player">

@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
+import Link from "next/link";
 import { Track, Reciter, RECITERS, SURAHS_DATA, GRADIENTS } from "@/data/quran-player-data";
 import { Icons } from "./PlayerIcons";
 import { SurahArt } from "./SurahArt";
@@ -43,13 +44,17 @@ export function Sidebar({
     <aside className="sp-sidebar">
       {/* Nav */}
       <nav className="sp-sidebar-nav">
+        <Link href="/" className="sp-sidebar-nav-item" title="Learn Quran homepage">
+          <Icons.Home />
+          <span>Home</span>
+        </Link>
         <button
           className={`sp-sidebar-nav-item${!selectedReciterPlaylist && mobileView === 'home' ? ' active' : ''}`}
           onClick={() => { setSelectedReciterPlaylist(null); setMobileView('home'); setSearchQuery(''); }}
-          title="Home"
+          title="Browse the player"
         >
-          <Icons.Home />
-          <span>Home</span>
+          <Icons.Browse />
+          <span>Browse</span>
         </button>
         <button
           className={`sp-sidebar-nav-item${mobileView === 'search' ? ' active' : ''}`}

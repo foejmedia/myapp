@@ -1,10 +1,34 @@
 /* Namaz Tracker "Print this month": only the log table is printed */
 .nz-print-sheet { display: none; }
 @media print {
-  body * { visibility: hidden; }
-  .nz-print-sheet, .nz-print-sheet * { visibility: visible; }
-  .nz-print-sheet { display: block; position: absolute; top: 0; left: 0; width: 100%; color: #000; font: 11px/1.4 system-ui, sans-serif; }
-  .nz-print-sheet h1 { font-size: 16px; margin: 0 0 10px; }
+  /* print only the sheet: drop everything else from the layout so no blank pages follow */
+  html, body { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+  body *:not(:has(.nz-print-sheet)):not(.nz-print-sheet):not(.nz-print-sheet *) { display: none !important; }
+  body *:has(.nz-print-sheet) {
+    display: block !important; position: static !important; min-height: 0 !important; height: auto !important;
+    margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
+    box-shadow: none !important; overflow: visible !important; transform: none !important; animation: none !important;
+  }
+  @page { margin: 14mm 12mm; }
+  .nz-print-sheet {
+    display: block; position: static; width: 100%; color: #10261f;
+    font: 10.5px/1.4 var(--font-manrope, system-ui), system-ui, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .nz-print-sheet .nzp-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 2px solid #0f7a5c; }
+  .nz-print-sheet .nzp-brand { display: flex; align-items: center; gap: 10px; }
+  .nz-print-sheet .nzp-logo { width: 38px; height: 38px; }
+  .nz-print-sheet .nzp-brand b { display: block; font-size: 17px; color: #0b5d48; }
+  .nz-print-sheet .nzp-brand small { display: block; font-size: 10px; color: #5f6f68; }
+  .nz-print-sheet .nzp-meta { text-align: right; }
+  .nz-print-sheet .nzp-meta b { display: block; font-size: 15px; }
+  .nz-print-sheet .nzp-meta span { color: #5f6f68; }
+  .nz-print-sheet .nzp-tally { display: flex; gap: 8px; list-style: none; margin: 0 0 10px; padding: 0; }
+  .nz-print-sheet .nzp-tally li { flex: 1; padding: 6px 8px; border-radius: 6px; background: #eef7f3; color: #3d5149; }
+  .nz-print-sheet .nzp-tally b { display: block; font-size: 15px; color: #0b5d48; }
   .nz-print-sheet table { width: 100%; border-collapse: collapse; }
-  .nz-print-sheet th, .nz-print-sheet td { border: 1px solid #999; padding: 3px 5px; text-align: left; }
+  .nz-print-sheet th { background: #0f7a5c; color: #fff; font-weight: 700; }
+  .nz-print-sheet th, .nz-print-sheet td { border: 1px solid #cfdcd6; padding: 3px 6px; text-align: left; }
+  .nz-print-sheet tbody tr:nth-child(even) td { background: #f6faf8; }
+  .nz-print-sheet .nzp-foot { margin-top: 10px; font-size: 9.5px; color: #5f6f68; text-align: right; }
 }

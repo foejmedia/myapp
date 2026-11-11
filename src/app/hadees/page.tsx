@@ -23,6 +23,10 @@ interface Collection {
   died: string;
   blurb: string;
   hue: string;
+  /** the compiler's name as it is usually said, for the cover tile */
+  short: string;
+  /** Sahih, Sunan or Jami' */
+  kind: string;
 }
 
 interface SavedHadith {
@@ -37,12 +41,12 @@ interface SavedHadith {
 
 /* ─── Constants ──────────────────────────────────────────────── */
 const COLLECTIONS: Collection[] = [
-  { id: 'bukhari', name: 'Sahih al-Bukhari', ar: 'صحيح البخاري', compiler: 'Imam al-Bukhari', died: 'd. 256 AH', blurb: 'Regarded as the most authentic collection after the Quran.', hue: '#13705a' },
-  { id: 'muslim', name: 'Sahih Muslim', ar: 'صحيح مسلم', compiler: 'Imam Muslim', died: 'd. 261 AH', blurb: 'The second of the two Sahih collections, known for its careful ordering.', hue: '#1e6091' },
-  { id: 'abudawud', name: 'Sunan Abu Dawud', ar: 'سنن أبي داود', compiler: 'Imam Abu Dawud', died: 'd. 275 AH', blurb: 'Focused on the hadith that underpin rulings of fiqh.', hue: '#8a5a1f' },
-  { id: 'tirmidhi', name: "Jami' at-Tirmidhi", ar: 'جامع الترمذي', compiler: 'Imam at-Tirmidhi', died: 'd. 279 AH', blurb: 'Notes the grading of hadith and the views of the scholars.', hue: '#6b3d8a' },
-  { id: 'nasai', name: "Sunan an-Nasa'i", ar: 'سنن النسائي', compiler: "Imam an-Nasa'i", died: 'd. 303 AH', blurb: 'Known for its strict criteria among the Sunan works.', hue: '#9a3b3b' },
-  { id: 'ibnmajah', name: 'Sunan Ibn Majah', ar: 'سنن ابن ماجه', compiler: 'Imam Ibn Majah', died: 'd. 273 AH', blurb: 'Completes the six major collections (al-Kutub al-Sittah).', hue: '#2f6f6a' },
+  { id: 'bukhari', name: 'Sahih al-Bukhari', ar: 'صحيح البخاري', compiler: 'Imam al-Bukhari', died: 'd. 256 AH', blurb: 'Regarded as the most authentic collection after the Quran.', hue: '#13705a', short: 'البخاري', kind: "Sahih" },
+  { id: 'muslim', name: 'Sahih Muslim', ar: 'صحيح مسلم', compiler: 'Imam Muslim', died: 'd. 261 AH', blurb: 'The second of the two Sahih collections, known for its careful ordering.', hue: '#1e6091', short: 'مسلم', kind: "Sahih" },
+  { id: 'abudawud', name: 'Sunan Abu Dawud', ar: 'سنن أبي داود', compiler: 'Imam Abu Dawud', died: 'd. 275 AH', blurb: 'Focused on the hadith that underpin rulings of fiqh.', hue: '#8a5a1f', short: 'أبو داود', kind: "Sunan" },
+  { id: 'tirmidhi', name: "Jami' at-Tirmidhi", ar: 'جامع الترمذي', compiler: 'Imam at-Tirmidhi', died: 'd. 279 AH', blurb: 'Notes the grading of hadith and the views of the scholars.', hue: '#6b3d8a', short: 'الترمذي', kind: "Jami'" },
+  { id: 'nasai', name: "Sunan an-Nasa'i", ar: 'سنن النسائي', compiler: "Imam an-Nasa'i", died: 'd. 303 AH', blurb: 'Known for its strict criteria among the Sunan works.', hue: '#9a3b3b', short: 'النسائي', kind: "Sunan" },
+  { id: 'ibnmajah', name: 'Sunan Ibn Majah', ar: 'سنن ابن ماجه', compiler: 'Imam Ibn Majah', died: 'd. 273 AH', blurb: 'Completes the six major collections (al-Kutub al-Sittah).', hue: '#2f6f6a', short: 'ابن ماجه', kind: "Sunan" },
 ];
 
 const LIMIT = 20;
@@ -361,25 +365,33 @@ export default function HadeesPage() {
           <section>
             <div className="hd-section-head">
               <div>
+                <p className="hd-kicker-ar" lang="ar" dir="rtl" style={{ fontFamily: ARABIC_FONT }}>الكتب الستة</p>
                 <h2>The Six Collections</h2>
+                <p className="hd-section-sub">Al-Kutub al-Sittah, the six books of hadith most relied on by scholars.</p>
               </div>
-              <button className="hd-saved-link" onClick={() => setView({ kind: 'saved' })}>
+              <button className="hd-saved-link" onClick={() => setView({ kind: 'saved' })} aria-label={`Saved hadith: ${saved.length}`}>
                 <span className="material-symbols-outlined">bookmarks</span>
-                Saved <b>{saved.length}</b>
+                <span className="hd-saved-txt">Saved</span> <b>{saved.length}</b>
               </button>
             </div>
             <div className="hd-grid">
               {COLLECTIONS.map((c, i) => (
-                <button key={c.id} className="hd-col" style={{ ['--hue' as string]: c.hue, animationDelay: `${i * 50}ms` }} onClick={() => openCollection(c.id)}>
-                  <span className="hd-col-arch" aria-hidden="true">
-                    <span className="material-symbols-outlined">menu_book</span>
+                <button key={c.id} className="hd-col" style={{ ['--hue' as string]: c.hue, animationDelay: `${i * 50}ms` }} onClick={() => openCollection(c.id)} aria-label={`Open ${c.name}`}>
+                  {/* a small book cover: the compiler's name in Arabic on the collection's colour */}
+                  <span className="hd-col-cover" aria-hidden="true">
+                    <span className="hd-col-cover-ar" lang="ar" dir="rtl" style={{ fontFamily: ARABIC_FONT }}>{c.short}</span>
+                    <span className="hd-col-cover-n">{i + 1}</span>
                   </span>
                   <span className="hd-col-text">
+                    <span className="hd-col-top">
+                      <span className="hd-col-kind">{c.kind}</span>
+                      <span className="hd-col-ar" lang="ar" dir="rtl" style={{ fontFamily: ARABIC_FONT }}>{c.ar}</span>
+                    </span>
                     <b>{c.name}</b>
                     <small>{c.compiler} · {c.died}</small>
                     <span className="hd-col-blurb">{c.blurb}</span>
                   </span>
-                  <span className="hd-col-go material-symbols-outlined">arrow_forward</span>
+                  <span className="hd-col-go material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                 </button>
               ))}
             </div>

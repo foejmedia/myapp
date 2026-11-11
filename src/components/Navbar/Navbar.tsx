@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTheme } from '@/components/ThemeProvider';
 import './Navbar.css';
 
@@ -56,12 +56,6 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
-const ALL_ITEMS: (NavItem & { section: string })[] = [
-  { href: '/', label: 'Home', icon: 'home', desc: 'Back to the start', section: 'General' },
-  ...NAV_SECTIONS.flatMap(s => s.items.map(i => ({ ...i, section: s.label }))),
-  { href: '/login', label: 'Sign in', icon: 'login', desc: 'Sync your progress', section: 'Account' },
-];
-
 const baseHref = (href: string) => href.split('?')[0];
 
 function isActive(pathname: string, href: string) {
@@ -76,22 +70,15 @@ function isActive(pathname: string, href: string) {
 export default function Navbar() {
   const [open, setOpen] = useState<string | null>(null);      // desktop dropdown
   const [menuOpen, setMenuOpen] = useState(false);              // mobile drawer
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [cursor, setCursor] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [pill, setPill] = useState<{ left: number; width: number } | null>(null);
-  const [isMac, setIsMac] = useState(false);
 
   const pathname = usePathname() ?? '';
-  const router = useRouter();
   const { resolvedTheme, toggleTheme } = useTheme();
   const linksRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setIsMac(/Mac|iPhone|iPad/.test(navigator.platform));
     const fn = () => setScrolled(window.scrollY > 8);
     fn();
     window.addEventListener('scroll', fn, { passive: true });
@@ -102,25 +89,18 @@ export default function Navbar() {
   useEffect(() => {
     setOpen(null);
     setMenuOpen(false);
-    setPaletteOpen(false);
   }, [pathname]);
 
   /* body scroll lock for overlays */
   useEffect(() => {
-    document.body.style.overflow = menuOpen || paletteOpen ? 'hidden' : '';
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [menuOpen, paletteOpen]);
+  }, [menuOpen]);
 
-  /* ⌘K / Ctrl+K / "/" opens search, Esc closes overlays */
+  /* Esc closes the menus */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const typing = /input|textarea|select/i.test((e.target as HTMLElement)?.tagName) || (e.target as HTMLElement)?.isContentEditable;
-      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
-        e.preventDefault();
-        setPaletteOpen(true);
-      }
       if (e.key === 'Escape') {
-        setPaletteOpen(false);
         setOpen(null);
         setMenuOpen(false);
       }
@@ -128,14 +108,6 @@ export default function Navbar() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
-
-  useEffect(() => {
-    if (paletteOpen) {
-      setQuery('');
-      setCursor(0);
-      setTimeout(() => inputRef.current?.focus(), 30);
-    }
-  }, [paletteOpen]);
 
   /* sliding highlight under the hovered link */
   const movePill = (el: HTMLElement | null) => {
@@ -158,24 +130,6 @@ export default function Navbar() {
       setPill(null);
     }, 140);
   };
-
-  // Name matches rank above description/section matches
-  const q = query.trim().toLowerCase();
-  const rank = (i: NavItem & { section: string }) => {
-    const label = i.label.toLowerCase();
-    if (label.startsWith(q)) return 0;
-    if (label.includes(q)) return 1;
-    if (`${i.desc} ${i.section}`.toLowerCase().includes(q)) return 2;
-    return -1;
-  };
-  const results = q
-    ? ALL_ITEMS.map(i => ({ i, r: rank(i) })).filter(x => x.r >= 0).sort((a, b) => a.r - b.r).map(x => x.i)
-    : ALL_ITEMS;
-
-  const goTo = useCallback((href: string) => {
-    setPaletteOpen(false);
-    router.push(href);
-  }, [router]);
 
   const dark = resolvedTheme === 'dark';
 
@@ -265,12 +219,6 @@ export default function Navbar() {
 
           {/* Right controls */}
           <div className="nv__actions">
-            <button className="nv__search" onClick={() => setPaletteOpen(true)} aria-label="Search">
-              <span className="material-symbols-outlined">search</span>
-              <span className="nv__search-text">Search</span>
-              <kbd className="nv__kbd">{isMac ? '⌘' : 'Ctrl'} K</kbd>
-            </button>
-
             <button className="nv__icon" onClick={toggleTheme} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} title={dark ? 'Light mode' : 'Dark mode'}>
               <span key={resolvedTheme} className="material-symbols-outlined nv__theme-icon">{dark ? 'light_mode' : 'dark_mode'}</span>
             </button>
@@ -300,10 +248,6 @@ export default function Navbar() {
                 <span className="material-symbols-outlined">home</span>
                 Home
               </Link>
-              <button className="nv-drawer__search" onClick={() => { setMenuOpen(false); setPaletteOpen(true); }}>
-                <span className="material-symbols-outlined">search</span>
-                Search
-              </button>
             </div>
 
             <div className="nv-drawer__body">
@@ -333,54 +277,6 @@ export default function Navbar() {
             <div className="nv-drawer__foot">
               <Link href="/login" className="nv-drawer__ghost" onClick={() => setMenuOpen(false)}>Sign in</Link>
               <Link href="/signup" className="nv-drawer__primary" onClick={() => setMenuOpen(false)}>Get started</Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Search palette ──────────────────────────────────── */}
-      {paletteOpen && (
-        <div className="nv-pal" role="dialog" aria-modal="true" aria-label="Search" onMouseDown={e => { if (e.target === e.currentTarget) setPaletteOpen(false); }}>
-          <div className="nv-pal__box">
-            <div className="nv-pal__input">
-              <span className="material-symbols-outlined">search</span>
-              <input
-                ref={inputRef}
-                value={query}
-                placeholder="Where would you like to go?"
-                onChange={e => { setQuery(e.target.value); setCursor(0); }}
-                onKeyDown={e => {
-                  if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(c => Math.min(c + 1, results.length - 1)); }
-                  if (e.key === 'ArrowUp') { e.preventDefault(); setCursor(c => Math.max(c - 1, 0)); }
-                  if (e.key === 'Enter' && results[cursor]) goTo(results[cursor].href);
-                }}
-                aria-activedescendant={results[cursor] ? `nv-r-${cursor}` : undefined}
-              />
-              <kbd className="nv__kbd">Esc</kbd>
-            </div>
-            <ul className="nv-pal__list" role="listbox">
-              {results.length === 0 && <li className="nv-pal__empty">No pages match “{query}”</li>}
-              {results.map((r, i) => (
-                <li key={r.href + r.label} id={`nv-r-${i}`} role="option" aria-selected={i === cursor}>
-                  <button
-                    className={`nv-pal__row${i === cursor ? ' is-cursor' : ''}`}
-                    onMouseEnter={() => setCursor(i)}
-                    onClick={() => goTo(r.href)}
-                  >
-                    <span className="nv-pal__icon material-symbols-outlined">{r.icon}</span>
-                    <span className="nv-pal__text">
-                      <b>{r.label}</b>
-                      <small>{r.desc}</small>
-                    </span>
-                    <span className="nv-pal__section">{r.section}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <div className="nv-pal__foot">
-              <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
-              <span><kbd>↵</kbd> open</span>
-              <span><kbd>/</kbd> search anywhere</span>
             </div>
           </div>
         </div>

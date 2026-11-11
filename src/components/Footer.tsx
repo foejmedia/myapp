@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Facebook, X, Instagram, Youtube, Shield, Heart, Globe } from 'lucide-react';
 import './Footer.css';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  // the ayah banner belongs to the homepage only
+  const isHome = usePathname() === '/';
 
   const navColumns = [
     {
@@ -41,8 +44,8 @@ const Footer: React.FC = () => {
       {/* Glow */}
       <div className="ftr-glow" />
 
-      {/* ── Arabic verse banner ── */}
-      <div className="ftr-verse-bar">
+      {/* ── Arabic verse banner (homepage only) ── */}
+      {isHome && (<div className="ftr-verse-bar">
         <span className="ftr-verse-arch" aria-hidden="true" />
         <span className="ftr-verse-kicker">An ayah to carry with you</span>
         <span className="ftr-verse-ar">وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ</span>
@@ -52,7 +55,7 @@ const Footer: React.FC = () => {
           Al-Isra 17:82
           <span className="material-symbols-outlined">arrow_forward</span>
         </Link>
-      </div>
+      </div>)}
 
       <div className="ftr-container">
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
 import "./quranfy-player.css";
 import "./player-controls-fix.css";
 
@@ -20,7 +21,6 @@ import { Sidebar } from "@/components/quran-player/Sidebar";
 import { BottomPlayerBar } from "@/components/quran-player/BottomPlayerBar";
 import { MobilePlayer } from "@/components/quran-player/MobilePlayer";
 import { QueuePanel } from "@/components/quran-player/QueuePanel";
-import { SoundCloudHeroPlayer } from "@/components/quran-player/SoundCloudHeroPlayer";
 import { GlassNowPlaying } from "@/components/quran-player/GlassNowPlaying";
 
 export default function QuranPlayerPage() {
@@ -357,14 +357,15 @@ export default function QuranPlayerPage() {
         </div>
       )}
 
-      <div className="sp-shell">
+      {/* is-library: on phones/tablets the Library tab shows the sidebar full width */}
+      <div className={`sp-shell${mobileView === 'library' ? ' is-library' : ''}`}>
         <Sidebar 
           mobileView={mobileView} setMobileView={setMobileView} setShowSearchView={setShowSearchView}
           selectedReciterPlaylist={selectedReciterPlaylist} setSelectedReciterPlaylist={setSelectedReciterPlaylist}
           setSearchQuery={setSearchQuery} setShowCreatePlaylist={setShowCreatePlaylist}
           activeFilter={activeFilter} setActiveFilter={setActiveFilter}
           currentReciter={currentReciter} currentTrack={currentTrack}
-          openReciterPlaylist={openReciterPlaylist} playTrack={handlePlayTrack}
+          openReciterPlaylist={r => { setMobileView('home'); openReciterPlaylist(r); }} playTrack={handlePlayTrack}
           mainRef={mainRef} tracks={tracks} likedTracksData={likedTracksData}
           translation={tr} pendingMode={pendingMode}
           onSelectTranslation={(langId) => startTranslation(langId, tr?.mode ?? pendingMode)}
@@ -538,14 +539,6 @@ export default function QuranPlayerPage() {
             );
           })() : (
             <>
-              {/* Hero Player */}
-              <SoundCloudHeroPlayer 
-                currentTrack={displayTrack || tracks[0]} 
-                audioRef={audioRef} 
-                isPlaying={isPlaying} 
-                togglePlay={() => (currentTrack ? togglePlay() : tracks[0] && handlePlayTrack(tracks[0]))} 
-              />
-
               {/* Filter chips (Spotify-style) */}
               <div className="sp-home-chips" role="tablist" aria-label="Browse">
                 {(["All", "Surahs", "Reciters", "Translations"] as const).map(c => (
@@ -722,8 +715,11 @@ export default function QuranPlayerPage() {
         
         {/* Mobile Nav hidden, already inside shell */}
         <div className="sp-mobile-nav">
-          <button className={`sp-mobile-nav-item ${mobileView === 'home' ? 'active' : ''}`} onClick={() => { setMobileView('home'); setSelectedReciterPlaylist(null); setSearchQuery(''); }}>
+          <Link href="/" className="sp-mobile-nav-item" aria-label="Learn Quran homepage">
              <Icons.Home /><span>Home</span>
+          </Link>
+          <button className={`sp-mobile-nav-item ${mobileView === 'home' ? 'active' : ''}`} onClick={() => { setMobileView('home'); setSelectedReciterPlaylist(null); setSearchQuery(''); }}>
+             <Icons.Browse /><span>Browse</span>
           </button>
           <button className={`sp-mobile-nav-item ${mobileView === 'search' ? 'active' : ''}`} onClick={() => { setMobileView('search'); setShowSearchView(v=>!v); }}>
              <Icons.Search /><span>Search</span>

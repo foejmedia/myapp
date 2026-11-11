@@ -296,7 +296,7 @@ export default function MobileCalendar({
                 ['insights', 'Insights', 'Insights', ''],
                 ['reminders', 'Reminders', 'Bell', ''],
                 ['settings', 'Settings', 'Settings', ''],
-                ['export', 'Export backup', 'Download', ''],
+                ['export', 'Export PDF', 'Download', ''],
                 ['print', 'Print this month', 'Print', ''],
               ] as [MobileAction, string, keyof typeof Icons, string][]
             ).map(([a, label, icon, extra]) => {

@@ -496,6 +496,9 @@
   body {
     padding-bottom: 68px;
   }
+  body.no-mobile-nav {
+    padding-bottom: 0;
+  }
 }
 /* Homepage has no side dashboard */
 .gsb-root.gsb-home-hidden {

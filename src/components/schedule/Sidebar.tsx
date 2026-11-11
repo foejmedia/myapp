@@ -178,6 +178,10 @@ export default function Sidebar({
           <h2>Categories</h2>
           {hidden.length > 0 && <span className={s.count}>{hidden.length} hidden</span>}
         </div>
+        {/* phones and tablets: adding an activity lives here instead of a floating button */}
+        <button type="button" className={s.catAdd} onClick={onAdd}>
+          <IconPlus /> New activity
+        </button>
         <ul className={s.cats}>
           {CATS.map(c => {
             const off = hidden.includes(c.key);

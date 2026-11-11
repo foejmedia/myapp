@@ -270,9 +270,15 @@ export default function SurahReadingPage({ params }: SurahPageProps) {
             ? initialMode as ReadingMode
             : 'translation'
     );
+    // follow ?mode= when it changes while this page stays open (e.g. a link from the Quran library)
+    useEffect(() => {
+        const m = searchParams?.get('mode');
+        if (m === 'reading' || m === 'word-by-word' || m === 'translation') setReadingMode(m);
+    }, [searchParams]);
     const [selectedTranslation, setSelectedTranslation] = useState('en.sahih');
     const [selectedReciter, setSelectedReciter] = useState(7);
-    const [fontSize, setFontSize] = useState(32);
+    // Arabic size is fixed (the size slider was removed from Reading settings)
+    const fontSize = 32;
     const [showSettings, setShowSettings] = useState(false);
     const [showTranslation, setShowTranslation] = useState(true);
     const [autoScroll, setAutoScroll] = useState(true);
@@ -951,12 +957,17 @@ export default function SurahReadingPage({ params }: SurahPageProps) {
                     <div className="rr-bar-center">
                         <div className="rr-modes" role="tablist" aria-label="Reading mode">
                             {modes.map(m => (
-                                <button key={m.id} role="tab" aria-selected={readingMode === m.id} className={readingMode === m.id ? 'on' : ''} onClick={() => setReadingMode(m.id)}>
+                                <button key={m.id} role="tab" aria-selected={readingMode === m.id} className={`${readingMode === m.id ? 'on' : ''}${m.id === 'word-by-word' ? ' is-wbw' : ''}`} onClick={() => setReadingMode(m.id)}>
                                     <span className="material-symbols-outlined">{m.icon}</span>
                                     <span className="rr-mode-label">{m.label}</span>
                                     {m.id === 'word-by-word' && <span className="rr-mode-short">Words</span>}
                                 </button>
                             ))}
+                            {/* the full commentary for this surah, ayah by ayah */}
+                            <Link href={`/tafseer/${surahNumber}`} className="rr-mode-link" title={`Tafseer of ${chapter.name_simple}`}>
+                                <span className="material-symbols-outlined">menu_book</span>
+                                <span className="rr-mode-label">Tafseer</span>
+                            </Link>
                         </div>
                     </div>
 
@@ -1294,16 +1305,6 @@ export default function SurahReadingPage({ params }: SurahPageProps) {
                         </div>
                         <div className="rr-drawer-body">
                             <div className="rr-field">
-                                <span className="rr-field-label">Arabic text size</span>
-                                <div className="rr-size">
-                                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'var(--rr-muted)' }}>text_decrease</span>
-                                    <input type="range" min="24" max="52" value={fontSize} onChange={e => setFontSize(parseInt(e.target.value))} aria-label="Arabic font size" />
-                                    <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'var(--rr-muted)' }}>text_increase</span>
-                                    <span className="rr-size-val">{fontSize}px</span>
-                                </div>
-                                <p className="rr-size-preview font-arabic" style={{ fontSize }} lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                            </div>
-                            <div className="rr-field">
                                 <label htmlFor="rr-translation">Translation</label>
                                 <select id="rr-translation" className="rr-select" value={selectedTranslation} onChange={e => setSelectedTranslation(e.target.value)}>
                                     {TRANSLATIONS.map(t => <option key={t.id} value={t.id}>{t.name} ({t.language})</option>)}
@@ -1326,7 +1327,8 @@ export default function SurahReadingPage({ params }: SurahPageProps) {
                                     <span className={`rr-switch${autoScroll ? ' on' : ''}`} />
                                 </div>
                             </div>
-                            <div className="rr-field">
+                            {/* keyboard-only, so hidden on phones (see .rr-field-keys) */}
+                            <div className="rr-field rr-field-keys">
                                 <span className="rr-field-label">Keyboard shortcuts</span>
                                 <div className="rr-keys">
                                     <kbd>Space</kbd><span>Play / pause</span>

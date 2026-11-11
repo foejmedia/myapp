@@ -141,6 +141,27 @@
   box-shadow: 0 10px 22px -14px rgba(75, 63, 207, 0.6);
 }
 .sideAdd svg { width: 20px; height: 20px; }
+
+/* New activity inside the Categories card (narrow screens only) */
+.catAdd {
+  display: none;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  margin-bottom: 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--primary);
+  color: var(--primary-ink);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.catAdd svg { width: 20px; height: 20px; }
+.catAdd:hover { filter: brightness(1.05); }
 .sideAdd:hover { filter: brightness(1.05); }
 
 .card, .mini, .locCard {
@@ -655,25 +676,9 @@ textarea.input { resize: vertical; line-height: 1.5; }
   .toolbar { width: 100%; }
   .seg { margin-left: auto; }
   .switch { font-size: 13px; gap: 8px; }
-  .addBtn {
-    position: fixed;
-    right: 18px;
-    bottom: calc(84px + env(safe-area-inset-bottom));
-    z-index: 50;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 52px;
-    padding: 0 18px 0 14px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--primary);
-    color: var(--primary-ink);
-    font-size: 14.5px;
-    font-weight: 800;
-    box-shadow: 0 14px 30px -12px rgba(75, 63, 207, 0.55);
-  }
-  .addBtn svg { width: 20px; height: 20px; }
+  /* no floating button on phones: New activity sits in the Categories card */
+  .addBtn { display: none; }
+  .catAdd { display: flex; }
   .gridScroll { max-height: none; height: calc(100vh - 300px); min-height: 460px; }
   .mCell { min-height: 72px; padding: 6px 4px; }
   .mChip span, .mChip time { display: none; }

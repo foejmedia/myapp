@@ -1205,7 +1205,67 @@
   color: rgba(240, 227, 196, 0.85);
 }
 
+/* ayah numbering + jump picker */
+.hz-player-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hz-player-num {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.hz-player-num select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 28px;
+  padding: 0 26px 0 10px;
+  border: 1px solid rgba(240, 227, 196, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.hz-player-num select:focus-visible {
+  outline: 2px solid var(--hz-cream);
+  outline-offset: 2px;
+}
+
+.hz-player-num select option {
+  color: #10261f;
+  background: #fff;
+}
+
+.hz-player-num .material-symbols-outlined {
+  position: absolute;
+  right: 6px;
+  font-size: 18px;
+  pointer-events: none;
+  color: var(--hz-cream);
+}
+
+.hz-player-of {
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: rgba(240, 227, 196, 0.9);
+  font-variant-numeric: tabular-nums;
+}
+
 .hz-player-info small {
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: block;
   font-size: 11.5px;
   color: rgba(255, 255, 255, 0.72);

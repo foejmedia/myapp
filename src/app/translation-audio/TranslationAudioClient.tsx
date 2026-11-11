@@ -47,6 +47,35 @@ async function loadAyahs(surah: number, textId: number): Promise<Ayah[]> {
   return rows;
 }
 
+/** Ayahs shown per page */
+const PAGE_SIZE = 20;
+
+/** Numbered pages (1, 2, 3 …); each covers 20 ayahs. The page being recited gets a dot. */
+function Pager({ page, count, total, playingPage, onPick }: {
+  page: number; count: number; total: number; playingPage: number | null; onPick: (p: number) => void;
+}) {
+  const from = (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(total, page * PAGE_SIZE);
+  return (
+    <nav className="ta-pager" aria-label="Pages of ayahs">
+      <span className="ta-pager-range">Ayahs <b>{from}–{to}</b> of {total}</span>
+      <div className="ta-pager-nums">
+        {Array.from({ length: count }, (_, i) => i + 1).map(p => (
+          <button
+            key={p}
+            className={`${p === page ? 'on' : ''}${p === playingPage ? ' live' : ''}`}
+            onClick={() => onPick(p)}
+            aria-current={p === page ? 'page' : undefined}
+            title={`Ayahs ${(p - 1) * PAGE_SIZE + 1}–${Math.min(total, p * PAGE_SIZE)}`}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export default function TranslationAudioClient() {
   const [langId, setLangId] = useState('en');
   const [surah, setSurah] = useState(1);
@@ -148,11 +177,26 @@ export default function TranslationAudioClient() {
     setAudioError(false);
   }, [surah, langId, stop]);
 
-  // Keep the playing ayah in view
+  /* ---- pages of 20 ayahs ---- */
+  const [page, setPage] = useState(1);
+  const pageCount = Math.max(1, Math.ceil((meta?.ayahs ?? 0) / PAGE_SIZE));
+  const pageOf = (n: number) => Math.ceil(n / PAGE_SIZE);
+  useEffect(() => { setPage(1); }, [surah, langId]);
+  // Playback carries on to the next page by itself: when the recited ayah is on
+  // another page, that page opens (the user doesn't have to tap "2")
+  useEffect(() => {
+    if (playing) setPage(pageOf(current));
+  }, [current, playing]);
+  const goPage = (p: number) => {
+    setPage(p);
+    document.querySelector('.ta-main')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  };
+
+  // Keep the playing ayah in view (after its page has rendered)
   useEffect(() => {
     if (!playing) return;
     rowRefs.current[current]?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  }, [current, playing]);
+  }, [current, playing, page]);
 
   const toggle = () => {
     if (playing) return stop();
@@ -246,8 +290,12 @@ export default function TranslationAudioClient() {
           )}
           {!error && !ayahs && <div className="ta-skel">{[0, 1, 2, 3].map(i => <i key={i} />)}</div>}
 
-          <ol className="ta-list">
-            {ayahs?.map(a => {
+          {ayahs && pageCount > 1 && (
+            <Pager page={page} count={pageCount} total={meta.ayahs ?? ayahs.length} playingPage={playing ? pageOf(current) : null} onPick={goPage} />
+          )}
+
+          <ol className="ta-list" start={(page - 1) * PAGE_SIZE + 1}>
+            {ayahs?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(a => {
               const on = a.n === current;
               return (
                 <li key={a.n} ref={el => { rowRefs.current[a.n] = el; }} className={`ta-ayah${on ? ' on' : ''}${on && playing ? ' playing' : ''}`}>
@@ -274,6 +322,18 @@ export default function TranslationAudioClient() {
               );
             })}
           </ol>
+
+          {ayahs && pageCount > 1 && (
+            <nav className="ta-pagenav" aria-label="Previous and next page">
+              <button onClick={() => goPage(page - 1)} disabled={page <= 1}>
+                <span className="material-symbols-outlined">chevron_left</span> Previous
+              </button>
+              <span>Page {page} of {pageCount}</span>
+              <button onClick={() => goPage(page + 1)} disabled={page >= pageCount}>
+                Next <span className="material-symbols-outlined">chevron_right</span>
+              </button>
+            </nav>
+          )}
         </section>
       </div>
 

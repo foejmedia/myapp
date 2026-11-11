@@ -27,7 +27,6 @@ const STEP = 48;
 export default function PageExplorer({ chapters, loading }: { chapters: PageChapter[]; loading: boolean }) {
   const [query, setQuery] = useState('');
   const [only, setOnly] = useState<'All' | 'Starts'>('All');
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [limit, setLimit] = useState(FIRST);
 
   const pages = useMemo<PageInfo[]>(() => {
@@ -85,13 +84,6 @@ export default function PageExplorer({ chapters, loading }: { chapters: PageChap
             ))}
           </div>
 
-          <div className="sx-seg sx-seg-icons" role="tablist" aria-label="Layout">
-            {(['grid', 'list'] as const).map(m => (
-              <button key={m} role="tab" aria-selected={view === m} aria-label={`${m} view`} className={view === m ? 'on' : ''} onClick={() => setView(m)}>
-                <span className="material-symbols-outlined">{m === 'grid' ? 'grid_view' : 'view_agenda'}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -123,7 +115,7 @@ export default function PageExplorer({ chapters, loading }: { chapters: PageChap
           <button onClick={() => { setQuery(''); setOnly('All'); }}>Clear filters</button>
         </div>
       ) : (
-        <div className={view === 'grid' ? 'sx-grid' : 'sx-list'}>
+        <div className="sx-grid">
           {shown.map((p, i) => {
             const lead = primary(p);
             return (

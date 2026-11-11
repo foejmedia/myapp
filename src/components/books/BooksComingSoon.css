@@ -1,0 +1,128 @@
+/* Coming soon page — bcs- prefixed; follows the site's light/dark theme. */
+.bcs {
+  --bcs-bg: #faf6ee;
+  --bcs-card: #ffffff;
+  --bcs-line: #ece4d6;
+  --bcs-ink: #10261f;
+  --bcs-muted: #5f6f68;
+  --bcs-green: #0f7a5c;
+  --bcs-gold: #b8862f;
+  --bcs-gold-soft: #fbf0d6;
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 140px);
+  padding: 40px 16px 96px;
+  background:
+    radial-gradient(600px 300px at 50% 0%, rgba(224, 169, 46, 0.12), transparent 70%),
+    var(--bcs-bg);
+  color: var(--bcs-ink);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+html.dark .bcs, [data-theme='dark'] .bcs {
+  --bcs-bg: #0f1714;
+  --bcs-card: #15201b;
+  --bcs-line: #24332c;
+  --bcs-ink: #eef2ee;
+  --bcs-muted: #9fb0a7;
+  --bcs-green: #4fd1a5;
+  --bcs-gold: #e9c46a;
+  --bcs-gold-soft: #2c2512;
+}
+
+.bcs-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 540px;
+  padding: 28px 28px 32px;
+  border-radius: 28px;
+  border: 1px solid var(--bcs-line);
+  background: var(--bcs-card);
+  box-shadow: 0 1px 2px rgba(16, 38, 31, 0.04), 0 24px 50px -28px rgba(16, 38, 31, 0.25);
+  text-align: center;
+}
+
+.bcs-art { width: 100%; max-width: 320px; height: auto; margin-bottom: 8px; }
+.bcs-glow { transform-box: fill-box; transform-origin: center; animation: bcs-breathe 5s ease-in-out infinite; }
+.bcs-twinkle path { transform-box: fill-box; transform-origin: center; animation: bcs-twinkle 2.6s ease-in-out infinite; }
+.bcs-twinkle path:nth-child(2) { animation-delay: 0.8s; }
+.bcs-twinkle path:nth-child(3) { animation-delay: 1.6s; }
+.bcs-lantern { transform-origin: 232px 0; animation: bcs-swing 4s ease-in-out infinite; }
+.bcs-new { animation: bcs-slide 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+.bcs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--bcs-gold-soft);
+  color: var(--bcs-gold);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.bcs-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: bcs-pulse 1.8s ease-in-out infinite; }
+
+.bcs-kicker {
+  margin: 18px 0 4px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bcs-green);
+}
+.bcs-card h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 5vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--bcs-ink);
+}
+.bcs-msg {
+  max-width: 420px;
+  margin: 10px 0 0;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--bcs-muted);
+}
+
+.bcs-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
+.bcs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 14px;
+  border: 1px solid var(--bcs-line);
+  background: var(--bcs-card);
+  color: var(--bcs-ink) !important;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.bcs-btn:hover { transform: translateY(-1px); border-color: var(--bcs-green); }
+.bcs-btn.primary { background: var(--bcs-green); border-color: var(--bcs-green); color: #fff !important; }
+html.dark .bcs-btn.primary, [data-theme='dark'] .bcs-btn.primary { color: #062018 !important; }
+.bcs-btn .material-symbols-outlined { font-size: 19px; }
+
+@keyframes bcs-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.8; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes bcs-twinkle { 0%, 100% { transform: scale(0.7); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
+@keyframes bcs-swing { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes bcs-slide { 0%, 15% { transform: translateX(26px); opacity: 0; } 45%, 85% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(0); opacity: 0; } }
+@keyframes bcs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+@media (max-width: 480px) {
+  .bcs { padding-top: 20px; }
+  .bcs-card { padding: 22px 18px 26px; border-radius: 22px; }
+  .bcs-actions { width: 100%; }
+  .bcs-btn { flex: 1; justify-content: center; padding: 0 12px; white-space: nowrap; font-size: 14.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bcs-glow, .bcs-twinkle path, .bcs-lantern, .bcs-new, .bcs-dot { animation: none; }
+}

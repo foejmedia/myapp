@@ -35,7 +35,6 @@ const readMins = (v: number) => Math.max(1, Math.round((v * 20) / 60));
 export default function SurahExplorer({ surahs, recentNums }: Props) {
   const [query, setQuery] = useState('');
   const [type, setType] = useState<'All' | 'Meccan' | 'Medinan'>('All');
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [showAll, setShowAll] = useState(false);
 
   const filtered = useMemo(() => {
@@ -85,13 +84,6 @@ export default function SurahExplorer({ surahs, recentNums }: Props) {
             ))}
           </div>
 
-          <div className="sx-seg sx-seg-icons" role="tablist" aria-label="Layout">
-            {(['grid', 'list'] as const).map(m => (
-              <button key={m} role="tab" aria-selected={view === m} aria-label={`${m} view`} className={view === m ? 'on' : ''} onClick={() => setView(m)}>
-                <span className="material-symbols-outlined">{m === 'grid' ? 'grid_view' : 'view_agenda'}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -120,7 +112,7 @@ export default function SurahExplorer({ surahs, recentNums }: Props) {
           <button onClick={() => { setQuery(''); setType('All'); }}>Clear filters</button>
         </div>
       ) : (
-        <div className={view === 'grid' ? 'sx-grid' : 'sx-list'}>
+        <div className="sx-grid">
           {shown.map((s, i) => {
             const recent = recentNums.includes(s.num);
             return (

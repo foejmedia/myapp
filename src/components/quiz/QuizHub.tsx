@@ -8,6 +8,7 @@ import {
   type Prefs, type Progress,
 } from '@/lib/quiz/progress';
 import { Icon } from './QuestionView';
+import { TargetArt, TrophyArt } from '@/learn1min/components/Illustrations';
 import './quiz.css';
 
 const LEVEL_INFO: { id: Prefs['level']; label: string; hint: string }[] = [
@@ -17,6 +18,8 @@ const LEVEL_INFO: { id: Prefs['level']; label: string; hint: string }[] = [
   { id: 'advanced', label: 'Advanced', hint: 'Longer surahs, harder recall' },
 ];
 const COUNTS = [5, 10, 15];
+/** icon tile colours for the quiz types, as on the Learn in 1 Minute dashboard */
+const TONES = ['blue', 'orange', 'green', 'gold'] as const;
 const pct = (n: number | null) => (n == null ? '—' : `${Math.round(n * 100)}%`);
 
 export default function QuizHub() {
@@ -60,17 +63,99 @@ export default function QuizHub() {
     saveProgress({ ...emptyProgress(), prefs });
   };
 
+  const answeredToday = today ? `${today.correct}/${today.total}` : null;
+
   return (
     <div className="qz">
       <div className="qz-wrap">
+        {/* ── header, like a Learn in 1 Minute module page ── */}
         <header className="qz-head">
-          <p className="qz-head-ar" lang="ar" dir="rtl">تَعَلَّمِ الْقُرْآنَ</p>
-          <h1>Quran Quiz</h1>
-          <p>Learn ayahs, surahs, translations and vocabulary — and revise what you’ve learned.</p>
+          <div>
+            <p className="qz-kicker">Quran Quiz <span lang="ar" dir="rtl">تَعَلَّمِ الْقُرْآنَ</span></p>
+            <h1>Quizzes</h1>
+            <p className="qz-head-sub">Learn ayahs, surahs, translations and vocabulary, then revise what you miss.</p>
+          </div>
+          {p && progress.total.answered > 0 && (
+            <span className="qz-badge">
+              <Icon name="target" /> {pct(accuracy(progress.total))} accuracy
+            </span>
+          )}
         </header>
 
+        {/* ── illustrated cards: today's challenge and revision ── */}
+        <div className="qz-hero-cards">
+          <Link href={href('daily')} className="qz-ill peach">
+            <TargetArt className="qz-ill-art" />
+            <span className="qz-ill-body">
+              <span className="qz-ill-kicker">Daily Quran Challenge</span>
+              <b className="qz-ill-title">{today ? 'Done for today, mashaAllah' : 'Five questions picked for your level'}</b>
+              <span className="qz-ill-row">
+                <strong>{answeredToday ?? '0/5'}</strong>
+                <span>{today ? 'Practise again any time' : 'Takes about two minutes'}</span>
+              </span>
+              <span className="qz-coral" aria-hidden="true"><i style={{ width: today ? `${(today.correct / Math.max(1, today.total)) * 100}%` : '0%' }} /></span>
+            </span>
+          </Link>
+
+          {revisionCount > 0 ? (
+            <Link href={href('revision')} className="qz-ill yellow">
+              <TrophyArt className="qz-ill-art trophy" />
+              <span className="qz-ill-body">
+                <span className="qz-ill-kicker">Revision</span>
+                <b className="qz-ill-title">{revisionCount} question{revisionCount === 1 ? '' : 's'} to review</b>
+                <span className="qz-ill-sub">The ones you missed come back until you get them right.</span>
+                <span className="qz-ill-cta">Start revision <Icon name="arrow_forward" /></span>
+              </span>
+            </Link>
+          ) : (
+            <div className="qz-ill yellow is-empty">
+              <TrophyArt className="qz-ill-art trophy" dim />
+              <span className="qz-ill-body">
+                <span className="qz-ill-kicker">Revision</span>
+                <b className="qz-ill-title">Nothing to revise yet</b>
+                <span className="qz-ill-sub">Questions you miss will appear here, ready to practise again.</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* ── quiz types ── */}
+        <section aria-labelledby="qz-modes-h">
+          <h2 id="qz-modes-h" className="qz-h2">Choose a quiz</h2>
+          <div className="qz-modes">
+            <Link href={href('mixed')} className="qz-mode">
+              <span className="qz-mode-top">
+                <span className="qz-tile green"><Icon name="shuffle" /></span>
+                <span className="qz-pill green">Recommended</span>
+              </span>
+              <b>{sessionTitle('mixed')}</b>
+              <small>A bit of everything</small>
+            </Link>
+            {MODES.map((m, i) => {
+              const t = progress.byMode[m.id];
+              const tone = TONES[i % TONES.length];
+              return (
+                <Link key={m.id} href={href(m.id)} className="qz-mode">
+                  <span className="qz-mode-top">
+                    <span className={`qz-tile ${tone}`}><Icon name={m.icon} /></span>
+                    {weak.includes(m.id)
+                      ? <span className="qz-pill orange">Practise</span>
+                      : t?.answered ? <span className="qz-pill gray">{pct(accuracy(t))}</span> : null}
+                  </span>
+                  <b>{m.title}</b>
+                  <small>{m.blurb}</small>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── settings ── */}
         <section className="qz-card qz-setup" aria-labelledby="qz-setup-h">
-          <h2 id="qz-setup-h" className="qz-sr">Quiz settings</h2>
+          <div className="qz-card-head">
+            <h2 id="qz-setup-h" className="qz-h2 in-card"><Icon name="tune" /> Quiz settings</h2>
+            {prefs.level === 'auto' && p && <span className="qz-pill blue">Now: {suggestion.level}</span>}
+          </div>
           <div className="qz-field">
             <span className="qz-label">Level</span>
             <div className="qz-seg-group" role="radiogroup" aria-label="Level">
@@ -88,7 +173,7 @@ export default function QuizHub() {
               ))}
             </div>
             {prefs.level === 'auto' && p && (
-              <p className="qz-small"><Icon name="route" /> Now: <b>{suggestion.level}</b>. {suggestion.reason}</p>
+              <p className="qz-small"><Icon name="route" /> {suggestion.reason}</p>
             )}
           </div>
 
@@ -115,67 +200,25 @@ export default function QuizHub() {
           </div>
         </section>
 
-        <div className="qz-feature">
-          <Link href={href('daily')} className="qz-card qz-daily">
-            <span className="qz-feature-icon"><Icon name="wb_sunny" /></span>
-            <span className="qz-feature-body">
-              <b>Daily Quran Challenge</b>
-              <small>{today ? `Done today — ${today.correct}/${today.total}. Practise again anytime.` : 'Five questions picked for your level'}</small>
-            </span>
-            <Icon name="chevron_right" />
-          </Link>
-          {revisionCount > 0 ? (
-            <Link href={href('revision')} className="qz-card qz-revise">
-              <span className="qz-feature-icon"><Icon name="history" /></span>
-              <span className="qz-feature-body">
-                <b>Revision</b>
-                <small>{revisionCount} question{revisionCount === 1 ? '' : 's'} to review</small>
-              </span>
-              <Icon name="chevron_right" />
-            </Link>
-          ) : (
-            <div className="qz-card qz-revise is-empty">
-              <span className="qz-feature-icon"><Icon name="history" /></span>
-              <span className="qz-feature-body">
-                <b>Revision</b>
-                <small>Questions you miss will appear here.</small>
-              </span>
-            </div>
-          )}
-        </div>
-
-        <section aria-labelledby="qz-modes-h">
-          <h2 id="qz-modes-h" className="qz-h2">Choose a quiz</h2>
-          <div className="qz-modes">
-            <Link href={href('mixed')} className="qz-mode is-mixed">
-              <Icon name="shuffle" />
-              <b>{sessionTitle('mixed')}</b>
-              <small>A bit of everything</small>
-            </Link>
-            {MODES.map(m => (
-              <Link key={m.id} href={href(m.id)} className="qz-mode">
-                <Icon name={m.icon} />
-                <b>{m.title}</b>
-                <small>{m.blurb}</small>
-                {weak.includes(m.id) && <span className="qz-chip gold">Practise</span>}
-              </Link>
-            ))}
-          </div>
-        </section>
-
+        {/* ── progress ── */}
         <section className="qz-card" aria-labelledby="qz-prog-h">
-          <h2 id="qz-prog-h" className="qz-h2 in-card">Your learning</h2>
+          <div className="qz-card-head">
+            <h2 id="qz-prog-h" className="qz-h2 in-card"><Icon name="insights" /> Score &amp; performance</h2>
+          </div>
           {!p ? (
             <div className="qz-skel" aria-busy="true" />
           ) : progress.total.answered === 0 ? (
-            <p className="qz-small">Your progress will appear here after your first quiz.</p>
+            <div className="qz-empty">
+              <b>No quiz results yet</b>
+              <span>Finish a quiz and your scores appear here.</span>
+            </div>
           ) : (
             <>
               <dl className="qz-stats">
-                <div><dt>Answered</dt><dd>{progress.total.answered}</dd></div>
-                <div><dt>Accuracy</dt><dd>{pct(accuracy(progress.total))}</dd></div>
-                <div><dt>Sessions</dt><dd>{progress.sessions.length}</dd></div>
-                <div><dt>To revise</dt><dd>{revisionCount}</dd></div>
+                <div className="tone-green"><dt>Answered</dt><dd>{progress.total.answered}</dd></div>
+                <div className="tone-blue"><dt>Accuracy</dt><dd>{pct(accuracy(progress.total))}</dd></div>
+                <div className="tone-gold"><dt>Sessions</dt><dd>{progress.sessions.length}</dd></div>
+                <div className="tone-orange"><dt>To revise</dt><dd>{revisionCount}</dd></div>
               </dl>
               <h3 className="qz-h3">By category</h3>
               <ul className="qz-cats">

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import TranslationAudioClient from './TranslationAudioClient';
+import { amiriTranslation } from '@/fonts/amiri';
 import './translation-audio.css';
 
 export const metadata: Metadata = {
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <TranslationAudioClient />;
+  return (
+    <div className={amiriTranslation.variable}>
+      <TranslationAudioClient />
+    </div>
+  );
 }

@@ -25,7 +25,9 @@ function isExcluded(p: string): boolean {
         p.startsWith('/manzil/') ||
         p.startsWith('/juz/') ||
         p.startsWith('/surah/') ||
-        p.startsWith('/ruku/')
+        p.startsWith('/ruku/') ||
+        // Watch is a full-screen streaming app with its own navigation
+        p.startsWith('/video-gallery')
     );
 }
 
@@ -38,7 +40,14 @@ export default function GlobalSidebar() {
         document.documentElement.setAttribute('data-color-theme', storedTheme === 'amber' ? 'amber' : 'green');
     }, []);
 
-    if (isExcluded(pathname)) return null;
+    // pages without the tab bar don't need the space reserved for it (see GlobalSidebar.css)
+    const excluded = isExcluded(pathname);
+    useEffect(() => {
+        document.body.classList.toggle('no-mobile-nav', excluded);
+        return () => document.body.classList.remove('no-mobile-nav');
+    }, [excluded]);
+
+    if (excluded) return null;
 
     const isActive = (href: string) => {
         if (href === '/') return pathname === '/';

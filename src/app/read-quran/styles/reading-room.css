@@ -230,6 +230,39 @@ html.rr-lock body {
   white-space: nowrap;
 }
 
+/* Tafseer: a link that looks like the other modes */
+.rr-modes .rr-mode-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  color: var(--rr-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.rr-modes .rr-mode-link:hover {
+  color: var(--rr-ink);
+  background: rgba(var(--brand-rgb), 0.08);
+}
+
+.rr-modes .rr-mode-link .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* four options on a phone: drop the icons so the labels fit */
+@media (max-width: 420px) {
+  .rr-modes button .material-symbols-outlined,
+  .rr-modes .rr-mode-link .material-symbols-outlined {
+    display: none;
+  }
+}
+
 .rr-mode-short {
   display: none;
 }
@@ -1313,6 +1346,13 @@ html.rr-dark .rr-bismillah img {
   transform: translateX(18px);
 }
 
+/* keyboard shortcuts mean nothing on a touch phone */
+@media (max-width: 767px) {
+  .rr-field-keys {
+    display: none;
+  }
+}
+
 .rr-keys {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -1537,7 +1577,8 @@ html.rr-dark .rr-bismillah img {
   .rr-modes .rr-mode-label {
     display: none;
   }
-  .rr-modes button {
+  .rr-modes button,
+  .rr-modes .rr-mode-link {
     padding: 0 10px;
   }
 }
@@ -1557,14 +1598,17 @@ html.rr-dark .rr-bismillah img {
     display: flex;
     width: 100%;
   }
-  .rr-modes button {
+  .rr-modes button,
+  .rr-modes .rr-mode-link {
     flex: 1;
     justify-content: center;
+    min-width: 0;
+    padding: 0 6px;
   }
   .rr-modes .rr-mode-label {
     display: inline;
   }
-  .rr-modes button:last-child .rr-mode-label {
+  .rr-modes button.is-wbw .rr-mode-label {
     display: none;
   }
   .rr-mode-short {

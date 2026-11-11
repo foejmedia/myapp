@@ -94,3 +94,15 @@ export const amiriLearn = localFont({
   display: 'swap',
   variable: '--l1-font-ar',
 });
+
+/** Urdu and Persian translation text on /translation-audio (the Quran font lacks letters like ے ڈ ں ی) */
+export const amiriTranslation = localFont({
+  src: [
+    { path: './amiri/Amiri-arabic-400.woff2', weight: '400', style: 'normal' },
+    { path: './amiri/Amiri-arabic-700.woff2', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
+  variable: '--ta-font-ar',
+  // letters only: brackets and other punctuation come from the next font, so they mirror once (not twice)
+  declarations: [{ prop: 'unicode-range', value: 'U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFC' }],
+});
