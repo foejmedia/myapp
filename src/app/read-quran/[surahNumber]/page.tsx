@@ -1042,51 +1042,88 @@ export default function SurahReadingPage({ params }: SurahPageProps) {
                             {pageIdx === 0 && hero}
                             {pageBar}
                             {!pageState && pageHasOpening && bismillah}
-                            {pageState ?? pageVerses.filter(v => !isBismillahVerse(v.verse_number, v.text_uthmani)).map(verse => (
-                                <article key={verse.id} id={`verse-${verse.verse_number}`} className={`rr-verse${currentVerse === verse.verse_number ? ' is-playing' : ''}`}>
-                                    <div className="rr-verse-top">
-                                        <span className="rr-vnum">{verse.verse_number}</span>
-                                        <div className="rr-actions">
-                                            {readAlong && (
-                                                <button className="rr-act rr-act-play" onClick={() => { setAudioEnabled(true); playVerse(verse.verse_number, true); }} title="Play ayah">
-                                                    <span className="material-symbols-outlined">play_arrow</span>
-                                                    <span className="rr-act-label">Play</span>
+                            {pageState ?? pageVerses.filter(v => !isBismillahVerse(v.verse_number, v.text_uthmani)).map(verse => {
+                                const saved = bookmarks.includes(verse.verse_key);
+                                const playing = currentVerse === verse.verse_number;
+                                const words = (verse.words ?? []).filter((w: any) => w.char_type_name !== 'end');
+                                return (
+                                    <article key={verse.id} id={`verse-${verse.verse_number}`} className={`rr-verse rr-wbw-verse${playing ? ' is-playing' : ''}`}>
+                                        <div className="rr-verse-top">
+                                            <span className="rr-vnum" title={verse.verse_key}>{verse.verse_number}</span>
+                                            <div className="rr-actions">
+                                                <button className="rr-act" onClick={() => openTafseer(verse.verse_number)} title="Tafseer">
+                                                    <span className="material-symbols-outlined">menu_book</span>
+                                                    <span className="rr-act-label">Tafseer</span>
                                                 </button>
+                                                <button className={`rr-act${saved ? ' on' : ''}`} onClick={() => toggleBookmark(verse.verse_key)} title={saved ? 'Remove bookmark' : 'Bookmark'}>
+                                                    <span className="material-symbols-outlined">bookmark</span>
+                                                </button>
+                                                <button className="rr-act" onClick={() => copyVerse(verse)} title="Copy">
+                                                    <span className="material-symbols-outlined">content_copy</span>
+                                                </button>
+                                                <button className="rr-act" onClick={() => shareVerse(verse)} title="Share">
+                                                    <span className="material-symbols-outlined">ios_share</span>
+                                                </button>
+                                                {readAlong && (
+                                                    <button
+                                                        className="rr-act rr-act-play"
+                                                        onClick={() => { if (playing && isPlaying) stopAudio(); else { setAudioEnabled(true); playVerse(verse.verse_number, true); } }}
+                                                        title={playing && isPlaying ? 'Stop' : 'Play ayah'}
+                                                    >
+                                                        <span className="material-symbols-outlined">{playing && isPlaying ? 'stop' : 'play_arrow'}</span>
+                                                        <span className="rr-act-label">{playing && isPlaying ? 'Stop' : 'Play'}</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* the ayah as one right-to-left line of words, each with its transliteration and meaning */}
+                                        <div className="rr-wbw-words" dir="rtl" style={{ ['--ar' as string]: `${fontSize}px` }}>
+                                            {words.length > 0 ? (
+                                                <>
+                                                    {words.map((word: any, idx: number) => {
+                                                        const location = word.location || `${verse.verse_key}:${word.position}`;
+                                                        const translit = word.transliteration?.text;
+                                                        const meaning = word.translation?.text;
+                                                        return (
+                                                            <button
+                                                                key={word.id || idx}
+                                                                className={`rr-word${selectedWord?.location === location ? ' on' : ''}${playing && currentWord === word.position ? ' is-reciting' : ''}`}
+                                                                onClick={() => openWordDetail(word, verse.verse_key, verse.words || [])}
+                                                                aria-label={[translit, meaning].filter(Boolean).join(': ') || `Word ${word.position}`}
+                                                            >
+                                                                {word.code_v2 ? (
+                                                                    <span
+                                                                        className="rr-word-ar is-qcf"
+                                                                        style={{ fontFamily: `${qcfFontFamily(word.page_number)}, UthmanicHafs, serif` }}
+                                                                        dangerouslySetInnerHTML={{ __html: escapeGlyph(word.code_v2) }}
+                                                                    />
+                                                                ) : (
+                                                                    <span className="rr-word-ar">{cleanArabicText(word.text_uthmani)}</span>
+                                                                )}
+                                                                {translit && <span className="rr-word-tr" dir="ltr">{translit}</span>}
+                                                                {meaning && <span className="rr-word-en" dir="ltr">{meaning}</span>}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                    <span className="rr-wbw-end" aria-hidden="true">
+                                                        <AyahEnding number={verse.verse_number} size={Math.round(fontSize * 0.9)} />
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <p className="rr-arabic font-arabic" style={{ ['--ar' as string]: `${fontSize}px` }}>{verseArabic(verse)}</p>
                                             )}
                                         </div>
-                                    </div>
-                                    <div className="rr-wbw-words">
-                                        {verse.words && verse.words.length > 0 ? (
-                                            verse.words.filter((w: any) => w.char_type_name !== 'end').map((word: any, idx: number) => {
-                                                const location = word.location || `${verse.verse_key}:${word.position}`;
-                                                return (
-                                                    <button
-                                                        key={word.id || idx}
-                                                        className={`rr-word${selectedWord?.location === location ? ' on' : ''}${currentVerse === verse.verse_number && currentWord === word.position ? ' is-reciting' : ''}`}
-                                                        onClick={() => openWordDetail(word, verse.verse_key, verse.words || [])}
-                                                    >
-                                                        {word.code_v2 ? (
-                                                            <span
-                                                                className="rr-word-ar is-qcf"
-                                                                style={{ fontFamily: `${qcfFontFamily(word.page_number)}, UthmanicHafs, serif` }}
-                                                                dangerouslySetInnerHTML={{ __html: escapeGlyph(word.code_v2) }}
-                                                            />
-                                                        ) : (
-                                                            <span className="rr-word-ar">{cleanArabicText(word.text_uthmani)}</span>
-                                                        )}
-                                                        {word.translation?.text && <span className="rr-word-en">{word.translation.text}</span>}
-                                                    </button>
-                                                );
-                                            })
-                                        ) : (
-                                            <p className="rr-arabic font-arabic" style={{ ['--ar' as string]: `${fontSize}px` }}>{verseArabic(verse)}</p>
+
+                                        {showTranslation && (
+                                            <div className="rr-wbw-meaning">
+                                                <span className="rr-wbw-kicker">Translation</span>
+                                                <p className="rr-translation">{parseTranslationWithFootnotes(verse.translations?.[0]?.text || '')}</p>
+                                            </div>
                                         )}
-                                    </div>
-                                    {showTranslation && (
-                                        <p className="rr-translation">{parseTranslationWithFootnotes(verse.translations?.[0]?.text || '')}</p>
-                                    )}
-                                </article>
-                            ))}
+                                    </article>
+                                );
+                            })}
                             {pageNav}
                         </div>
                     ) : (

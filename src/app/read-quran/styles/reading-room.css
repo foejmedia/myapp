@@ -636,52 +636,119 @@ html.rr-dark .rr-bismillah img {
 }
 
 /* ── Word by word ────────────────────────────────────────── */
+/* the ayah reads as one right-to-left line; each word stacks Arabic, transliteration and meaning */
 .rr-wbw-words {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 6px 0;
+  align-items: flex-start;
+  gap: 6px 2px;
+  margin: 2px -6px 0;
+  padding: 10px 6px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--rr-paper) 70%, var(--rr-card));
 }
 
 .rr-word {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 64px;
-  padding: 10px 10px 8px;
-  border-radius: 14px;
-  border: 1px solid var(--rr-line);
-  background: color-mix(in srgb, var(--rr-paper) 60%, var(--rr-card));
+  gap: 1px;
+  padding: 6px 10px 9px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* a thin rule between words, like the gaps in a printed word-by-word mushaf */
+.rr-word + .rr-word::before {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  background: var(--rr-line);
 }
 
 .rr-word:hover {
-  border-color: rgba(var(--brand-rgb), 0.45);
-  transform: translateY(-2px);
+  background: rgba(var(--brand-rgb), 0.07);
+}
+
+.rr-word:hover::before,
+.rr-word:hover + .rr-word::before,
+.rr-word.on::before,
+.rr-word.on + .rr-word::before,
+.rr-word.is-reciting::before,
+.rr-word.is-reciting + .rr-word::before {
+  opacity: 0;
+}
+
+.rr-word:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brand-primary);
 }
 
 .rr-word.on {
-  border-color: var(--brand-primary);
-  background: rgba(var(--brand-rgb), 0.08);
+  background: rgba(var(--brand-rgb), 0.1);
+  box-shadow: inset 0 0 0 1.5px rgba(var(--brand-rgb), 0.55);
 }
 
-.rr-word-ar {
+.rr-word-ar,
+.rr-word-ar.is-qcf {
   font-family: 'UthmanicHafs', serif;
-  font-size: 26px;
-  line-height: 1.6;
+  font-size: calc(var(--ar, 32px) * 0.95);
+  line-height: 1.65;
   color: var(--rr-arabic);
 }
 
-.rr-word-en {
-  max-width: 120px;
+.rr-word-tr {
   font-size: 11.5px;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--rr-gold);
+  white-space: nowrap;
+}
+
+.rr-word-en {
+  max-width: 130px;
+  margin-top: 1px;
+  font-size: 12.5px;
+  font-weight: 600;
   line-height: 1.3;
   text-align: center;
+  color: color-mix(in srgb, var(--rr-ink) 72%, transparent);
+}
+
+.rr-wbw-end {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 10px 6px 0;
+}
+
+/* translation sits under the words with a small label instead of a dashed rule */
+.rr-wbw-meaning {
+  margin-top: 14px;
+}
+
+.rr-wbw-kicker {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--rr-muted);
+}
+
+.rr-wbw-meaning .rr-translation {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 /* ── Surah nav + loading ─────────────────────────────────── */
@@ -1736,24 +1803,27 @@ html.rr-dark .rr-bismillah img {
     line-height: 1.75;
   }
 
-  /* word by word: smaller tiles that wrap evenly */
+  /* word by word: tighter words, smaller type */
   .rr-wbw-words {
-    gap: 6px;
+    gap: 4px 0;
+    margin: 2px -10px 0;
+    padding: 8px 4px;
+    border-radius: 14px;
   }
   .rr-word {
-    min-width: 0;
-    flex: 0 1 auto;
-    padding: 6px 8px 6px;
-    border-radius: 12px;
+    padding: 4px 7px 7px;
   }
   .rr-word-ar,
   .rr-word-ar.is-qcf {
-    font-size: 22px;
+    font-size: calc(var(--ar, 32px) * 0.72);
     line-height: 1.6;
   }
+  .rr-word-tr {
+    font-size: 10px;
+  }
   .rr-word-en {
-    max-width: 96px;
-    font-size: 10.5px;
+    max-width: 92px;
+    font-size: 11px;
   }
 
   /* page strip + navigation */
@@ -1872,12 +1942,12 @@ html.rr-dark .uth-qcf .uth-ar-footer {
 }
 
 .rr-word.is-reciting {
-  border-color: var(--brand-primary);
-  background: rgba(var(--brand-rgb), 0.16);
-  transform: translateY(-2px);
+  background: rgba(var(--brand-rgb), 0.14);
+  box-shadow: inset 0 -3px 0 var(--brand-primary);
 }
 
-.rr-word.is-reciting .rr-word-ar {
+.rr-word.is-reciting .rr-word-ar,
+.rr-word.is-reciting .rr-word-en {
   color: var(--brand-primary);
 }
 
