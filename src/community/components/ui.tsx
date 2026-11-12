@@ -5,7 +5,7 @@ import {
   Sparkles, Sprout, Users,
 } from 'lucide-react';
 import { PREVIEW, to } from '../config';
-import { Squiggle } from './Art';
+import { Portrait, Squiggle, type Look } from './Art';
 import s from '../community.module.css';
 
 const ICONS = {
@@ -55,13 +55,16 @@ const tintOf = (name: string) => {
   return h % 5;
 };
 
-/** An arch-shaped tile with the member's initials: no photos are needed, and none are implied */
-export function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' | 'lg' }) {
+/**
+ * An arch-shaped tile: the member's illustration when a look is given, otherwise their initials.
+ * No photos are needed, and none are implied.
+ */
+export function Avatar({ name, look, size = 'md' }: { name: string; look?: Look; size?: 'sm' | 'md' | 'lg' }) {
   const tint = [s.tint0, s.tint1, s.tint2, s.tint3, s.tint4][tintOf(name)];
   const sz = size === 'sm' ? s.avatarSm : size === 'lg' ? s.avatarLg : '';
   return (
     <span className={`${s.avatar} ${tint} ${sz}`} aria-hidden="true">
-      {initials(name)}
+      {look ? <Portrait look={look} /> : initials(name)}
     </span>
   );
 }

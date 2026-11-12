@@ -39,7 +39,7 @@ export default function StoriesPage() {
                       ))}
                     </div>
                     <p className={s.byline}>
-                      <Avatar name={x.name} size="sm" />
+                      <Avatar name={x.name} look={x.look} size="sm" />
                       <span>
                         <b>{x.name}</b>
                         <small>{x.role}</small>

@@ -25,23 +25,153 @@ export function LogoMark({ size = 36 }: { size?: number }) {
 }
 
 const TINTS = ['var(--t0)', 'var(--t1)', 'var(--t2)', 'var(--t3)', 'var(--t4)'];
-const INKS = ['var(--t0-ink)', 'var(--t1-ink)', 'var(--t2-ink)', 'var(--t3-ink)', 'var(--t4-ink)'];
 
-/** A round portrait placeholder: head and shoulders, no face, so no real person is implied */
-export function Person({ tint = 0, size = 56, ring }: { tint?: number; size?: number; ring?: string }) {
+const SKIN = ['#f7d5b5', '#eab38c', '#cf9068', '#a8704b', '#7a4c33'];
+const WEAR = ['var(--wear-navy)', '#12b47c', '#7c5cff', '#ff7a59', '#2f7cf6', '#f5a524', '#e2457a', '#0fa3a0'];
+const HAIR = ['#2a1d16', '#5a3a26', '#17151f', '#9a98a6'];
+
+/**
+ * An illustrated member: drawn, not photographed, and with no facial features, so no real person is implied.
+ * Sisters wear a hijab; brothers have hair or a kufi, and may have a beard. Every look is chosen
+ * in the data (`look` on a member or story), never guessed from a name.
+ */
+export interface Look {
+  kind: 'hijab' | 'hair' | 'kufi';
+  skin: number;
+  /** clothes, or the hijab's colour */
+  wear: number;
+  hair?: 'short' | 'wavy' | 'curly';
+  hairColor?: number;
+  beard?: 'short' | 'full';
+  /** the kufi: white unless given */
+  cap?: string;
+}
+
+function Figure({ look }: { look: Look }) {
+  const skin = SKIN[look.skin % SKIN.length];
+  const wear = WEAR[look.wear % WEAR.length];
+  const hairC = HAIR[(look.hairColor ?? 0) % HAIR.length];
+  const hijab = look.kind === 'hijab';
+  const beard = !hijab && look.beard;
   return (
-    <svg width={size} height={size} viewBox="0 0 56 56" aria-hidden="true" className={s.person}>
-      <circle cx="28" cy="28" r="26" fill={TINTS[tint % 5]} stroke={ring ?? 'var(--surface)'} strokeWidth="3" />
-      <clipPath id={`cm-p${tint}`}>
-        <circle cx="28" cy="28" r="24.5" />
-      </clipPath>
-      <g clipPath={`url(#cm-p${tint})`} fill={INKS[tint % 5]}>
-        <circle cx="28" cy="23" r="8.5" />
-        <path d="M11 54c0-11 7.6-18 17-18s17 7 17 18z" />
-      </g>
+    <g>
+      <circle cx="30" cy="31" r="21" fill="var(--halo)" />
+
+      {/* shoulders */}
+      <path d="M6 72c0-15 10.5-23 24-23s24 8 24 23z" fill={wear} />
+      {hijab ? (
+        <path d="M6 72c0-15 10.5-23 24-23s24 8 24 23z" fill="#000" opacity=".16" />
+      ) : (
+        <>
+          <rect x="25.8" y="38" width="8.4" height="13" rx="3.5" fill={skin} />
+          <rect x="25.8" y="38" width="8.4" height="13" rx="3.5" fill="#000" opacity=".1" />
+          <path d="M23.5 49.6 30 57.5l6.5-7.9" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="1.6" strokeLinejoin="round" />
+        </>
+      )}
+
+      {/* the hijab, draped from the crown to the shoulders */}
+      {hijab && (
+        <>
+          <path d="M30 12.5C17 12.5 13.6 24 14.2 34c.4 7-2.8 12.2-5.8 18.2C14.6 56.4 22.4 58.5 30 58.5s15.4-2.1 21.6-6.3c-3-6-6.2-11.2-5.8-18.2C46.4 24 43 12.5 30 12.5z" fill={wear} />
+          <path d="M15.6 47.5c4.6 4.2 9.4 6.4 14.4 6.6M44.4 47.5c-2.4 2.2-5 3.8-7.8 4.8" fill="none" stroke="#000" strokeOpacity=".14" strokeWidth="1.5" strokeLinecap="round" />
+        </>
+      )}
+
+      {/* ears */}
+      {!hijab && (
+        <>
+          <ellipse cx="18.8" cy="31.8" rx="2.4" ry="3.1" fill={skin} />
+          <ellipse cx="41.2" cy="31.8" rx="2.4" ry="3.1" fill={skin} />
+        </>
+      )}
+
+      {/* face */}
+      <ellipse cx="30" cy="31" rx={hijab ? 9.8 : 11} ry={hijab ? 11.2 : 12.5} fill={skin} />
+      {hijab && (
+        <>
+          <path d="M20.4 28C21.3 21.2 25.2 19.6 30 19.6s8.7 1.6 9.6 8.4c-2.8-3.1-6-4.3-9.6-4.3s-6.8 1.2-9.6 4.3z" fill="#fff" opacity=".82" />
+          <ellipse cx="30" cy="31" rx="9.8" ry="11.2" fill="none" stroke="#000" strokeOpacity=".08" strokeWidth="1.4" />
+        </>
+      )}
+
+      {/* hair or kufi */}
+      {look.kind === 'hair' && look.hair === 'short' && (
+        <path d="M18.8 30.5C17.9 20.6 23 16.4 30 16.4s12.1 4.2 11.2 14.1c-1.5-4.6-4.4-7-8-7.8-3.4 2.3-8.6 3.1-13 2.5-.7 1.6-1.2 3.4-1.4 5.3z" fill={hairC} />
+      )}
+      {look.kind === 'hair' && look.hair === 'wavy' && (
+        <>
+          <path d="M18.5 32C16.6 19.4 22.8 15 30.6 15.4c7.4.4 12.4 5.4 11 16-1.1-4.8-3-8-6.2-9.6-2.8 2.8-7.8 3.9-12.6 3-2.4 1.6-3.8 4.2-4.3 7.2z" fill={hairC} />
+          <path d="M33.5 17.6c2.6.4 4.6 2 5.4 4.4" fill="none" stroke="#fff" strokeOpacity=".22" strokeWidth="1.3" strokeLinecap="round" />
+        </>
+      )}
+      {look.kind === 'hair' && look.hair === 'curly' && (
+        <g fill={hairC}>
+          {[[19.6, 27.5, 3.6], [20.6, 22.4, 4], [24.4, 18.4, 4.3], [30, 16.6, 4.6], [35.6, 18.2, 4.3], [39.6, 22.2, 4], [40.6, 27.4, 3.6], [27.4, 21, 3.6], [33, 21, 3.6]].map(([cx, cy, r]) => (
+            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} />
+          ))}
+        </g>
+      )}
+      {look.kind === 'kufi' && (
+        <>
+          <path d="M18.6 26.8C18.8 18.6 23.8 15 30 15s11.2 3.6 11.4 11.8z" fill={look.cap ?? '#f6f5fb'} />
+          <path d="M18.6 26.8h22.8" stroke="#000" strokeOpacity=".12" strokeWidth="2" />
+          <g fill="#000" opacity=".1">
+            <circle cx="24" cy="21" r=".9" />
+            <circle cx="30" cy="19" r=".9" />
+            <circle cx="36" cy="21" r=".9" />
+            <circle cx="27" cy="23.4" r=".9" />
+            <circle cx="33" cy="23.4" r=".9" />
+          </g>
+        </>
+      )}
+
+      {/* beard */}
+      {beard === 'short' && (
+        <path d="M19 31c.4 8.8 4.8 13.6 11 13.6S40.6 39.8 41 31c-1.6 3.6-3.4 5.4-5.6 5.9-1.8-1.1-3.4-1.6-5.4-1.6s-3.6.5-5.4 1.6C22.4 36.4 20.6 34.6 19 31z" fill={hairC} />
+      )}
+      {beard === 'full' && (
+        <path d="M18.8 30c-.3 11 4.5 18.6 11.2 18.6S41.5 41 41.2 30c-1.6 4.4-3.6 6.4-5.8 6.9-1.8-1.1-3.4-1.6-5.4-1.6s-3.6.5-5.4 1.6c-2.2-.5-4.2-2.5-5.8-6.9z" fill={hairC} />
+      )}
+      {/* no facial features: the face is left blank on purpose */}
+    </g>
+  );
+}
+
+/** The member avatar: the illustration inside an arch-shaped frame (sized by the CSS around it) */
+export function Portrait({ look }: { look: Look }) {
+  return (
+    <svg className={s.portrait} viewBox="0 0 60 70" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <Figure look={look} />
     </svg>
   );
 }
+
+/** A round portrait for the hero and the app sketch */
+export function Person({ look, tint = 0, size = 56, ring }: { look: Look; tint?: number; size?: number; ring?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="8 10 44 44"
+      aria-hidden="true"
+      className={s.person}
+      style={{ background: TINTS[tint % 5], boxShadow: `0 0 0 ${size > 40 ? 3 : 2}px ${ring ?? 'var(--surface)'}` }}
+    >
+      <Figure look={look} />
+    </svg>
+  );
+}
+
+/** Looks for the drawn people in the hero and the app sketch */
+const CAST: Look[] = [
+  { kind: 'hijab', skin: 1, wear: 2 },
+  { kind: 'kufi', skin: 3, wear: 1, beard: 'short', hairColor: 2 },
+  { kind: 'hair', skin: 2, wear: 4, hair: 'short' },
+  { kind: 'hijab', skin: 4, wear: 3 },
+  { kind: 'hair', skin: 0, wear: 0, hair: 'curly', hairColor: 1 },
+  { kind: 'hijab', skin: 2, wear: 7 },
+  { kind: 'kufi', skin: 1, wear: 5, beard: 'full', hairColor: 3 },
+];
 
 /** The little sound waves beside the hero headline */
 export function Waves() {
@@ -57,10 +187,10 @@ export function Waves() {
 }
 
 const PEOPLE = [
-  { tint: 4, x: 3, y: 4, ring: '#c9b7f6' },
-  { tint: 1, x: 8, y: 58, ring: '#ffd27a', typing: true },
-  { tint: 3, x: 89, y: 6, ring: '#b9cdf6', bubble: 'Assalamu alaikum!' },
-  { tint: 2, x: 79, y: 66, ring: '#ffb9a3' },
+  { tint: 4, x: 3, y: 4, ring: '#c9b7f6', look: CAST[0] },
+  { tint: 1, x: 8, y: 58, ring: '#ffd27a', look: CAST[1], typing: true },
+  { tint: 3, x: 89, y: 6, ring: '#b9cdf6', look: CAST[2], bubble: 'Assalamu alaikum!' },
+  { tint: 2, x: 79, y: 66, ring: '#ffb9a3', look: CAST[3] },
 ];
 
 /** People floating around the hero, each on a dashed path down to the circle below */
@@ -77,7 +207,7 @@ export function HeroPeople() {
       </svg>
       {PEOPLE.map(p => (
         <span key={p.tint} className={s.floater} style={{ left: `${p.x}%`, top: `${p.y}%` }}>
-          <Person tint={p.tint} ring={p.ring} />
+          <Person look={p.look} tint={p.tint} ring={p.ring} />
           {p.bubble && <span className={s.bubbleLeft}>{p.bubble}</span>}
           {p.typing && (
             <span className={s.bubbleTyping}>
@@ -109,7 +239,7 @@ export function CirclePreview() {
         <b>Learn Quran</b>
         <span className={s.previewSearch}>Search circles</span>
         <span className={s.previewMe}>
-          <Person tint={0} size={26} />
+          <Person look={CAST[4]} tint={3} size={26} />
         </span>
       </div>
       <div className={s.previewBody}>
@@ -132,7 +262,7 @@ export function CirclePreview() {
             </div>
             <div className={s.previewFaces}>
               {[0, 1, 2, 3, 4].map(t => (
-                <Person key={t} tint={t} size={40} />
+                <Person key={t} look={CAST[t + 1]} tint={t} size={40} />
               ))}
             </div>
           </div>
@@ -163,7 +293,7 @@ export function CirclePreview() {
           <p>Partners</p>
           {[2, 3].map(t => (
             <span key={t} className={s.previewRow}>
-              <Person tint={t} size={24} />
+              <Person look={CAST[t + 3]} tint={t} size={24} />
               <span className={s.skel} style={{ width: '60%' }} />
             </span>
           ))}

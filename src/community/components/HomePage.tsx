@@ -130,7 +130,7 @@ export default function HomePage() {
               {members.length > 0 && (
                 <div className={s.avatarGrid}>
                   {members.map(m => (
-                    <Avatar key={m.id} name={m.name} />
+                    <Avatar key={m.id} name={m.name} look={m.look} />
                   ))}
                 </div>
               )}
@@ -164,7 +164,7 @@ export default function HomePage() {
                   </p>
                   <blockquote className={s.quote}>“{story.body[1] ?? story.body[0]}”</blockquote>
                   <p className={s.byline}>
-                    <Avatar name={story.name} size="sm" />
+                    <Avatar name={story.name} look={story.look} size="sm" />
                     <span>
                       <b>{story.name}</b>
                       <small>{story.role}</small>

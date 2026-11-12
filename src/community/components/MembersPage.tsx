@@ -32,7 +32,11 @@ export default function MembersPage() {
 
           {mine?.sentAt && (
             <div className={s.mine}>
-              <Avatar name={mine.name} size="lg" />
+              <Avatar
+                name={mine.name}
+                size="lg"
+                look={mine.iAm === 'sister' ? { kind: 'hijab', skin: 1, wear: 1 } : mine.iAm === 'brother' ? { kind: 'hair', skin: 1, wear: 1, hair: 'short' } : undefined}
+              />
               <div>
                 <p className={s.mineName}>
                   {mine.name} <span className={s.pendingTag}>Application sent</span>
@@ -49,7 +53,7 @@ export default function MembersPage() {
               <ul className={s.memberGrid}>
                 {shown.map(m => (
                   <li key={m.id} className={s.member}>
-                    <Avatar name={m.name} size="lg" />
+                    <Avatar name={m.name} look={m.look} size="lg" />
                     <h2 className={s.memberName}>{m.name}</h2>
                     <p className={s.memberLine}>{m.line}</p>
                     <p className={s.memberMeta}>
