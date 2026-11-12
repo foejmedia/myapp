@@ -1,0 +1,13 @@
+/*
+ * The community preview brings its own header and footer (src/community-v2/Shell.tsx).
+ * These rules only remove the space the main site reserves for its navbar and page padding.
+ */
+.app-shell.no-sidebar:has(.cv-host) {
+  display: block;
+  padding-top: 0;
+}
+
+.app-shell.no-sidebar:has(.cv-host) > main {
+  min-height: 0;
+  padding: 0;
+}
