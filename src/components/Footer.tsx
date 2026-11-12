@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Facebook, X, Instagram, Youtube, Shield, Heart, Globe } from 'lucide-react';
+import { Facebook, X, Instagram, Linkedin, Youtube, Shield, Heart, Globe } from 'lucide-react';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -33,7 +33,8 @@ const Footer: React.FC = () => {
   const socials = [
     { icon: <Facebook size={18} />, href: 'https://www.facebook.com/learnquranapp', label: 'Facebook' },
     { icon: <X size={18} />, href: 'https://x.com/learnquranapp_', label: 'X (Twitter)' },
-    { icon: <Instagram size={18} />, href: 'https://www.instagram.com/learnquranapp_/', label: 'Instagram' },
+    { icon: <Instagram size={18} />, href: 'https://www.instagram.com/learnquranapp_', label: 'Instagram' },
+    { icon: <Linkedin size={18} />, href: 'https://www.linkedin.com/company/learnquranapp', label: 'LinkedIn' },
     { icon: <Youtube size={18} />, href: 'https://www.youtube.com/@learnquranapp', label: 'YouTube' },
   ];
 

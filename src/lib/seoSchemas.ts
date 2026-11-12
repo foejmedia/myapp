@@ -18,7 +18,8 @@ export function getOrganizationSchema() {
     sameAs: [
       'https://www.facebook.com/learnquranapp',
       'https://x.com/learnquranapp_',
-      'https://www.instagram.com/learnquranapp_/',
+      'https://www.instagram.com/learnquranapp_',
+      'https://www.linkedin.com/company/learnquranapp',
       'https://www.youtube.com/@learnquranapp',
     ],
     contactPoint: {

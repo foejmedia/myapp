@@ -22,9 +22,9 @@ const SOCIALS: Social[] = [
   { name: 'WhatsApp', blurb: 'Weekly Quranic reminders', href: 'https://wa.me/916204130133?text=Assalamu%20Alaikum!%20I%20would%20like%20to%20receive%20weekly%20Quranic%20insights', from: '#25d366', to: '#128c7e', icon: <WhatsAppGlyph /> },
   { name: 'WhatsApp Channel', blurb: 'Updates and new features', href: '', from: '#34d399', to: '#059669', icon: <span className="material-symbols-outlined" aria-hidden="true">campaign</span> },
   { name: 'Facebook', blurb: 'Community and announcements', href: 'https://www.facebook.com/learnquranapp', from: '#4c8bf5', to: '#1459c7', icon: <Facebook size={22} /> },
-  { name: 'Instagram', blurb: 'Daily ayahs and reflections', href: 'https://www.instagram.com/learnquranapp_/', from: '#f9a03f', to: '#c0267e', icon: <Instagram size={22} /> },
+  { name: 'Instagram', blurb: 'Daily ayahs and reflections', href: 'https://www.instagram.com/learnquranapp_', from: '#f9a03f', to: '#c0267e', icon: <Instagram size={22} /> },
   { name: 'X', blurb: 'Short updates and tips', href: 'https://x.com/learnquranapp_', from: '#4b5563', to: '#111827', icon: <XIcon size={22} /> },
-  { name: 'LinkedIn', blurb: 'Our story and team', href: '', from: '#2f86d6', to: '#0a58a8', icon: <Linkedin size={22} /> },
+  { name: 'LinkedIn', blurb: 'Our story and team', href: 'https://www.linkedin.com/company/learnquranapp', from: '#2f86d6', to: '#0a58a8', icon: <Linkedin size={22} /> },
 ];
 
 /** "Follow us everywhere": one card per platform, brand-tinted on hover. */
