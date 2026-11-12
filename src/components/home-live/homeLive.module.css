@@ -68,65 +68,211 @@
 :global([data-theme='dark']) .lavender .cardCta { color: #a5b4fc; }
 :global([data-theme='dark']) .peach .cardCta { color: #fdba74; }
 
-/* ---------- live sky scene ---------- */
+/* ---------- live scene: a lakeside mosque under a sky that follows the clock ---------- */
+/* Each phase of the day sets the whole palette; the drawing only ever reads these tokens. */
 .scene {
-  position: relative; overflow: hidden; min-height: 300px; margin: 8px 0 36px; border-radius: 26px;
-  box-shadow: 0 18px 40px -24px rgba(17, 24, 39, 0.45); isolation: isolate;
-  transition: background 1.5s ease;
+  --sky: linear-gradient(180deg, #6fbdf0 0%, #a9dcf8 48%, #e6f6ff 100%);
+  --m1: #b3d7ec; --m2: #86c0d6; --m3: #5aad88; --far: #9fcbdf; --mist: rgba(255, 255, 255, 0.6);
+  --wall: #fffaf0; --dome: #0e8a68; --trim: #e2b245; --win: #1d6558; --shade: rgba(16, 48, 78, 0.13);
+  --tree: #2a7a5c; --trunk: #7a6548;
+  --water-a: #b4e1f4; --water-b: #47a3cd; --ripple: rgba(255, 255, 255, 0.75); --shore: rgba(28, 110, 96, 0.3);
+  --cloud: #fff; --cloud-o: 0.95; --bird: rgba(22, 44, 78, 0.75);
+  --sun-a: #ffd84f; --sun-b: #f7a614; --halo-1: rgba(255, 221, 96, 0.22); --halo-2: rgba(255, 200, 70, 0.5);
+  --ray: rgba(255, 244, 190, 0.5); --glow: rgba(255, 248, 214, 0.7); --glint: rgba(255, 255, 255, 0.8);
+  --ink: #0f172a; --ink-2: rgba(15, 23, 42, 0.8); --ink-3: rgba(15, 23, 42, 0.68);
+
+  position: relative; overflow: hidden; isolation: isolate; container-type: inline-size;
+  min-height: 400px; margin: 8px 0 36px; border-radius: 26px;
+  background: var(--sky); box-shadow: 0 22px 44px -26px rgba(17, 24, 39, 0.5);
 }
+.scene[data-phase='dawn'] {
+  --sky: linear-gradient(180deg, #86b2e8 0%, #c9bde6 36%, #f9c5c0 66%, #ffe2b6 100%);
+  --m1: #d9c3e2; --m2: #b9a2d2; --m3: #6ea48d; --far: #c7afd9; --mist: rgba(255, 234, 222, 0.7);
+  --wall: #fff1e6; --dome: #2c8f7c; --trim: #e8b06c; --win: #3a6c78; --shade: rgba(70, 50, 110, 0.14);
+  --tree: #2f6f62; --trunk: #7b6257;
+  --water-a: #ffd8c6; --water-b: #94a6da; --ripple: rgba(255, 246, 236, 0.8); --shore: rgba(60, 80, 120, 0.28);
+  --cloud: #ffece4; --cloud-o: 0.92; --bird: rgba(50, 44, 90, 0.55);
+  --sun-a: #ffc65c; --sun-b: #ff8f4d; --halo-1: rgba(255, 190, 120, 0.26); --halo-2: rgba(255, 160, 110, 0.55);
+  --ray: rgba(255, 226, 190, 0.5); --glow: rgba(255, 214, 170, 0.85); --glint: rgba(255, 240, 220, 0.85);
+}
+.scene[data-phase='golden'] {
+  --sky: linear-gradient(180deg, #ef985c 0%, #f8b76f 40%, #ffd698 72%, #ffecca 100%);
+  --m1: #eebd92; --m2: #d79772; --m3: #7f9a58; --far: #e2ab85; --mist: rgba(255, 236, 200, 0.6);
+  --wall: #fff0d2; --dome: #16795c; --trim: #f0a534; --win: #2f6a58; --shade: rgba(120, 60, 20, 0.15);
+  --tree: #3f6b45; --trunk: #6d5235;
+  --water-a: #ffdfab; --water-b: #de9160; --ripple: rgba(255, 246, 220, 0.8); --shore: rgba(110, 80, 40, 0.3);
+  --cloud: #fff2dc; --cloud-o: 0.9; --bird: rgba(90, 50, 30, 0.55);
+  --sun-a: #ffd257; --sun-b: #ff9a2e; --halo-1: rgba(255, 214, 120, 0.3); --halo-2: rgba(255, 180, 70, 0.6);
+  --ray: rgba(255, 240, 200, 0.55); --glow: rgba(255, 240, 200, 0.85); --glint: rgba(255, 250, 230, 0.9);
+}
+.scene[data-phase='dusk'] {
+  --sky: linear-gradient(180deg, #27286a 0%, #5f4696 40%, #dc7f8b 76%, #ffbd80 100%);
+  --m1: #80609f; --m2: #584382; --m3: #2b295c; --far: #6e5294; --mist: rgba(255, 170, 150, 0.3);
+  --wall: #40366f; --dome: #261f52; --trim: #f1ad78; --win: #ffd56b; --shade: rgba(8, 6, 40, 0.3);
+  --tree: #1c1b44; --trunk: #1c1b44;
+  --water-a: #f3a188; --water-b: #3c3074; --ripple: rgba(255, 214, 190, 0.6); --shore: rgba(20, 16, 60, 0.45);
+  --cloud: #f4b0b8; --cloud-o: 0.5; --bird: transparent;
+  --sun-a: #ffb066; --sun-b: #ff6f4f; --halo-1: rgba(255, 150, 110, 0.3); --halo-2: rgba(255, 120, 90, 0.6);
+  --ray: rgba(255, 190, 150, 0.3); --glow: rgba(255, 176, 120, 0.9); --glint: rgba(255, 214, 170, 0.85);
+  --ink: #fff; --ink-2: rgba(255, 255, 255, 0.88); --ink-3: rgba(255, 255, 255, 0.76);
+}
+.scene[data-phase='night'] {
+  --sky: linear-gradient(180deg, #060b26 0%, #101c54 52%, #2a3a88 100%);
+  --m1: #1e2d6c; --m2: #162256; --m3: #0c143a; --far: #1a2760; --mist: rgba(130, 150, 230, 0.18);
+  --wall: #243574; --dome: #1b4a73; --trim: #d8b25c; --win: #ffd978; --shade: rgba(0, 0, 20, 0.32);
+  --tree: #070d28; --trunk: #070d28;
+  --water-a: #2c3e8c; --water-b: #0a1034; --ripple: rgba(190, 205, 255, 0.4); --shore: rgba(0, 0, 20, 0.5);
+  --cloud: #aab9f0; --cloud-o: 0.14; --bird: transparent;
+  --glow: rgba(150, 170, 255, 0.3); --glint: rgba(230, 236, 255, 0.7);
+  --ink: #fff; --ink-2: rgba(255, 255, 255, 0.88); --ink-3: rgba(255, 255, 255, 0.76);
+}
+/* the size of the drawing, shared by every layer that has to line up with it */
+.land, .glint, .orbit, .birds, .sceneText { --gh: 320px; }
+
+/* sky */
 .stars { position: absolute; inset: 0; z-index: 0; }
 .stars span { position: absolute; border-radius: 50%; background: #fff; animation: hlTwinkle 2.6s ease-in-out infinite; }
-.sun, .moon { position: absolute; z-index: 0; width: 66px; height: 66px; margin: -33px 0 0 -33px; border-radius: 50%; transition: left 2s ease, top 2s ease; }
-.sun {
-  background: radial-gradient(circle at 40% 40%, #fffbe6, #ffd34d 55%, #f59e0b);
-  box-shadow: 0 0 0 14px rgba(255, 211, 77, 0.18), 0 0 60px 20px rgba(255, 196, 61, 0.45);
+.scene[data-phase='dusk'] .stars { opacity: 0.55; -webkit-mask: linear-gradient(#000 20%, transparent 62%); mask: linear-gradient(#000 20%, transparent 62%); }
+.meteor {
+  position: absolute; left: 58%; top: 9%; width: 110px; height: 2px; border-radius: 2px; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95)); transform: rotate(-205deg);
+  animation: hlMeteor 13s ease-in 4s infinite;
+}
+@keyframes hlMeteor {
+  0%, 92% { opacity: 0; translate: 0 0; }
+  93% { opacity: 1; }
+  100% { opacity: 0; translate: -260px 120px; }
+}
+.orbit { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.glow {
+  position: absolute; bottom: calc(var(--gh) * 0.2 - 150px); width: 620px; height: 420px; margin-left: -310px;
+  background: radial-gradient(closest-side, var(--glow), transparent); transition: left 2s ease;
+}
+.orb { position: absolute; width: 0; height: 0; transition: left 2s ease, top 2s ease; }
+.sunDisc {
+  position: absolute; left: -37px; top: -37px; width: 74px; height: 74px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, #fffdf2, var(--sun-a) 52%, var(--sun-b));
+  box-shadow: 0 0 0 14px var(--halo-1), 0 0 60px 20px var(--halo-2);
   animation: hlSunGlow 5s ease-in-out infinite;
 }
-@keyframes hlSunGlow { 0%, 100% { box-shadow: 0 0 0 12px rgba(255, 211, 77, 0.16), 0 0 50px 16px rgba(255, 196, 61, 0.4); } 50% { box-shadow: 0 0 0 20px rgba(255, 211, 77, 0.1), 0 0 70px 26px rgba(255, 196, 61, 0.5); } }
-.moon {
-  width: 54px; height: 54px; margin: -27px 0 0 -27px; background: transparent;
-  box-shadow: 14px -6px 0 0 #fef3c7, 14px -6px 26px 4px rgba(254, 243, 199, 0.35);
+@keyframes hlSunGlow {
+  0%, 100% { box-shadow: 0 0 0 12px var(--halo-1), 0 0 50px 16px var(--halo-2); }
+  50% { box-shadow: 0 0 0 22px var(--halo-1), 0 0 76px 28px var(--halo-2); }
 }
-.clouds { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.cloudA, .cloudB, .cloudC {
-  position: absolute; height: 34px; border-radius: 999px; background: rgba(255, 255, 255, 0.85);
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.06)); animation: hlDrift linear infinite;
+.rays {
+  position: absolute; left: -150px; top: -150px; width: 300px; height: 300px; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, var(--ray) 0deg 4deg, transparent 4deg 18deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 27%, #000 30%, transparent 68%);
+  mask: radial-gradient(circle, transparent 0 27%, #000 30%, transparent 68%);
+  animation: hlSpin 140s linear infinite;
 }
-.cloudA::before, .cloudB::before, .cloudC::before { content: ''; position: absolute; left: 22%; top: -18px; width: 46%; height: 40px; border-radius: 50%; background: inherit; }
-.cloudA { top: 14%; width: 150px; animation-duration: 70s; animation-delay: -12s; }
-.cloudB { top: 30%; width: 110px; opacity: 0.85; animation-duration: 95s; animation-delay: -55s; }
-.cloudC { top: 8%; width: 90px; opacity: 0.7; animation-duration: 120s; animation-delay: -80s; }
-@keyframes hlDrift { from { transform: translateX(-200px); } to { transform: translateX(1400px); } }
-.land { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 140px; z-index: 1; }
-.hillBack { fill: rgba(16, 122, 87, 0.22); }
-.hillFront { fill: rgba(16, 122, 87, 0.35); }
-.scene[data-phase='night'] .hillBack, .scene[data-phase='dusk'] .hillBack { fill: rgba(12, 20, 52, 0.55); }
-.scene[data-phase='night'] .hillFront, .scene[data-phase='dusk'] .hillFront { fill: rgba(8, 14, 40, 0.8); }
-.mosque { position: absolute; right: 6%; bottom: 0; z-index: 2; width: min(300px, 46%); height: auto; }
-.mosqueBody { fill: rgba(15, 76, 58, 0.78); }
-.scene[data-phase='night'] .mosqueBody, .scene[data-phase='dusk'] .mosqueBody { fill: #0a1230; }
-.windows { fill: rgba(255, 255, 255, 0.25); }
-.windowsOn { fill: #ffd56b; filter: drop-shadow(0 0 6px rgba(255, 213, 107, 0.9)); animation: hlFlicker 4s ease-in-out infinite; }
-@keyframes hlFlicker { 0%, 100% { opacity: 1; } 48% { opacity: 0.85; } 52% { opacity: 1; } }
+@keyframes hlSpin { to { transform: rotate(360deg); } }
+.moon { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; overflow: visible; filter: drop-shadow(0 0 14px rgba(254, 243, 199, 0.55)); }
+.moonMask { fill: #000; }
+.moonLit { fill: #fff3c4; }
+
+.clouds { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--cloud-o); }
+.cloudA, .cloudB, .cloudC, .cloudD {
+  position: absolute; left: 0; height: auto; fill: var(--cloud);
+  filter: drop-shadow(0 8px 10px rgba(20, 40, 80, 0.06)); animation: hlDrift linear infinite;
+}
+.cloudA { top: 10%; width: 170px; animation-duration: 80s; animation-delay: -30s; }
+.cloudB { top: 27%; width: 120px; opacity: 0.85; animation-duration: 110s; animation-delay: -84s; }
+.cloudC { top: 5%; width: 96px; opacity: 0.7; animation-duration: 140s; animation-delay: -62s; }
+.cloudD { top: 38%; width: 84px; opacity: 0.6; animation-duration: 170s; animation-delay: -150s; }
+@keyframes hlDrift { from { transform: translateX(-180px); } to { transform: translateX(calc(100cqw + 20px)); } }
+
+.birds { position: absolute; z-index: 0; left: 0; top: 30%; width: 124px; height: auto; overflow: visible; animation: hlFly 48s linear -14s infinite; }
+.bird {
+  fill: none; stroke: var(--bird); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  transform-box: fill-box; transform-origin: 50% 100%; animation: hlFlap 0.9s ease-in-out infinite alternate;
+}
+@keyframes hlFly {
+  0% { transform: translate(34cqw, 30px); opacity: 0; }
+  10%, 88% { opacity: 1; }
+  100% { transform: translate(calc(100cqw + 10px), -40px); opacity: 0; }
+}
+@keyframes hlFlap { from { transform: scaleY(1); } to { transform: scaleY(0.3); } }
+
+/* land */
+.land {
+  position: absolute; right: 0; bottom: 0; z-index: 1; display: block;
+  height: var(--gh); width: calc(var(--gh) * 6); min-width: 100%; max-width: none;
+}
+.land path, .land rect, .land circle, .land ellipse, .land stop { transition: fill 1.2s ease, stop-color 1.2s ease; }
+.m1 { fill: var(--m1); }
+.m2 { fill: var(--m2); }
+.m3 { fill: var(--m3); }
+.far { fill: var(--far); }
+.mist0 { stop-color: var(--mist); stop-opacity: 0; }
+.mist1 { stop-color: var(--mist); stop-opacity: 1; }
+.waterA { stop-color: var(--water-a); }
+.waterB { stop-color: var(--water-b); }
+.shore { fill: var(--shore); }
+.shoreLine { fill: var(--ripple); opacity: 0.55; }
+.tree { fill: var(--tree); }
+.trunk { fill: none; stroke: var(--trunk); stroke-width: 5; stroke-linecap: round; }
+.fronds { transform-box: fill-box; transform-origin: 50% 70%; animation: hlSway 5s ease-in-out infinite alternate; }
+.wall { fill: var(--wall); }
+.dome { fill: var(--dome); }
+.trim { fill: var(--trim); }
+.shade { fill: var(--shade); }
+.lite { fill: none; stroke: rgba(255, 255, 255, 0.38); stroke-width: 4; stroke-linecap: round; }
+.wins { fill: var(--win); }
+.scene[data-phase='dusk'] .wins, .scene[data-phase='night'] .wins { filter: drop-shadow(0 0 5px rgba(255, 205, 96, 0.95)); animation: hlFlicker 4s ease-in-out infinite; }
+@keyframes hlFlicker { 0%, 100% { opacity: 1; } 48% { opacity: 0.86; } 52% { opacity: 1; } }
+.reflect { opacity: 0.46; }
+.reflect .wins { filter: none; }
+.cut { fill: var(--water-a); opacity: 0.4; animation: hlRipple 6s ease-in-out infinite alternate; }
+.ripple { fill: var(--ripple); opacity: 0.5; animation: hlRipple 7s ease-in-out infinite alternate; }
+@keyframes hlRipple { from { transform: translateX(-10px); } to { transform: translateX(12px); } }
+.boat { transform-box: fill-box; transform-origin: 50% 100%; animation: hlBob 4.5s ease-in-out infinite alternate; }
+.hull { fill: var(--trunk); }
+.sail { fill: var(--wall); }
+@keyframes hlBob { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(1.5px) rotate(2.5deg); } }
+.glint {
+  position: absolute; bottom: 0; z-index: 2; width: 70px; height: calc(var(--gh) * 0.19); margin-left: -35px; pointer-events: none;
+  background: repeating-linear-gradient(180deg, var(--glint) 0 2px, transparent 2px 8px);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 38% 62%, transparent); mask: linear-gradient(90deg, transparent, #000 38% 62%, transparent);
+  transition: left 2s ease; animation: hlGlint 3.2s ease-in-out infinite alternate;
+}
+@keyframes hlGlint { from { opacity: 0.45; transform: scaleX(0.8); } to { opacity: 0.9; transform: scaleX(1.1); } }
+
+/* words */
 .sceneText {
-  position: relative; z-index: 3; display: grid; gap: 8px; max-width: 440px; padding: 34px 32px 90px;
+  position: relative; z-index: 3; display: grid; gap: 10px; max-width: 480px; padding: 40px 36px calc(var(--gh) * 0.36);
 }
-.sceneKicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(17, 24, 39, 0.7); }
-.sceneTitle { margin: 0; font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em; color: #111827; }
-.sceneLine { margin: 0; font-size: 15px; color: rgba(17, 24, 39, 0.78); }
-.scene[data-phase='night'] .sceneKicker, .scene[data-phase='dusk'] .sceneKicker { color: rgba(255, 255, 255, 0.75); }
-.scene[data-phase='night'] .sceneTitle, .scene[data-phase='dusk'] .sceneTitle { color: #fff; }
-.scene[data-phase='night'] .sceneLine, .scene[data-phase='dusk'] .sceneLine { color: rgba(255, 255, 255, 0.85); }
-.sceneBtns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.sceneKicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.sceneTitle { margin: 0; font-size: clamp(26px, 4.4vw, 40px); line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; }
+.sceneLine { margin: 0; max-width: 34ch; font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+.sceneBtns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .sceneBtn, .sceneBtnGhost {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px;
+  display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 20px;
   border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: transform 0.15s ease;
 }
 .sceneBtn { background: #047857; color: #fff; box-shadow: 0 10px 20px -10px rgba(4, 120, 87, 0.8); }
-.sceneBtnGhost { background: rgba(255, 255, 255, 0.75); color: #064e3b; border: 1px solid rgba(255, 255, 255, 0.9); backdrop-filter: blur(6px); }
-.scene[data-phase='night'] .sceneBtn, .scene[data-phase='dusk'] .sceneBtn { background: #fcd34d; color: #1f2937; }
+.sceneBtnGhost { background: rgba(255, 255, 255, 0.78); color: #064e3b; border: 1px solid rgba(255, 255, 255, 0.9); backdrop-filter: blur(6px); }
+.scene[data-phase='night'] .sceneBtn, .scene[data-phase='dusk'] .sceneBtn { background: #fcd34d; color: #1f2937; box-shadow: 0 10px 22px -10px rgba(252, 211, 77, 0.7); }
 .scene[data-phase='night'] .sceneBtnGhost, .scene[data-phase='dusk'] .sceneBtnGhost { background: rgba(255, 255, 255, 0.12); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
 .sceneBtn:hover, .sceneBtnGhost:hover { transform: translateY(-1px); }
+.sceneBtn:focus-visible, .sceneBtnGhost:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* the drawing shrinks with the card, then moves under the words */
+@container (max-width: 980px) {
+  .land, .glint, .orbit, .birds, .sceneText { --gh: 264px; }
+  .sceneText { max-width: 400px; }
+}
+@container (max-width: 700px) {
+  .land, .glint, .orbit, .birds, .sceneText { --gh: 210px; }
+  .orbit { top: auto; bottom: 0; height: calc(var(--gh) + 58px); }
+  .birds { top: auto; bottom: calc(var(--gh) + 6px); }
+  .sceneText { max-width: none; padding: 26px 22px calc(var(--gh) + 34px); }
+  .sceneBtn, .sceneBtnGhost { padding: 10px 14px; font-size: 13.5px; }
+  .orb { scale: 0.82; }
+  .clouds { opacity: calc(var(--cloud-o) * 0.75); }
+  .cloudA { width: 130px; }
+  .cloudD { display: none; }
+}
 
 /* ---------- Search Quran idle state ---------- */
 .searchIdle {
@@ -157,15 +303,16 @@
   .card { flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; }
   .art { width: 96px; max-width: 96px; height: 84px; flex: none; }
   .cardTitle { font-size: 15px; }
-  .scene { min-height: 340px; border-radius: 20px; }
-  .sceneText { padding: 24px 20px 150px; }
-  .mosque { width: 62%; right: 2%; }
+  .scene { border-radius: 20px; }
   .searchIdle { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; }
   .searchArt { width: 140px; height: 100px; align-self: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pulse, .rise, .twinkle, .twinkleSlow, .sway, .grow, .growLate, .scan, .liveDot, .stars span,
-  .sun, .cloudA, .cloudB, .cloudC, .windowsOn, .card:hover .shine { animation: none !important; }
-  .card, .flip, .sun, .moon, .topic, .scene { transition: none !important; }
+  .sunDisc, .rays, .meteor, .cloudA, .cloudB, .cloudC, .cloudD, .birds, .bird, .fronds, .wins, .cut, .ripple, .boat, .glint,
+  .card:hover .shine { animation: none !important; }
+  .birds { left: 58%; }
+  .cloudA { left: 30%; } .cloudB { left: 62%; } .cloudC { left: 78%; } .cloudD { left: 46%; }
+  .card, .flip, .orb, .glow, .glint, .topic, .land path, .land rect, .land circle, .land ellipse, .land stop { transition: none !important; }
 }
