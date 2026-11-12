@@ -1,0 +1,13 @@
+/*
+ * The homepage preview brings its own header and footer (src/home-v2/HomeV2.tsx).
+ * These rules only remove the space the main site reserves for its fixed navbar and page padding.
+ */
+.app-shell.no-sidebar:has(.hv-host) {
+  display: block;
+  padding-top: 0;
+}
+
+.app-shell.no-sidebar:has(.hv-host) > main {
+  min-height: 0;
+  padding: 0;
+}

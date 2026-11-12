@@ -139,6 +139,8 @@ export default function Navbar() {
   if (pathname.startsWith('/quran-player')) return null;
   // The community has its own header and footer (src/community), so it can move to a subdomain
   if (pathname.startsWith('/community')) return null;
+  // The homepage preview brings its own header and footer (src/home-v2)
+  if (pathname.startsWith('/home-v2')) return null;
 
   return (
     <>

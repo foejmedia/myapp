@@ -13,6 +13,8 @@ const Footer: React.FC = () => {
   const isHome = pathname === '/';
   // the community has its own footer (src/community)
   if (pathname.startsWith('/community')) return null;
+  // The homepage preview brings its own header and footer (src/home-v2)
+  if (pathname.startsWith('/home-v2')) return null;
 
   const navColumns = [
     {

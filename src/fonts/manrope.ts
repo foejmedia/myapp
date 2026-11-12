@@ -99,3 +99,10 @@ export const manropeCommunity = localFont({
   display: 'swap',
   variable: '--cm-font',
 });
+
+/** Homepage preview (/home-v2): its own variable, so the trial stays separate from the live homepage */
+export const manropeHomeV2 = localFont({
+  src: [{ path: './manrope/Manrope-latin-variable.woff2', weight: '200 800', style: 'normal' }],
+  display: 'swap',
+  variable: '--hv-font',
+});

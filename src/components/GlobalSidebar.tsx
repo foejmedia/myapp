@@ -29,7 +29,9 @@ function isExcluded(p: string): boolean {
         // Watch is a full-screen streaming app with its own navigation
         p.startsWith('/video-gallery') ||
         // The community has its own header and footer
-        p.startsWith('/community')
+        p.startsWith('/community') ||
+        // The homepage preview has its own header and footer
+        p.startsWith('/home-v2')
     );
 }
 
