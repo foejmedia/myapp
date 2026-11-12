@@ -9,7 +9,10 @@ import './Footer.css';
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   // the ayah banner belongs to the homepage only
-  const isHome = usePathname() === '/';
+  const pathname = usePathname() ?? '';
+  const isHome = pathname === '/';
+  // the community has its own footer (src/community)
+  if (pathname.startsWith('/community')) return null;
 
   const navColumns = [
     {

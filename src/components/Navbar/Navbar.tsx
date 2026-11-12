@@ -137,6 +137,8 @@ export default function Navbar() {
   if (pathname.startsWith('/video-gallery')) return null;
   // The Quran player is a full-screen app with its own home button
   if (pathname.startsWith('/quran-player')) return null;
+  // The community has its own header and footer (src/community), so it can move to a subdomain
+  if (pathname.startsWith('/community')) return null;
 
   return (
     <>

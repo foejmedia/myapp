@@ -27,7 +27,9 @@ function isExcluded(p: string): boolean {
         p.startsWith('/surah/') ||
         p.startsWith('/ruku/') ||
         // Watch is a full-screen streaming app with its own navigation
-        p.startsWith('/video-gallery')
+        p.startsWith('/video-gallery') ||
+        // The community has its own header and footer
+        p.startsWith('/community')
     );
 }
 

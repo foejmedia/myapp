@@ -1,12 +1,9 @@
-import ComingSoon from '@/components/ComingSoon/ComingSoon';
+import type { Metadata } from 'next';
+import HomePage from '@/community/components/HomePage';
+import { to } from '@/community/config';
 
-export default function CommunityPage() {
-  return (
-    <ComingSoon
-      title="Community"
-      subtitle="A sanctuary for hearts seeking connection through the Quran"
-      primaryLink="/"
-      primaryLinkText="Back to Home"
-    />
-  );
+export const metadata: Metadata = { alternates: { canonical: to() } };
+
+export default function Page() {
+  return <HomePage />;
 }

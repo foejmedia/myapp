@@ -92,3 +92,10 @@ export const manropeSite = localFont({
   display: 'swap',
   variable: '--font-manrope',
 });
+
+/** Community (/community): its own variable so the module can move to a subdomain as is */
+export const manropeCommunity = localFont({
+  src: [{ path: './manrope/Manrope-latin-variable.woff2', weight: '200 800', style: 'normal' }],
+  display: 'swap',
+  variable: '--cm-font',
+});

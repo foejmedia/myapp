@@ -47,6 +47,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    ...['circles', 'members', 'stories', 'gatherings', 'resources', 'guidelines', 'join'].map(page => ({
+      url: `${baseUrl}/community/${page}`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    })),
     {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
