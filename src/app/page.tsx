@@ -16,6 +16,7 @@ import HomeJourney from '@/components/home-live/HomeJourney';
 import MeadowHero from '@/components/home-live/MeadowHero';
 import LiveScene from '@/components/home-live/LiveScene';
 import SearchIdle from '@/components/home-live/SearchIdle';
+import FeatureCards from '@/components/home-live/FeatureCards';
 
 // ── Prayer Times Types ──
 interface PrayerTimesData {
