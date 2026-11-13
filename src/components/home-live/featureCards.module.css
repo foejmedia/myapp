@@ -1,0 +1,487 @@
+/*
+ * Homepage feature cards (FeatureCards.tsx). Flat colour blocks with pill buttons, in the
+ * style of the homepage preview. Sizes follow the width of .root (a container), not the window,
+ * so the cards fit the homepage column at any screen size.
+ */
+
+.root {
+  --yellow: #ffce00;
+  --indigo: #3b197f;
+  --mauve: #8144a8;
+  --celeste: #00a4ff;
+  --blush: #ffa1cc;
+  --ink: #2d2c2b;
+
+  container-type: inline-size;
+  margin-bottom: 32px;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+/* the site has global rules for links, headings and paragraphs: the cards set their own */
+.root :where(p, ul, li, h2) {
+  margin: 0;
+  padding: 0;
+}
+.root :where(ul) {
+  list-style: none;
+}
+/* the homepage colours paragraphs globally; on a colour block the text takes the card's colour */
+.root .chip,
+.root .featBody {
+  color: inherit;
+}
+.root :where(a),
+.root :where(a):hover {
+  color: var(--lc, inherit);
+  text-decoration: none;
+}
+.root :where(i) {
+  font-style: normal;
+}
+.root :where(svg) {
+  display: block;
+  flex: none;
+}
+.root :focus-visible {
+  outline: 2px solid #0061ef;
+  outline-offset: 3px;
+}
+.nb {
+  white-space: nowrap;
+}
+
+.duo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.feat {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 248px;
+  gap: 20px;
+  min-height: 452px;
+  padding: 40px;
+  border-radius: 32px;
+  isolation: isolate;
+}
+.featRead {
+  background: var(--indigo);
+  color: #ffffff;
+}
+.featMinute {
+  background: var(--celeste);
+  color: var(--ink);
+}
+.featText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 800px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 14px;
+  font-weight: 500;
+}
+.featMinute .chip {
+  background: rgba(255, 255, 255, 0.5);
+}
+.root .featTitle {
+  margin-top: 18px;
+  color: inherit;
+  font-family: inherit;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.featBody {
+  margin: 14px 0 28px;
+  font-size: 17px;
+  line-height: 1.45;
+  opacity: 0.86;
+}
+.featMinute .featBody {
+  opacity: 1;
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  margin-top: auto;
+  padding: 0 26px;
+  border-radius: 800px;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s ease,
+    translate 0.18s ease;
+}
+.btn svg {
+  transition: translate 0.2s ease;
+}
+.btn:hover svg {
+  translate: 3px 0;
+}
+.btn:active {
+  translate: 0 2px;
+  box-shadow: none;
+}
+.btnLight {
+  --lc: #2d2c2b;
+  background: #ffffff;
+  box-shadow: rgba(20, 8, 48, 0.35) 0 2px 0 0;
+}
+.btnLight:hover {
+  background: #f9f4f2;
+}
+.btnDark {
+  --lc: #ffffff;
+  background: #2d2c2b;
+  box-shadow: rgba(45, 44, 43, 0.25) 0 2px 0 0;
+}
+.btnDark:hover {
+  background: #44423f;
+}
+
+/* decoration */
+.featArt {
+  position: relative;
+}
+.discA,
+.discB {
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+}
+.discA {
+  width: 330px;
+  height: 330px;
+  right: -96px;
+  bottom: -150px;
+  background: var(--mauve);
+}
+.discB {
+  width: 340px;
+  height: 340px;
+  right: -90px;
+  bottom: -170px;
+  background: var(--yellow);
+}
+.crescent {
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  width: 38px;
+  height: 38px;
+  fill: var(--yellow);
+  z-index: -1;
+}
+
+/* the reader, as a phone */
+.phone {
+  position: absolute;
+  left: 0;
+  top: 38px;
+  width: 244px;
+  height: 480px;
+  padding: 14px 12px;
+  border: 6px solid #1c0f45;
+  border-radius: 34px;
+  background: #ffffff;
+  color: #2d2c2b;
+  rotate: 4deg;
+  transform-origin: top left;
+  animation: fcFloat 7s ease-in-out infinite;
+}
+.phoneBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.phoneBar i {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f9f4f2;
+}
+.bism {
+  height: 26px;
+  margin: 12px 0 10px;
+  background: #3b197f;
+  -webkit-mask: url('/bismillah.svg') center / contain no-repeat;
+  mask: url('/bismillah.svg') center / contain no-repeat;
+}
+.surahs {
+  display: grid;
+  gap: 7px;
+}
+.surahs li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border: 1px solid #e2ded9;
+  border-radius: 14px;
+}
+.surahs li:first-child {
+  border-color: transparent;
+  background: #ffce00;
+}
+.surahs i {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f9f4f2;
+  font-size: 13px;
+  font-weight: 700;
+}
+.surahs li:first-child i {
+  background: #ffffff;
+}
+.surahs span {
+  display: grid;
+  line-height: 1.25;
+}
+.surahs b {
+  font-size: 13.5px;
+}
+.surahs small {
+  overflow: hidden;
+  color: #63605d;
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.surahs li:first-child small {
+  color: #44423f;
+}
+
+/* the one-minute lesson card */
+.lesson {
+  position: absolute;
+  left: 8px;
+  top: 30px;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  width: 228px;
+  padding: 24px 18px 20px;
+  border-radius: 30px;
+  background: #ffffff;
+  color: #2d2c2b;
+  rotate: -4deg;
+  transform-origin: top left;
+  animation: fcFloat 8s ease-in-out -3s infinite;
+}
+.ring {
+  width: 132px;
+  height: 132px;
+}
+.ringTrack,
+.ringFill {
+  fill: none;
+  stroke-width: 11;
+}
+.ringTrack {
+  stroke: #f1ece8;
+}
+.ringFill {
+  stroke: #3b197f;
+  stroke-linecap: round;
+  stroke-dasharray: 72 100;
+  transform: rotate(-90deg);
+  transform-origin: 60px 60px;
+}
+.ringNum,
+.ringUnit {
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: #2d2c2b;
+  font-family: inherit;
+}
+.ringNum {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.ringUnit {
+  fill: #63605d;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.tags {
+  display: flex;
+  gap: 6px;
+}
+.tags span {
+  padding: 5px 10px;
+  border-radius: 800px;
+  background: #f9f4f2;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.tags span:first-child {
+  background: #ffa1cc;
+}
+.streak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 16px;
+  background: #2d2c2b;
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.streak svg {
+  color: #ffce00;
+}
+
+@keyframes fcFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+/* ---------- sized by the space the cards are given ---------- */
+
+/* side by side in a narrower column (the homepage's 1100px): slimmer art, smaller type */
+@container (max-width: 1199px) {
+  .feat {
+    grid-template-columns: minmax(0, 1fr) 196px;
+    gap: 28px;
+    min-height: 420px;
+    padding: 36px 32px;
+  }
+  .root .featTitle {
+    font-size: 30px;
+  }
+  .featBody {
+    font-size: 16px;
+  }
+  .phone,
+  .lesson {
+    scale: 0.84;
+  }
+  .phone {
+    top: 30px;
+  }
+  .discA,
+  .discB {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+/* one card per row */
+@container (max-width: 879px) {
+  .duo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .feat {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    min-height: 400px;
+    padding: 40px;
+  }
+  .featText {
+    max-width: 440px;
+  }
+  .root .featTitle {
+    font-size: 34px;
+  }
+  .phone,
+  .lesson {
+    left: 14px;
+    scale: 1;
+  }
+  .discA,
+  .discB {
+    width: 330px;
+    height: 330px;
+  }
+}
+
+/* phones: the words above, the drawing below */
+@container (max-width: 579px) {
+  .duo {
+    gap: 16px;
+  }
+  .feat {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    min-height: 0;
+    padding: 28px 24px 0;
+    border-radius: 28px;
+  }
+  .root .featTitle {
+    font-size: 28px;
+  }
+  .featBody {
+    margin-bottom: 22px;
+  }
+  .btn {
+    margin-top: 0;
+  }
+  .featArt {
+    height: 290px;
+    margin-top: 30px;
+  }
+  .phone,
+  .lesson {
+    left: 50%;
+    top: 0;
+    margin-left: -122px;
+    transform-origin: center;
+  }
+  .lesson {
+    margin-left: -114px;
+  }
+  .discA,
+  .discB {
+    width: 300px;
+    height: 300px;
+    right: -110px;
+    bottom: -150px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone,
+  .lesson {
+    animation: none;
+  }
+  .btn,
+  .btn svg {
+    transition: none;
+  }
+}

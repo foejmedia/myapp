@@ -942,6 +942,9 @@ export default function HomePage() {
             {/* ── HADEES OF THE DAY ── */}
             <HadeesOfTheDay />
 
+            {/* ── READ + LEARN IN 1 MINUTE: two feature cards ── */}
+            <FeatureCards />
+
             {/* ── 3 STEPS TO LEARN ── */}
             <LearnSteps />
 
