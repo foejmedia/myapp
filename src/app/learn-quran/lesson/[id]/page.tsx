@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import '../../styles/learn-quran.css';
+import '../../styles/tracker.css';
+import { useQaidaTracker } from '../../lib/useQaidaTracker';
 
 interface LessonItem {
     id?: string;
@@ -33,6 +35,31 @@ export default function LessonDetailPage() {
     const [isPlayingAll, setIsPlayingAll] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [fontSize, setFontSize] = useState(3.0); // Default 3rem
+    const [celebrate, setCelebrate] = useState(false);
+
+    // Per-learner progress (device profiles)
+    const tracker = useQaidaTracker();
+    const tracking = tracker.status === 'ready';
+    const heardList = lesson && tracking ? tracker.progress.heard[String(lesson.id)] ?? [] : [];
+    const heardSet = new Set(heardList);
+    const isDone = !!(lesson && tracking && tracker.progress.done[String(lesson.id)]);
+    const lessonTotal = lesson?.items.length ?? 0;
+    const lessonPctNum = isDone ? 100 : lessonTotal ? Math.round((heardSet.size / lessonTotal) * 100) : 0;
+    const wasDoneRef = useRef<boolean | null>(null);
+
+    // remember the last lesson opened
+    const { open: openLessonTrack } = tracker;
+    useEffect(() => {
+        if (lesson && tracking) openLessonTrack(lesson.id);
+    }, [lesson, tracking, openLessonTrack]);
+
+    // celebrate when the lesson becomes complete while on this page
+    useEffect(() => {
+        if (!lesson || !tracking) { wasDoneRef.current = null; return; }
+        if (wasDoneRef.current === false && isDone) setCelebrate(true);
+        if (!isDone) setCelebrate(false);
+        wasDoneRef.current = isDone;
+    }, [lesson, tracking, isDone]);
 
     // REFS for Reactive State Access inside callbacks
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -234,6 +261,7 @@ export default function LessonDetailPage() {
             : null;
 
         setPlayingItem(item.id || item.text);
+        if (lesson) tracker.heard(lesson.id, item.id || item.text, lesson.items.length);
 
         const handleCompletion = () => {
             setPlayingItem(null);
@@ -478,6 +506,20 @@ export default function LessonDetailPage() {
                                 </>
                             )}
                         </button>
+
+                        {tracking ? (
+                            <div className="lqt-lesson-track">
+                                <div className="lqt-lesson-track-top">
+                                    <span><strong>{tracker.profile?.name}</strong> · {isDone ? 'Completed' : `${heardSet.size} of ${lessonTotal} practised`}</span>
+                                    <span className="lqt-lesson-track-pct">{lessonPctNum}%</span>
+                                </div>
+                                <div className="lqt-bar"><span style={{ width: `${lessonPctNum}%` }} /></div>
+                            </div>
+                        ) : tracker.status === 'guest' ? (
+                            <Link href="/learn-quran" className="lqt-ghost lqt-track-hint">
+                                Choose your name to track progress →
+                            </Link>
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -493,7 +535,8 @@ export default function LessonDetailPage() {
                             <button
                                 key={idx}
                                 id={`item-${idx}`}
-                                className={`lq-item-card ${playingItem === (item.id || item.text) ? 'playing' : ''}`}
+                                className={`lq-item-card ${playingItem === (item.id || item.text) ? 'playing' : ''} ${heardSet.has(item.id || item.text) ? 'lqt-heard' : ''}`}
+                                aria-label={`${item.name || item.text}${heardSet.has(item.id || item.text) ? ' (practised)' : ''}`}
                                 onClick={() => {
                                     stopPlayAll(); // Stop auto-play if user interacts manually
                                     playAudio(item);
@@ -507,6 +550,7 @@ export default function LessonDetailPage() {
                                     <div className="lq-item-text">{item.text}</div>
                                 )}
                                 {item.name && <div className="lq-item-name">{item.name}</div>}
+                                {heardSet.has(item.id || item.text) && <span className="lqt-heard-tick" aria-hidden="true">✓</span>}
                             </button>
                         ))
                     ) : (
@@ -515,6 +559,29 @@ export default function LessonDetailPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Completion */}
+                {tracking && (
+                    <div className={`lqt-complete ${isDone ? 'is-done' : ''} ${celebrate ? 'is-celebrate' : ''}`}>
+                        <div>
+                            <div className="lqt-complete-t">
+                                {isDone ? (celebrate ? 'MashaAllah! Lesson complete' : 'Lesson complete') : 'Finished this lesson?'}
+                            </div>
+                            <div className="lqt-complete-s">
+                                {isDone
+                                    ? `Saved to ${tracker.profile?.name}'s progress. Keep revising whenever you like.`
+                                    : 'Tap every item to complete it automatically, or mark it done when you can read it confidently.'}
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            className={isDone ? 'lqt-ghost' : 'lqt-btn'}
+                            onClick={() => tracker.setDone(lesson.id, !isDone)}
+                        >
+                            {isDone ? 'Mark as not done' : '✓ Mark lesson complete'}
+                        </button>
+                    </div>
+                )}
 
                 {/* Navigation */}
                 <div className="lq-nav-buttons-container">
