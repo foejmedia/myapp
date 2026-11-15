@@ -22,6 +22,10 @@ import { BottomPlayerBar } from "@/components/quran-player/BottomPlayerBar";
 import { MobilePlayer } from "@/components/quran-player/MobilePlayer";
 import { QueuePanel } from "@/components/quran-player/QueuePanel";
 import { GlassNowPlaying } from "@/components/quran-player/GlassNowPlaying";
+import { JourneyCard } from "@/components/quran-player/JourneyCard";
+import { useListenJourney } from "@/components/quran-player/useListenJourney";
+import { resumeAyah } from "@/lib/listenJourney";
+import { surahList } from "@/app/audio-quran/surahList";
 
 export default function QuranPlayerPage() {
   const [currentReciter, setCurrentReciter] = useState<Reciter>(RECITERS[0]);
@@ -73,6 +77,35 @@ export default function QuranPlayerPage() {
       gradient: GRADIENTS[i % GRADIENTS.length],
     };
   }), [currentReciter]);
+
+  // Translation listening goes through the whole Quran in order: all 114 surahs, not just the featured ones.
+  const allTracks: Track[] = useMemo(() => surahList.map((s, i) => {
+    const ayahs = s.ayahs ?? 0;
+    const est = estimateDuration(ayahs);
+    return {
+      id: s.number,
+      name: `Surah ${s.name}`,
+      englishName: s.name,
+      translation: s.englishNameTranslation,
+      ayahs,
+      reciter: currentReciter.name,
+      reciterId: currentReciter.id,
+      audioUrl: getAudioUrl(s.number, currentReciter.server),
+      duration: est.display,
+      durationSeconds: est.seconds,
+      gradient: GRADIENTS[i % GRADIENTS.length],
+    };
+  }), [currentReciter]);
+  /** a surah by number in Quran order (null past either end) */
+  const serialTrack = useCallback((surah: number) => allTracks[surah - 1] ?? null, [allTracks]);
+  const journeySurahs = useMemo(
+    () => allTracks.map(t => ({ number: t.id, name: t.englishName, translation: t.translation, ayahs: t.ayahs })),
+    [allTracks],
+  );
+
+  // Each learner's place in the translation journey (saved on this device)
+  const journey = useListenJourney();
+  const { at: journeyAt, heard: journeyHeard } = journey;
 
   const {
     tracks: queueTracks,
@@ -127,13 +160,14 @@ export default function QuranPlayerPage() {
     trPosRef.current = pos;
     setTrPos(pos);
     setCurrentTrack(track);
+    journeyAt(track.id, ayah, lang.id);
     audio.src = ayahClipUrl(phase === 'ar' ? ARABIC_FOLDER : lang.folder, track.id, ayah);
     audio.play().catch(() => {});
-  }, [setCurrentTrack]);
+  }, [setCurrentTrack, journeyAt]);
 
   playTranslationAtRef.current = playTranslationAt;
 
-  const startTranslation = useCallback((langId: string, mode: TrMode, track?: Track | null) => {
+  const startTranslation = useCallback((langId: string, mode: TrMode, track?: Track | null, ayah = 1) => {
     const next = { langId, mode };
     trRef.current = next;
     setTr(next);
@@ -141,7 +175,7 @@ export default function QuranPlayerPage() {
     const t = track ?? currentTrack ?? tracks[0];
     if (t) {
       setGlassOpen(true);
-      playTranslationAt(t, 1, trFirstPhase(mode));
+      playTranslationAt(t, Math.min(Math.max(1, ayah), t.ayahs || 1), trFirstPhase(mode));
     }
   }, [currentTrack, tracks, playTranslationAt]);
 
@@ -183,9 +217,10 @@ export default function QuranPlayerPage() {
   };
 
   const playNext = useCallback(async () => {
-    const next = getNextTrack();
+    // translation mode follows the Quran's order (114 wraps back to 1)
+    const next = trRef.current && currentTrack ? serialTrack(currentTrack.id + 1) ?? allTracks[0] : getNextTrack();
     if (next) handlePlayTrack(next, false);
-  }, [getNextTrack, handlePlayTrack]);
+  }, [getNextTrack, handlePlayTrack, currentTrack, serialTrack, allTracks]);
 
   const playPrev = useCallback(async () => {
     const audio = audioRef.current;
@@ -193,9 +228,9 @@ export default function QuranPlayerPage() {
       audio.currentTime = 0;
       return;
     }
-    const prev = getPrevTrack();
+    const prev = trRef.current && currentTrack ? serialTrack(currentTrack.id - 1) ?? allTracks[allTracks.length - 1] : getPrevTrack();
     if (prev) handlePlayTrack(prev, false);
-  }, [getPrevTrack, audioRef]);
+  }, [getPrevTrack, audioRef, currentTrack, serialTrack, allTracks]);
 
   // Expose playNext and PlayPrev for the native audio 'ended' event
   useEffect(() => {
@@ -205,12 +240,13 @@ export default function QuranPlayerPage() {
       const cfg = trRef.current;
       const pos = trPosRef.current;
       if (cfg && pos && currentTrack) {
-        // ayah → translation of the same ayah → next ayah → next surah (loops through the library)
+        // ayah → translation of the same ayah → next ayah → next surah in Quran order (1 → 114)
         if (cfg.mode === 'both' && pos.phase === 'ar') return playTranslationAt(currentTrack, pos.ayah, 'tr');
+        journeyHeard(currentTrack.id, pos.ayah, currentTrack.ayahs);
         if (pos.ayah < currentTrack.ayahs) return playTranslationAt(currentTrack, pos.ayah + 1, trFirstPhase(cfg.mode));
-        const nextSurah = isRepeating ? currentTrack : getNextTrack();
+        const nextSurah = isRepeating ? currentTrack : serialTrack(currentTrack.id + 1);
         if (nextSurah) playTranslationAt(nextSurah, 1, trFirstPhase(cfg.mode));
-        return;
+        return; // after surah 114 the journey is complete: stop
       }
       if (isRepeating) {
         audio.currentTime = 0;
@@ -221,7 +257,7 @@ export default function QuranPlayerPage() {
     };
     audio.addEventListener("ended", onEnded);
     return () => audio.removeEventListener("ended", onEnded);
-  }, [isRepeating, playNext, audioRef, currentTrack, getNextTrack, playTranslationAt]);
+  }, [isRepeating, playNext, audioRef, currentTrack, serialTrack, playTranslationAt, journeyHeard]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -313,13 +349,30 @@ export default function QuranPlayerPage() {
 
   const isTrackPlaying = (trackId: number) => currentTrack?.id === trackId && isPlaying;
 
-  const playTranslationSurah = (t: Track) => {
-    if (trRef.current) handlePlayTrack(t);
-    else startTranslation(TRANSLATION_LANGS[0].id, pendingMode, t);
+  /** Play a surah's translation from a given ayah (keeps the chosen language, else the learner's last one). */
+  const playJourney = (surah: number, ayah: number) => {
+    const t = serialTrack(surah);
+    if (!t) return;
+    if (trRef.current) {
+      setGlassOpen(true);
+      playTranslationAt(t, Math.min(Math.max(1, ayah), t.ayahs), trFirstPhase(trRef.current.mode));
+      return;
+    }
+    const last = journey.journey.pos?.lang;
+    const lang = TRANSLATION_LANGS.find(l => l.id === last) ?? TRANSLATION_LANGS[0];
+    startTranslation(lang.id, pendingMode, t, ayah);
   };
+  /** Surah cards: pause/resume the one playing, otherwise pick up where this learner stopped in it. */
+  const playTranslationSurah = (t: Track) => {
+    if (trRef.current && currentTrack?.id === t.id) { togglePlay(); return; }
+    playJourney(t.id, resumeAyah(journey.journey, { number: t.id, ayahs: t.ayahs }));
+  };
+  /** what comes after the current surah in Quran order */
+  const serialQueue = (n: number) => (currentTrack ? allTracks.slice(currentTrack.id, currentTrack.id + n) : []);
   const shownTrMode: TrMode = tr?.mode ?? pendingMode;
 
   const trLang = tr ? TRANSLATION_LANGS.find(l => l.id === tr.langId) : undefined;
+  const journeyLang = trLang ?? TRANSLATION_LANGS.find(l => l.id === journey.journey.pos?.lang) ?? TRANSLATION_LANGS[0];
   const displayTrack: Track | null = currentTrack && tr && trLang && trPos
     ? { ...currentTrack, reciter: `${trLang.name} · ${trPos.phase === 'ar' ? 'Arabic' : 'Translation'} · Ayah ${trPos.ayah}/${currentTrack.ayahs}` }
     : currentTrack;
@@ -551,6 +604,16 @@ export default function QuranPlayerPage() {
               {/* Translation audio shelves */}
               {(homeTab === "All" || homeTab === "Translations") && (
                 <>
+                  <JourneyCard
+                    tracker={journey}
+                    surahs={journeySurahs}
+                    langName={journeyLang.name}
+                    now={tr && trPos ? { surah: trPos.surah, ayah: trPos.ayah } : null}
+                    isPlaying={isPlaying}
+                    onPlay={playJourney}
+                    onTogglePlay={togglePlay}
+                  />
+
                   <div className="sp-section">
                     <div className="sp-section-header">
                       <h2 className="sp-section-title">Listen in your language</h2>
@@ -580,23 +643,34 @@ export default function QuranPlayerPage() {
                   <div className="sp-section">
                     <div className="sp-section-header">
                       <h2 className="sp-section-title">
-                        Surahs in {trLang?.name ?? TRANSLATION_LANGS[0].name}
+                        Surahs in {journeyLang.name} · 1 to 114
                       </h2>
                       <button className="sp-section-show-all" onClick={() => toggleSection('trsurahs')}>{expandedSections.has('trsurahs') || homeTab === "Translations" ? 'Show less' : 'Show all'}</button>
                     </div>
                     <div className={expandedSections.has('trsurahs') || homeTab === "Translations" ? "sp-card-grid" : "sp-shelf"}>
-                      {tracks.map(track => (
-                        <div key={track.id} className="sp-card" onClick={() => playTranslationSurah(track)}>
-                          <div className="sp-card-art-container">
-                            <SurahArt number={track.id} name={track.englishName} gradient={track.gradient} />
-                            <button className="sp-card-play-btn" onClick={e => { e.stopPropagation(); playTranslationSurah(track); }}>
-                              {tr && isTrackPlaying(track.id) ? <Icons.Pause /> : <Icons.Play />}
-                            </button>
+                      {allTracks.map(track => {
+                        const tracked = journey.status === 'ready';
+                        const done = tracked && !!journey.journey.done[String(track.id)];
+                        const heardTo = tracked ? journey.journey.heard[String(track.id)] ?? 0 : 0;
+                        return (
+                          <div key={track.id} className="sp-card" onClick={() => playTranslationSurah(track)}>
+                            <div className="sp-card-art-container">
+                              <SurahArt number={track.id} name={track.englishName} gradient={track.gradient} />
+                              {done && <span className="qpj-card-done" aria-label="Finished">✓</span>}
+                              <button className="sp-card-play-btn" onClick={e => { e.stopPropagation(); playTranslationSurah(track); }}>
+                                {tr && isTrackPlaying(track.id) ? <Icons.Pause /> : <Icons.Play />}
+                              </button>
+                            </div>
+                            <div className="sp-card-title">{track.name}</div>
+                            <div className="sp-card-subtitle">
+                              {done ? 'Finished ✓' : heardTo > 0 ? `Ayah ${heardTo} of ${track.ayahs}` : `${track.translation} · ${track.ayahs} ayahs`}
+                            </div>
+                            {!done && heardTo > 0 && (
+                              <div className="qpj-bar qpj-card-bar"><span style={{ width: `${(heardTo / track.ayahs) * 100}%` }} /></div>
+                            )}
                           </div>
-                          <div className="sp-card-title">{track.name}</div>
-                          <div className="sp-card-subtitle">{track.translation} · {track.ayahs} ayahs</div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </>
@@ -748,13 +822,13 @@ export default function QuranPlayerPage() {
         volume={volume} setVolume={setVolume}
         isMuted={isMuted} setIsMuted={setIsMuted}
         isLiked={isLiked} toggleLike={toggleLike}
-        queue={getQueueList(3)}
+        queue={tr ? serialQueue(3) : getQueueList(3)}
         duration={duration}
       />
 
       <QueuePanel
         showQueue={showQueue} setShowQueue={setShowQueue}
-        currentTrack={currentTrack} queueList={getQueueList(30)}
+        currentTrack={currentTrack} queueList={tr ? serialQueue(30) : getQueueList(30)}
         playTrack={handlePlayTrack}
       />
 

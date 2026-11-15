@@ -1,6 +1,6 @@
 /**
  * Noorani Qaida tracker — one progress document per learner profile.
- * Pure: no React here. Storage helpers at the bottom use localStorage (device-only).
+ * Pure: no React or storage here (see useQaidaTracker).
  */
 import { DAY_RE, addDays, streaks } from '@/learn1min/lib/dates';
 
@@ -112,34 +112,5 @@ export function summary(p: QaidaProgress, lessons: LessonInfo[], today: string) 
   };
 }
 
-/* ---------- storage (device-only) ---------- */
-
-const KEY_PREFIX = 'lq:progress:';
-export const storageKey = (profileId: string) => KEY_PREFIX + profileId;
-
-export function loadProgress(profileId: string): QaidaProgress {
-  try {
-    const raw = window.localStorage.getItem(storageKey(profileId));
-    return raw ? migrate(JSON.parse(raw)) : emptyProgress();
-  } catch {
-    return emptyProgress();
-  }
-}
-
-/** Returns false when the browser blocks storage or it is full. */
-export function saveProgress(profileId: string, p: QaidaProgress): boolean {
-  try {
-    window.localStorage.setItem(storageKey(profileId), JSON.stringify(p));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function removeProgress(profileId: string) {
-  try {
-    window.localStorage.removeItem(storageKey(profileId));
-  } catch {
-    /* nothing stored */
-  }
-}
+/** localStorage key prefix; one document per learner profile (device-only). */
+export const STORAGE_PREFIX = 'lq:progress:';
