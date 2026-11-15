@@ -6,7 +6,7 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const UA = 'LearnQuran-LiveRadio/1.0 (+https://quraniclearn.com)';
+const UA = 'LearnQuran-LiveRadio/1.0 (+https://learnquran.app)';
 /** Used when the server list can't be fetched; Radio Browser's mirrors change over time */
 const RB_FALLBACK = ['https://de1.api.radio-browser.info', 'https://de2.api.radio-browser.info'];
 /** several searches, since stations are tagged and named inconsistently */

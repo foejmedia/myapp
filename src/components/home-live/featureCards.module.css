@@ -5,12 +5,14 @@
  */
 
 .root {
-  --yellow: #ffce00;
-  --indigo: #3b197f;
-  --mauve: #8144a8;
-  --celeste: #00a4ff;
-  --blush: #ffa1cc;
-  --ink: #2d2c2b;
+  /* the site theme (styles/design-system.css): forest green and teal with light mint, sage and cream */
+  --yellow: #d6e6dc; /* light sage: highlights on green */
+  --indigo: #0f3d2e; /* forest — the hero green */
+  --mauve: #2b6b57; /* teal */
+  --celeste: #e3efe8; /* light mint: the "1 minute" card */
+  --blush: #d6e6dc; /* sage */
+  --ink: #0f3d2e;
+  --cream: #f7f3e9;
 
   container-type: inline-size;
   margin-bottom: 32px;
@@ -44,7 +46,7 @@
   flex: none;
 }
 .root :focus-visible {
-  outline: 2px solid #0061ef;
+  outline: 2px solid var(--mauve);
   outline-offset: 3px;
 }
 .nb {
@@ -141,20 +143,20 @@
   box-shadow: none;
 }
 .btnLight {
-  --lc: #2d2c2b;
-  background: #ffffff;
+  --lc: var(--ink);
+  background: var(--cream);
   box-shadow: rgba(20, 8, 48, 0.35) 0 2px 0 0;
 }
 .btnLight:hover {
-  background: #f9f4f2;
+  background: #ffffff;
 }
 .btnDark {
-  --lc: #ffffff;
-  background: #2d2c2b;
-  box-shadow: rgba(45, 44, 43, 0.25) 0 2px 0 0;
+  --lc: var(--cream);
+  background: var(--ink);
+  box-shadow: rgba(9, 38, 29, 0.3) 0 2px 0 0;
 }
 .btnDark:hover {
-  background: #44423f;
+  background: #145240;
 }
 
 /* decoration */
@@ -179,7 +181,7 @@
   height: 340px;
   right: -90px;
   bottom: -170px;
-  background: var(--yellow);
+  background: #cfe3d7;
 }
 .crescent {
   position: absolute;
@@ -199,10 +201,10 @@
   width: 244px;
   height: 480px;
   padding: 14px 12px;
-  border: 6px solid #1c0f45;
+  border: 6px solid #082419;
   border-radius: 34px;
   background: #ffffff;
-  color: #2d2c2b;
+  color: var(--ink);
   rotate: 4deg;
   transform-origin: top left;
   animation: fcFloat 7s ease-in-out infinite;
@@ -217,12 +219,12 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #f9f4f2;
+  background: var(--cream);
 }
 .bism {
   height: 26px;
   margin: 12px 0 10px;
-  background: #3b197f;
+  background: var(--indigo);
   -webkit-mask: url('/bismillah.svg') center / contain no-repeat;
   mask: url('/bismillah.svg') center / contain no-repeat;
 }
@@ -236,12 +238,12 @@
   align-items: center;
   gap: 9px;
   padding: 9px;
-  border: 1px solid #e2ded9;
+  border: 1px solid rgba(15, 61, 46, 0.12);
   border-radius: 14px;
 }
 .surahs li:first-child {
   border-color: transparent;
-  background: #ffce00;
+  background: var(--yellow);
 }
 .surahs i {
   display: grid;
@@ -249,7 +251,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #f9f4f2;
+  background: var(--cream);
   font-size: 13px;
   font-weight: 700;
 }
@@ -265,14 +267,14 @@
 }
 .surahs small {
   overflow: hidden;
-  color: #63605d;
+  color: #4e5b54;
   font-size: 10.5px;
   letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .surahs li:first-child small {
-  color: #44423f;
+  color: #2e3b35;
 }
 
 /* the one-minute lesson card */
@@ -287,7 +289,7 @@
   padding: 24px 18px 20px;
   border-radius: 30px;
   background: #ffffff;
-  color: #2d2c2b;
+  color: var(--ink);
   rotate: -4deg;
   transform-origin: top left;
   animation: fcFloat 8s ease-in-out -3s infinite;
@@ -302,10 +304,10 @@
   stroke-width: 11;
 }
 .ringTrack {
-  stroke: #f1ece8;
+  stroke: #efe8d8;
 }
 .ringFill {
-  stroke: #3b197f;
+  stroke: var(--indigo);
   stroke-linecap: round;
   stroke-dasharray: 72 100;
   transform: rotate(-90deg);
@@ -315,7 +317,7 @@
 .ringUnit {
   text-anchor: middle;
   dominant-baseline: middle;
-  fill: #2d2c2b;
+  fill: var(--ink);
   font-family: inherit;
 }
 .ringNum {
@@ -324,7 +326,7 @@
   letter-spacing: -0.03em;
 }
 .ringUnit {
-  fill: #63605d;
+  fill: #4e5b54;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
@@ -336,13 +338,13 @@
 .tags span {
   padding: 5px 10px;
   border-radius: 800px;
-  background: #f9f4f2;
+  background: var(--cream);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
 }
 .tags span:first-child {
-  background: #ffa1cc;
+  background: var(--blush);
 }
 .streak {
   display: flex;
@@ -352,14 +354,14 @@
   width: 100%;
   padding: 10px 8px;
   border-radius: 16px;
-  background: #2d2c2b;
-  color: #ffffff;
+  background: var(--ink);
+  color: var(--cream);
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0;
 }
 .streak svg {
-  color: #ffce00;
+  color: var(--yellow);
 }
 
 @keyframes fcFloat {

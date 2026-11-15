@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
+import { SITE_URL } from '@/lib/site';
 
 export const generateMetadata = (page: string): Metadata => {
   const baseTitle = 'Learn Quran';
-  const basePath = 'https://quraniclearn.com';
+  const basePath = SITE_URL;
 
   const pages = {
     home: {

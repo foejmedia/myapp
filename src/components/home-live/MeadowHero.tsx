@@ -20,6 +20,10 @@ function rng(seed: number) {
   };
 }
 
+/** 2 decimals: Math.cos/sin can differ in the last digits between Node and the browser,
+ *  which would make the server-rendered SVG attributes mismatch on hydration. */
+const q = (n: number) => Math.round(n * 100) / 100;
+
 const LEAF = [s.leaf1, s.leaf2, s.leaf3, s.leaf4];
 
 /** A leafy branch reaching in from the top-left corner (mirrored for the right). */
@@ -35,11 +39,11 @@ function Tree({ seed }: { seed: number }) {
         const a = r() * Math.PI * 2;
         const d = Math.sqrt(r()) * rad;
         return {
-          x: cx + Math.cos(a) * d,
-          y: cy + Math.sin(a) * d * 0.8,
-          rx: 7 + r() * 9,
-          ry: 4 + r() * 5,
-          rot: r() * 180,
+          x: q(cx + Math.cos(a) * d),
+          y: q(cy + Math.sin(a) * d * 0.8),
+          rx: q(7 + r() * 9),
+          ry: q(4 + r() * 5),
+          rot: q(r() * 180),
           c: LEAF[Math.floor(r() * LEAF.length)],
         };
       }),
@@ -133,9 +137,9 @@ export default function MeadowHero() {
       const lean = (r() - 0.5) * 16;
       return { d: `M${x.toFixed(1)} ${y.toFixed(1)} q${(lean / 2).toFixed(1)} ${(-h / 2).toFixed(1)} ${lean.toFixed(1)} ${(-h).toFixed(1)}`, c: Math.floor(r() * 3) };
     });
-    const flowers = Array.from({ length: 34 }, () => ({ x: r() * 1200, y: 590 + r() * 46, r: 0.9 + r() * 0.9 }));
-    const farFlowers = Array.from({ length: 70 }, () => ({ x: r() * 1200, y: 505 + r() * 75, r: 0.6 + r() * 1.1 }));
-    const stars = Array.from({ length: 40 }, () => ({ x: r() * 1200, y: r() * 330, r: 0.6 + r() * 1.2 }));
+    const flowers = Array.from({ length: 34 }, () => ({ x: q(r() * 1200), y: q(590 + r() * 46), r: q(0.9 + r() * 0.9) }));
+    const farFlowers = Array.from({ length: 70 }, () => ({ x: q(r() * 1200), y: q(505 + r() * 75), r: q(0.6 + r() * 1.1) }));
+    const stars = Array.from({ length: 40 }, () => ({ x: q(r() * 1200), y: q(r() * 330), r: q(0.6 + r() * 1.2) }));
     return { blades, flowers, farFlowers, stars };
   }, []);
 

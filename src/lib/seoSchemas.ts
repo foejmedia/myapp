@@ -2,6 +2,7 @@
  * SEO Utilities Library
  * Contains JSON-LD schemas, metadata generators, and SEO helpers
  */
+import { SITE_NAME, SITE_URL, absoluteUrl } from './site';
 
 /**
  * Organization Schema for structured data
@@ -11,9 +12,15 @@ export function getOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Learn Quran',
-    url: 'https://learnquran.app',
-    logo: 'https://learnquran.app/images/logo.png',
+    '@id': `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    url: `${SITE_URL}/`,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/icons/icon-512x512.png`,
+      width: 512,
+      height: 512,
+    },
     description: 'Interactive Quranic learning platform for spiritual growth and understanding.',
     sameAs: [
       'https://www.facebook.com/learnquranapp',
@@ -31,23 +38,19 @@ export function getOrganizationSchema() {
 }
 
 /**
- * Website Schema for search functionality
- * Enables search action in Google search results
+ * WebSite schema: tells Google the site's name (shown above the result) and its home URL.
+ * (No SearchAction: Google retired the sitelinks search box, and the site has no /search page.)
  */
 export function getWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Learn Quran',
-    url: 'https://learnquran.app',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: 'https://learnquran.app/search?q={search_term_string}',
-      },
-      'query-input': 'required name=search_term_string',
-    },
+    '@id': `${SITE_URL}/#website`,
+    name: SITE_NAME,
+    alternateName: ['LearnQuran', 'learnquran.app'],
+    url: `${SITE_URL}/`,
+    inLanguage: 'en',
+    publisher: { '@id': `${SITE_URL}/#organization` },
   };
 }
 
@@ -306,7 +309,7 @@ export function getOpenGraphTags({
     title,
     description,
     url,
-    siteName: 'Learn Quran | learnquran.app',
+    siteName: SITE_NAME,
     images: [
       {
         url: image,
@@ -350,8 +353,7 @@ export function getTwitterCardTags({
  * Prevents duplicate content issues
  */
 export function getCanonicalUrl(path: string): string {
-  const baseUrl = 'https://learnquran.app';
-  return `${baseUrl}${path}`;
+  return absoluteUrl(path);
 }
 
 /**
@@ -362,7 +364,7 @@ export function getHrefLangTags(path: string, languages: string[] = ['en']) {
   return languages.map((lang) => ({
     rel: 'alternate',
     hrefLang: lang,
-    href: `https://learnquran.app/${lang}${path}`,
+    href: `${SITE_URL}/${lang}${path}`,
   }));
 }
 

@@ -1,0 +1,331 @@
+/*
+ * Homepage about + FAQ, in the site theme (styles/design-system.css): forest green, teal,
+ * light mint, sage and cream — the same blocks, pills and discs as the feature cards above it.
+ * Light blocks, chips and the FAQ use theme variables, so they follow light/dark mode.
+ */
+
+.wrap {
+  --forest: #0f3d2e;
+  --forest-deep: #09261d;
+  --teal: #2b6b57;
+  --sage-light: #d6e6dc;
+  --cream: #f7f3e9;
+  --ink: #0f3d2e;
+  /* light surfaces that switch with the theme */
+  --sand: var(--bg-card-hover, #f2ebdd);
+  --sage: color-mix(in srgb, var(--accent-teal, #2b6b57) 16%, var(--bg-card, #ffffff));
+  --mint: color-mix(in srgb, var(--brand-primary, #0f3d2e) 8%, var(--bg-card, #ffffff));
+  --on-light: var(--text-primary, #0f3d2e);
+
+  margin: 8px 0 40px;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+/* the site has global rules for links, headings and paragraphs: this section sets its own */
+.wrap :where(h2, h3, p, ul, li) {
+  margin: 0;
+  padding: 0;
+}
+.wrap :where(ul) {
+  list-style: none;
+}
+.wrap :where(a),
+.wrap :where(a):hover {
+  text-decoration: none;
+}
+.wrap :focus-visible {
+  outline: 2px solid var(--brand-primary, #0f3d2e);
+  outline-offset: 3px;
+}
+
+/* ── intro ── */
+.intro {
+  max-width: 760px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 800px;
+  background: var(--sage-light);
+  color: var(--forest);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.wrap .h2 {
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-size: clamp(26px, 3.4vw, 34px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.wrap .h2Small {
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.wrap .lead {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ── colour cards ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.wrap .card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+  min-height: 250px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--bg);
+  color: var(--fg);
+  transition: translate 0.18s ease;
+}
+
+.wrap .card:hover {
+  translate: 0 -3px;
+  color: var(--fg);
+}
+
+/* tones: the theme's forest, teal and deep green, plus light mint, sand and sage */
+.forestTone { --bg: var(--forest); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.12); --disc: var(--teal); --btn: var(--cream); --btn-fg: var(--forest); }
+.mintTone { --bg: var(--mint); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--sage-light); --btn: var(--forest); --btn-fg: var(--cream); }
+.tealTone { --bg: var(--teal); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.14); --disc: var(--sage-light); --btn: var(--cream); --btn-fg: var(--forest); }
+.sandTone { --bg: var(--sand); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--sage-light); --btn: var(--forest); --btn-fg: var(--cream); }
+.sageTone { --bg: var(--sage); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--teal); --btn: var(--forest); --btn-fg: var(--cream); }
+.deepTone { --bg: var(--forest-deep); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.1); --disc: var(--teal); --btn: var(--cream); --btn-fg: var(--forest); }
+
+/* light blocks sit a little apart from the page */
+.mintTone,
+.sandTone,
+.sageTone {
+  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+}
+
+/* dark theme: the light blocks become warm dark surfaces; their buttons switch to emerald */
+:global([data-theme='dark']) .mintTone,
+:global([data-theme='dark']) .sandTone,
+:global([data-theme='dark']) .sageTone {
+  --btn: var(--brand-primary, #10b981);
+  --btn-fg: #0f0d0a;
+  --disc: var(--teal);
+}
+
+/* corner disc, like the yellow one on the "1 minute" card */
+.disc {
+  position: absolute;
+  z-index: -1;
+  right: -46px;
+  bottom: -60px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--disc);
+  opacity: 0.55;
+  transition: scale 0.3s ease;
+}
+
+.card:hover .disc {
+  scale: 1.08;
+}
+
+/* .wrap prefix: the global .material-symbols-outlined rule would otherwise win and un-centre the glyph */
+.wrap .icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  background: var(--soft);
+  margin-bottom: 18px;
+}
+
+.wrap .h3 {
+  margin-bottom: 8px;
+  color: inherit;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.wrap .text {
+  margin-bottom: 22px;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  opacity: 0.86;
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  margin-top: auto;
+  padding: 0 18px;
+  border-radius: 800px;
+  background: var(--btn);
+  color: var(--btn-fg);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: rgba(9, 38, 29, 0.25) 0 2px 0 0;
+}
+
+.more svg {
+  transition: translate 0.2s ease;
+}
+
+.card:hover .more svg {
+  translate: 3px 0;
+}
+
+/* ── popular surahs ── */
+.popular {
+  margin-bottom: 40px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wrap .chip {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 800px;
+  background: var(--sand);
+  color: var(--on-light);
+  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: background-color 0.18s ease, color 0.18s ease, translate 0.18s ease;
+}
+
+.wrap .chip:hover {
+  background: var(--forest);
+  color: var(--cream);
+  translate: 0 -2px;
+}
+
+/* ── FAQ ── */
+.faq {
+  max-width: 860px;
+}
+
+.qa {
+  margin-bottom: 10px;
+  border-radius: 22px;
+  background: var(--sand);
+  color: var(--on-light);
+  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+  transition: background-color 0.2s ease;
+}
+
+.qa[open] {
+  background: var(--forest);
+  color: var(--cream);
+  box-shadow: none;
+}
+
+.q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.q::-webkit-details-marker {
+  display: none;
+}
+
+.wrap .qText {
+  color: inherit;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.chev {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sage-light);
+  color: var(--forest);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  transition: rotate 0.2s ease;
+}
+
+.qa[open] .chev {
+  rotate: 45deg;
+}
+
+.wrap .a {
+  padding: 0 22px 20px;
+  color: inherit;
+  font-size: 15.5px;
+  line-height: 1.6;
+  opacity: 0.88;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap .card,
+  .disc,
+  .more svg,
+  .wrap .chip,
+  .chev {
+    transition: none;
+  }
+}

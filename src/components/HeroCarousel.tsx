@@ -123,8 +123,8 @@ export default function HeroCarousel() {
             <span className="material-symbols-outlined">light_mode</span>
             {hello}
           </p>
-          <h1 className="hc-h1">Grow closer, one ayah at a time.</h1>
-          <p className="hc-sub">A peaceful space to learn, reflect, and connect with the Quran.</p>
+          <h1 className="hc-h1">Learn Quran online, one ayah at a time.</h1>
+          <p className="hc-sub">A free, peaceful space to read, listen to and understand the Holy Quran.</p>
         </div>
         <p className="hc-salam font-arabic" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</p>
       </div>

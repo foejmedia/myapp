@@ -1,10 +1,10 @@
 // app/layout.tsx
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 import Footer from '@/components/Footer';
 import GlobalSidebar from '@/components/GlobalSidebar';
 import Navbar from '@/components/Navbar/Navbar';
-import { getOrganizationSchema, getWebsiteSchema } from '@/lib/seoSchemas';
+import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import './globals.css';
 import { manropeSite } from '@/fonts/manrope';
@@ -12,44 +12,42 @@ import ClientWrapper from '@/components/ClientWrapper';
 import QuickAccessWidget from '@/components/QuickAccessWidget';
 import PrayerReminders from '@/components/PrayerReminders';
 
+/*
+ * Site-wide defaults. Pages override title/description; canonical URLs are set per page
+ * (never here — a canonical in the root layout would point every page at the homepage).
+ */
 export const metadata: Metadata = {
-  title: 'Learn Quran - Learn the Noble Quran | Interactive Quranic Education',
-  description: 'Embark on a transformative journey with the Holy Quran through our comprehensive learning platform. Learn Quran with interactive lessons, audio recitations, and guided study plans.',
-  keywords: 'Quran, Learn Quran, Quran learning, Islamic education, Tajweed, Tafsir, Hifz, Arabic, Muslim, Islamic studies',
+  metadataBase: new URL(SITE_URL),
+  title: 'Learn Quran – Read, Listen & Understand the Holy Quran',
+  description:
+    'Learn Quran online for free: read all 114 surahs with translation and tafsir, listen to recitations, learn Noorani Qaida and tajweed, and memorize step by step.',
+  applicationName: SITE_NAME,
   authors: [{ name: 'Learn Quran Team' }],
-  creator: 'Learn Quran',
-  publisher: 'Learn Quran',
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://quraniclearn.com'),
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
-    title: 'Learn Quran - Learn the Noble Quran | Interactive Quranic Education',
-    description: 'Embark on a transformative journey with the Holy Quran through our comprehensive learning platform designed for spiritual growth.',
-    url: 'https://quraniclearn.com',
-    siteName: 'Learn Quran',
-    images: [
-      {
-        url: '/your-quran-logo.svg',
-        width: 1200,
-        height: 630,
-        alt: 'Learn Quran - Learn the Noble Quran',
-      },
-    ],
+    siteName: SITE_NAME,
+    title: 'Learn Quran – Read, Listen & Understand the Holy Quran',
+    description: 'Read, listen to and understand the Holy Quran online — free, a little every day.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Learn Quran online, for free' }],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Learn Quran - Learn the Noble Quran',
-    description: 'Interactive Quranic learning platform for spiritual growth and understanding.',
-    images: ['/your-quran-logo.svg'],
+    title: 'Learn Quran – Read, Listen & Understand the Holy Quran',
+    description: 'Read, listen to and understand the Holy Quran online — free, a little every day.',
+    images: ['/og-image.png'],
   },
+  // Google Search Console: set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token it gives you
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } }
+    : {}),
   robots: {
     index: true,
     follow: true,
@@ -63,6 +61,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0f7a5a',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -71,7 +75,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`scroll-smooth ${manropeSite.variable}`} suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -105,19 +108,13 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        <link
-          rel="icon"
-          href="/favicon.ico"
-          type="image/x-icon"
-        />
+        {/* Favicon & Apple icon come from app/icon.png and app/apple-icon.png */}
 
         {/* PWA Support */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#d97706" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Learn Quran" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
 
         {/* ✅ Theme init – runs before first paint to prevent flash */}
         <script
@@ -125,20 +122,7 @@ export default function RootLayout({
             __html: `(function(){try{var k='quran-learn-theme';var s=localStorage.getItem(k);var sys=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var t=(s&&s!=='system')?s:sys;var r=document.documentElement;r.setAttribute('data-theme',t);if(t==='dark'){r.classList.add('dark');}else{r.classList.remove('dark');}}catch(e){}})();`,
           }}
         />
-
-        {/* ✅ JSON-LD Structured Data for SEO */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(getOrganizationSchema()),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(getWebsiteSchema()),
-          }}
-        />
+        {/* Organization / WebSite structured data lives on the homepage (app/page.tsx) */}
       </head>
       <body>
         <ThemeProvider>
