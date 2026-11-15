@@ -9,7 +9,7 @@
   --yellow: #d6e6dc; /* light sage: highlights on green */
   --indigo: #0f3d2e; /* forest — the hero green */
   --mauve: #2b6b57; /* teal */
-  --celeste: #e3efe8; /* light mint: the "1 minute" card */
+  --celeste: #f6faf8; /* near-white mint: the "1 minute" card */
   --blush: #d6e6dc; /* sage */
   --ink: #0f3d2e;
   --cream: #f7f3e9;
@@ -76,6 +76,9 @@
 .featMinute {
   background: var(--celeste);
   color: var(--ink);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 61, 46, 0.1),
+    0 6px 20px rgba(15, 61, 46, 0.06);
 }
 .featText {
   display: flex;
@@ -93,7 +96,7 @@
   font-weight: 500;
 }
 .featMinute .chip {
-  background: rgba(255, 255, 255, 0.5);
+  background: #e3efe8;
 }
 .root .featTitle {
   margin-top: 18px;
@@ -181,7 +184,7 @@
   height: 340px;
   right: -90px;
   bottom: -170px;
-  background: #cfe3d7;
+  background: #e3efe8;
 }
 .crescent {
   position: absolute;
@@ -290,6 +293,7 @@
   border-radius: 30px;
   background: #ffffff;
   color: var(--ink);
+  box-shadow: 0 14px 34px rgba(15, 61, 46, 0.12), 0 0 0 1px rgba(15, 61, 46, 0.06);
   rotate: -4deg;
   transform-origin: top left;
   animation: fcFloat 8s ease-in-out -3s infinite;

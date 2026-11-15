@@ -1,26 +1,42 @@
 /*
- * Homepage about + FAQ, in the site theme (styles/design-system.css): forest green, teal,
- * light mint, sage and cream — the same blocks, pills and discs as the feature cards above it.
- * Light blocks, chips and the FAQ use theme variables, so they follow light/dark mode.
+ * Homepage about + FAQ. Neutral palette: white and soft stone cards with charcoal text and
+ * buttons (no green, no gold). In dark mode the cards use the theme's dark surfaces.
  */
 
 .wrap {
-  --forest: #0f3d2e;
-  --forest-deep: #09261d;
-  --teal: #2b6b57;
-  --sage-light: #d6e6dc;
-  --cream: #f7f3e9;
-  --ink: #0f3d2e;
-  /* light surfaces that switch with the theme */
-  --sand: var(--bg-card-hover, #f2ebdd);
-  --sage: color-mix(in srgb, var(--accent-teal, #2b6b57) 16%, var(--bg-card, #ffffff));
-  --mint: color-mix(in srgb, var(--brand-primary, #0f3d2e) 8%, var(--bg-card, #ffffff));
-  --on-light: var(--text-primary, #0f3d2e);
+  --ink: #1c1917; /* text, buttons */
+  --muted: #57534e; /* body copy */
+  --line: rgba(28, 25, 23, 0.1); /* hairlines */
+  --paper: #ffffff;
+  --stone: #fafaf9;
+  --mist: #f5f5f4;
+  --disc-c: #efedea;
+  --tile: #f5f5f4;
+  --btn: #1c1917;
+  --btn-fg: #ffffff;
+  --chip-hover: #1c1917;
+  --chip-hover-fg: #ffffff;
 
   margin: 8px 0 40px;
   font-family: inherit;
   letter-spacing: -0.01em;
-  color: var(--text-primary);
+  color: var(--ink);
+}
+
+/* dark theme: the theme's warm dark surfaces with light text and buttons */
+:global([data-theme='dark']) .wrap {
+  --ink: var(--text-primary, #faf6ed);
+  --muted: var(--text-muted, #a89f8a);
+  --line: rgba(250, 246, 237, 0.08);
+  --paper: var(--bg-card, #2a2420);
+  --stone: color-mix(in srgb, #ffffff 3%, var(--bg-card, #2a2420));
+  --mist: var(--bg-elevated, #241f1a);
+  --disc-c: rgba(250, 246, 237, 0.05);
+  --tile: #f2efe6;
+  --btn: #f5f5f4;
+  --btn-fg: #1c1917;
+  --chip-hover: #f5f5f4;
+  --chip-hover-fg: #1c1917;
 }
 
 /* the site has global rules for links, headings and paragraphs: this section sets its own */
@@ -36,7 +52,7 @@
   text-decoration: none;
 }
 .wrap :focus-visible {
-  outline: 2px solid var(--brand-primary, #0f3d2e);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -52,8 +68,9 @@
   height: 30px;
   padding: 0 13px;
   border-radius: 800px;
-  background: var(--sage-light);
-  color: var(--forest);
+  background: var(--mist);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 14px;
@@ -61,7 +78,7 @@
 
 .wrap .h2 {
   margin-bottom: 12px;
-  color: var(--text-primary);
+  color: var(--ink);
   font-size: clamp(26px, 3.4vw, 34px);
   font-weight: 700;
   line-height: 1.08;
@@ -71,7 +88,7 @@
 
 .wrap .h2Small {
   margin-bottom: 16px;
-  color: var(--text-primary);
+  color: var(--ink);
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -80,7 +97,7 @@
 .wrap .lead {
   font-size: 17px;
   line-height: 1.5;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 /* ── colour cards ── */
@@ -125,31 +142,21 @@
   color: var(--fg);
 }
 
-/* tones: the theme's forest, teal and deep green, plus light mint, sand and sage */
-.forestTone { --bg: var(--forest); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.12); --disc: var(--teal); --btn: var(--cream); --btn-fg: var(--forest); }
-.mintTone { --bg: var(--mint); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--sage-light); --btn: var(--forest); --btn-fg: var(--cream); }
-.tealTone { --bg: var(--teal); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.14); --disc: var(--sage-light); --btn: var(--cream); --btn-fg: var(--forest); }
-.sandTone { --bg: var(--sand); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--sage-light); --btn: var(--forest); --btn-fg: var(--cream); }
-.sageTone { --bg: var(--sage); --fg: var(--on-light); --soft: rgba(var(--brand-rgb, 15, 61, 46), 0.1); --disc: var(--teal); --btn: var(--forest); --btn-fg: var(--cream); }
-.deepTone { --bg: var(--forest-deep); --fg: var(--cream); --soft: rgba(255, 255, 255, 0.1); --disc: var(--teal); --btn: var(--cream); --btn-fg: var(--forest); }
+/* tones: white, stone and mist, so neighbouring cards differ just a little */
+.paperTone { --bg: var(--paper); }
+.stoneTone { --bg: var(--stone); }
+.mistTone { --bg: var(--mist); }
 
-/* light blocks sit a little apart from the page */
-.mintTone,
-.sandTone,
-.sageTone {
-  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+.paperTone,
+.stoneTone,
+.mistTone {
+  --fg: var(--ink);
+  box-shadow:
+    inset 0 0 0 1px var(--line),
+    0 6px 20px rgba(28, 25, 23, 0.05);
 }
 
-/* dark theme: the light blocks become warm dark surfaces; their buttons switch to emerald */
-:global([data-theme='dark']) .mintTone,
-:global([data-theme='dark']) .sandTone,
-:global([data-theme='dark']) .sageTone {
-  --btn: var(--brand-primary, #10b981);
-  --btn-fg: #0f0d0a;
-  --disc: var(--teal);
-}
-
-/* corner disc, like the yellow one on the "1 minute" card */
+/* soft corner disc */
 .disc {
   position: absolute;
   z-index: -1;
@@ -158,8 +165,7 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: var(--disc);
-  opacity: 0.55;
+  background: var(--disc-c);
   transition: scale 0.3s ease;
 }
 
@@ -167,18 +173,32 @@
   scale: 1.08;
 }
 
-/* .wrap prefix: the global .material-symbols-outlined rule would otherwise win and un-centre the glyph */
+/* illustrated icon (HomeAboutIcons.tsx) on a light tile, like a sticker on the colour block */
 .wrap .icon {
-  width: 46px;
-  height: 46px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-size: 24px;
-  line-height: 1;
-  background: var(--soft);
-  margin-bottom: 18px;
+  border-radius: 20px;
+  background: var(--tile);
+  box-shadow: inset 0 0 0 1px var(--line);
+  margin-bottom: 20px;
+  transition: translate 0.25s ease, rotate 0.25s ease;
+}
+
+.iconSvg {
+  width: 52px;
+  height: 52px;
+}
+
+.card:hover .icon {
+  translate: 0 -3px;
+  rotate: -4deg;
+}
+
+:global([data-theme='dark']) .wrap .icon {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 .wrap .h3 {
@@ -192,10 +212,9 @@
 
 .wrap .text {
   margin-bottom: 22px;
-  color: inherit;
+  color: var(--muted);
   font-size: 15px;
   line-height: 1.45;
-  opacity: 0.86;
 }
 
 .more {
@@ -210,7 +229,7 @@
   color: var(--btn-fg);
   font-size: 14px;
   font-weight: 700;
-  box-shadow: rgba(9, 38, 29, 0.25) 0 2px 0 0;
+  box-shadow: rgba(28, 25, 23, 0.2) 0 2px 0 0;
 }
 
 .more svg {
@@ -238,17 +257,17 @@
   height: 40px;
   padding: 0 18px;
   border-radius: 800px;
-  background: var(--sand);
-  color: var(--on-light);
-  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
   font-size: 14.5px;
   font-weight: 600;
   transition: background-color 0.18s ease, color 0.18s ease, translate 0.18s ease;
 }
 
 .wrap .chip:hover {
-  background: var(--forest);
-  color: var(--cream);
+  background: var(--chip-hover);
+  color: var(--chip-hover-fg);
   translate: 0 -2px;
 }
 
@@ -260,16 +279,14 @@
 .qa {
   margin-bottom: 10px;
   border-radius: 22px;
-  background: var(--sand);
-  color: var(--on-light);
-  box-shadow: inset 0 0 0 1px var(--border-default, rgba(15, 61, 46, 0.12));
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
   transition: background-color 0.2s ease;
 }
 
 .qa[open] {
-  background: var(--forest);
-  color: var(--cream);
-  box-shadow: none;
+  background: var(--mist);
 }
 
 .q {
@@ -300,8 +317,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--sage-light);
-  color: var(--forest);
+  background: var(--btn);
+  color: var(--btn-fg);
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
@@ -317,11 +334,12 @@
   color: inherit;
   font-size: 15.5px;
   line-height: 1.6;
-  opacity: 0.88;
+  color: var(--muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .wrap .card,
+  .wrap .icon,
   .disc,
   .more svg,
   .wrap .chip,

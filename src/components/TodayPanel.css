@@ -238,8 +238,10 @@
   box-shadow: 0 8px 22px rgba(214, 162, 75, 0.3);
 }
 
-.tp-btn-arrow {
+/* .tp-btn prefix: beats the later Material Symbols display:inline-block (see .tp-mini-icon) */
+.tp-btn .tp-btn-arrow {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 28px;
@@ -355,19 +357,23 @@
   background: var(--bg-elevated);
 }
 
-.tp-mini-icon {
+/* .tp-mini prefix: the Material Symbols stylesheet (loaded later) sets display:inline-block on
+   .material-symbols-outlined, which would undo the centring and leave the glyph top-left */
+.tp-mini .tp-mini-icon {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
+  line-height: 1;
   border-radius: 10px;
   font-size: 19px !important;
   color: var(--brand-primary);
   background: rgba(var(--brand-rgb), 0.12);
 }
 
-.tp-mini-fire {
+.tp-mini .tp-mini-fire {
   color: #f97316;
   background: rgba(249, 115, 22, 0.12);
   animation: tp-flicker 1.4s ease-in-out infinite alternate;
@@ -585,7 +591,7 @@
 @media (prefers-reduced-motion: reduce) {
   .tp-glow,
   .tp-dot,
-  .tp-mini-fire,
+  .tp-mini .tp-mini-fire,
   .tp-bar-fill {
     animation: none;
   }

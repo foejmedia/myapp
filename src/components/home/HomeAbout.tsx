@@ -4,16 +4,17 @@
  */
 import Link from 'next/link';
 import { HOME_FAQ } from './homeFaq';
+import { HOME_ABOUT_ICONS } from './HomeAboutIcons';
 import s from './HomeAbout.module.css';
 
-/** `tone` picks one of the site-theme colours (see HomeAbout.module.css) */
+/** `tone` picks one of the neutral card colours (see HomeAbout.module.css) */
 const FEATURES = [
-  { href: '/read-quran', icon: 'menu_book', tone: 'forestTone', title: 'Read the Quran online', text: 'All 114 surahs in clear Uthmani script, with translation, word-by-word meaning and tafseer.' },
-  { href: '/learn-quran', icon: 'school', tone: 'mintTone', title: 'Learn to read: Noorani Qaida', text: '18 audio lessons from the alphabet to fluent reading — perfect for beginners and kids.' },
-  { href: '/quran-player', icon: 'headphones', tone: 'tealTone', title: 'Listen with translation', text: 'Beautiful recitations, ayah by ayah, with the meaning in English, Urdu and more.' },
-  { href: '/memorize-quran', icon: 'psychology', tone: 'sandTone', title: 'Memorize the Quran (Hifz)', text: 'Learn ayah by ayah with audio on repeat, at your own pace.' },
-  { href: '/tajweed', icon: 'record_voice_over', tone: 'sageTone', title: 'Tajweed rules', text: 'Color-coded Quran text and a guide to every rule: ikhfa, idgham, qalqalah, madd and more.' },
-  { href: '/tafseer', icon: 'lightbulb', tone: 'deepTone', title: 'Tafseer & understanding', text: 'Read the explanation behind each ayah and reflect on what Allah is saying.' },
+  { href: '/read-quran', icon: 'read', tone: 'paperTone', title: 'Read the Quran online', text: 'All 114 surahs in clear Uthmani script, with translation, word-by-word meaning and tafseer.' },
+  { href: '/learn-quran', icon: 'qaida', tone: 'stoneTone', title: 'Learn to read: Noorani Qaida', text: '18 audio lessons from the alphabet to fluent reading — perfect for beginners and kids.' },
+  { href: '/quran-player', icon: 'listen', tone: 'mistTone', title: 'Listen with translation', text: 'Beautiful recitations, ayah by ayah, with the meaning in English, Urdu and more.' },
+  { href: '/memorize-quran', icon: 'memorize', tone: 'paperTone', title: 'Memorize the Quran (Hifz)', text: 'Learn ayah by ayah with audio on repeat, at your own pace.' },
+  { href: '/tajweed', icon: 'tajweed', tone: 'stoneTone', title: 'Tajweed rules', text: 'Color-coded Quran text and a guide to every rule: ikhfa, idgham, qalqalah, madd and more.' },
+  { href: '/tafseer', icon: 'tafseer', tone: 'mistTone', title: 'Tafseer & understanding', text: 'Read the explanation behind each ayah and reflect on what Allah is saying.' },
 ] as const;
 
 const POPULAR = [
@@ -43,11 +44,13 @@ export default function HomeAbout() {
       </div>
 
       <ul className={s.grid}>
-        {FEATURES.map(f => (
+        {FEATURES.map(f => {
+          const Icon = HOME_ABOUT_ICONS[f.icon];
+          return (
           <li key={f.href}>
             <Link href={f.href} className={`${s.card} ${s[f.tone]}`}>
               <span className={s.disc} aria-hidden="true" />
-              <span className={`material-symbols-outlined ${s.icon}`} aria-hidden="true">{f.icon}</span>
+              <span className={s.icon} aria-hidden="true"><Icon className={s.iconSvg} /></span>
               <h3 className={s.h3}>{f.title}</h3>
               <p className={s.text}>{f.text}</p>
               <span className={s.more} aria-hidden="true">
@@ -56,7 +59,8 @@ export default function HomeAbout() {
               </span>
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <div className={s.popular}>
