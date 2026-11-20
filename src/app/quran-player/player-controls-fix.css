@@ -5,6 +5,21 @@
   touch-action: none !important;
 }
 
+/* Desktop bar: keep the 32px drag hit-area but let it only occupy 12px of
+   layout, so the controls + seek row stay compact and vertically centered. */
+.sp-player-bar .sp-progress-bar-wrapper {
+  margin: -10px 0 !important;
+}
+
+.sp-player-bar .sp-player-center {
+  gap: 10px; /* >= the -10px margin so the hit-area never overlaps the buttons */
+  align-self: center;
+}
+
+.sp-player-bar .sp-progress-time {
+  line-height: 1;
+}
+
 .sp-progress-bar-wrapper.dragging .sp-progress-fill {
   transition: none !important;
 }
