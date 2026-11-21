@@ -5,7 +5,8 @@ import { FORMATS } from '../data/gatherings';
 import { MEMBERS, STORIES } from '../data/people';
 import { ABOUT_BODY, ABOUT_TITLE } from '../data/about';
 import AboutScene from './AboutScene';
-import { CirclePreview, HeroPeople, ToolsOrbit, Waves } from './Art';
+import { CirclePreview, HeroPeople, Waves } from './Art';
+import GlobeSection from './GlobeSection';
 import { Avatar, ExampleTag, Icon, JoinBand, Mark, SectionHead } from './ui';
 import s from '../community.module.css';
 
@@ -190,17 +191,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={s.section}>
-        <div className={s.wrap}>
-          <ToolsOrbit>
-            <p className={s.eyebrow}>Practise with the app</p>
-            <h2 className={s.h2}>
-              Every tool, <Mark>one tap away</Mark>
-            </h2>
-            <p className={s.sub}>Circles work from the Learn Quran app: the reader, recitations, the Hifz program, tajweed lessons and more.</p>
-          </ToolsOrbit>
-        </div>
-      </section>
+      <GlobeSection />
 
       <section className={s.section}>
         <div className={s.wrap}>
