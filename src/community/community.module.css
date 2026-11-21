@@ -2274,12 +2274,12 @@
 .globeBall,
 .globeShine {
   position: absolute;
-  inset: 10%;
+  inset: 9.6%;
   border-radius: 50%;
   pointer-events: none;
 }
 .globeBall {
-  background: radial-gradient(circle at 35% 30%, #6fa8ff 0%, #2f6df6 45%, #1640b8 80%, #0f2f8f 100%);
+  background: radial-gradient(circle at 35% 30%, #6fa8ff 0%, #2f6df6 48%, #1f55d6 82%, #2a62e8 100%);
   box-shadow: 0 0 40px 2px rgba(47, 109, 246, 0.22), 0 36px 60px -34px rgba(15, 47, 143, 0.5);
 }
 .globeShine {
@@ -2892,5 +2892,122 @@
   .footIn {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
+  }
+}
+
+/* =====================================================================
+ * Phone layout (under 600px): shorter, tighter, nothing cut off abruptly
+ * ===================================================================== */
+@media (max-width: 599px) {
+  .section {
+    padding-block: 36px;
+  }
+  .root .display {
+    font-size: clamp(2.1rem, 9.6vw, 2.75rem);
+  }
+
+  /* hero: the app preview fades out instead of being chopped at the section edge */
+  .preview {
+    -webkit-mask-image: linear-gradient(#000 55%, transparent 100%);
+    mask-image: linear-gradient(#000 55%, transparent 100%);
+  }
+
+  /* why a community: compact rows, icon on the left */
+  .root .pillars {
+    gap: 10px;
+  }
+  .root .pillars .pillar {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 14px;
+    row-gap: 4px;
+    align-items: start;
+    padding: 16px;
+  }
+  .pillar > :first-child {
+    grid-row: span 2;
+  }
+  .pillar .h3 {
+    align-self: center;
+  }
+
+  /* joining: a timeline instead of three cards */
+  .root .steps {
+    position: relative;
+    gap: 0;
+  }
+  .root .steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    bottom: 36px;
+    left: 17px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--primary-border), var(--line));
+  }
+  .root .steps .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 16px;
+    row-gap: 4px;
+    padding: 0 0 22px;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .step > .stepNo {
+    grid-row: span 2;
+    color: var(--on-mint);
+    background: var(--mint);
+    box-shadow: 0 0 0 5px var(--bg);
+  }
+  .step .h3 {
+    align-self: center;
+  }
+
+  /* bento cards: a little less padding */
+  .card {
+    padding: 20px;
+  }
+
+  /* globe: let it fill the width; the glow can run past the edges */
+  .root .globeBand {
+    overflow: hidden;
+    padding-block: 0;
+  }
+  .globeStage {
+    width: calc(100% + 72px);
+    margin: -24px -36px;
+  }
+  .globePinIn {
+    font-size: 0.875rem;
+  }
+
+  /* closing card and footer */
+  .joinCard {
+    padding: 28px 22px;
+    text-align: center;
+  }
+  .joinCard .sub {
+    margin-inline: auto;
+  }
+  .footNav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footNav .footTitle {
+    flex-basis: 100%;
+  }
+  .root .footNav a {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.8438rem;
+    font-weight: 600;
   }
 }

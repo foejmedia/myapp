@@ -1,13 +1,13 @@
 import { ArrowRight, Ear, HeartHandshake, Target } from 'lucide-react';
-import { APPLY_URL, PREVIEW } from '../config';
+import { APPLY_URL } from '../config';
 import { CIRCLES } from '../data/circles';
 import { FORMATS } from '../data/gatherings';
-import { MEMBERS, STORIES } from '../data/people';
+import { MEMBERS } from '../data/people';
 import { ABOUT_BODY, ABOUT_TITLE } from '../data/about';
 import AboutScene from './AboutScene';
 import { CirclePreview, HeroPeople, Waves } from './Art';
 import GlobeSection from './GlobeSection';
-import { Avatar, ExampleTag, Icon, JoinBand, Mark, SectionHead } from './ui';
+import { Avatar, Icon, JoinBand, Mark, SectionHead } from './ui';
 import s from '../community.module.css';
 
 const PILLARS = [
@@ -35,8 +35,6 @@ const STEPS = [
 ];
 
 export default function HomePage() {
-  const members = PREVIEW ? MEMBERS : MEMBERS.filter(m => !m.example);
-  const story = (PREVIEW ? STORIES : STORIES.filter(x => !x.example))[0];
 
   return (
     <>
@@ -138,14 +136,11 @@ export default function HomePage() {
               <p className={s.stat}>Every level</p>
               <p className={s.statLabel}>Who is here</p>
               <p className={s.cardText}>Beginners, returning readers, memorisers, parents and teachers, each in a circle that suits them.</p>
-              {members.length > 0 && (
-                <div className={s.avatarGrid}>
-                  {members.map(m => (
-                    <Avatar key={m.id} name={m.name} look={m.look} />
-                  ))}
-                </div>
-              )}
-              {PREVIEW && <p className={s.cardNote}>Example profiles, shown while the community opens.</p>}
+              <div className={s.avatarGrid} aria-hidden="true">
+                {MEMBERS.map(m => (
+                  <Avatar key={m.id} name={m.id} look={m.look} />
+                ))}
+              </div>
             </article>
 
             <article className={`${s.card} ${s.bentoWide}`}>
@@ -165,27 +160,9 @@ export default function HomePage() {
             </article>
 
             <article className={s.card}>
-              {story ? (
-                <>
-                  <p className={s.statLabel}>
-                    {story.milestone} {story.example && <ExampleTag />}
-                  </p>
-                  <blockquote className={s.quote}>“{story.body[1] ?? story.body[0]}”</blockquote>
-                  <p className={s.byline}>
-                    <Avatar name={story.name} look={story.look} size="sm" />
-                    <span>
-                      <b>{story.name}</b>
-                      <small>{story.role}</small>
-                    </span>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className={s.stat}>Soon</p>
-                  <p className={s.statLabel}>Member stories</p>
-                  <p className={s.cardText}>Milestones will be shared here by members, in their own words.</p>
-                </>
-              )}
+              <p className={s.stat}>1:1</p>
+              <p className={s.statLabel}>Revision partners</p>
+              <p className={s.cardText}>Pair up with someone at your level and recite to each other between sessions.</p>
             </article>
           </div>
         </div>
