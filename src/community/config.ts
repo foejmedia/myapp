@@ -22,6 +22,10 @@ export const site = (page = '/') => `${MAIN_SITE}${page}`;
  * Applications are sent to this WhatsApp number as a pre-filled message, because there is
  * no backend yet. It is the number the homepage already publishes. Digits only, with country code.
  */
+/** Where every "Apply to join" button goes: the application Google Form */
+export const APPLY_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLSdnIZqwPOk_iFaGCtX1jDsq3xu4c8MGMVsIG34H9DQMsaTA2A/viewform';
+
 export const WHATSAPP_NUMBER = '916204130133';
 
 /**

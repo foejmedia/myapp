@@ -1,11 +1,12 @@
-import Link from 'next/link';
 import { ArrowRight, Ear, HeartHandshake, Target } from 'lucide-react';
-import { PREVIEW, to } from '../config';
+import { APPLY_URL, PREVIEW } from '../config';
 import { CIRCLES } from '../data/circles';
 import { FORMATS } from '../data/gatherings';
 import { MEMBERS, STORIES } from '../data/people';
+import { ABOUT_BODY, ABOUT_TITLE } from '../data/about';
+import AboutScene from './AboutScene';
 import { CirclePreview, HeroPeople, ToolsOrbit, Waves } from './Art';
-import { ArrowLink, Avatar, ExampleTag, Icon, JoinBand, Mark, SectionHead } from './ui';
+import { Avatar, ExampleTag, Icon, JoinBand, Mark, SectionHead } from './ui';
 import s from '../community.module.css';
 
 const PILLARS = [
@@ -55,17 +56,29 @@ export default function HomePage() {
                 at your level, a partner to revise with, and people who will ask how your lesson went.
               </p>
               <div className={s.actionsCenter}>
-                <Link href={to('/join')} className={s.btn}>
+                <a href={APPLY_URL} target="_blank" rel="noopener noreferrer" className={s.btn}>
                   Apply to join <ArrowRight size={18} aria-hidden="true" />
-                </Link>
-                <Link href={to('/circles')} className={s.btnGhost}>
-                  See the circles
-                </Link>
+                </a>
               </div>
               <p className={s.heroNote}>Free to join. Every level is welcome.</p>
             </div>
           </div>
           <CirclePreview />
+        </div>
+      </section>
+
+      <section className={s.about} aria-labelledby="cm-about">
+        <div className={`${s.wrap} ${s.aboutIn}`}>
+          <div className={s.aboutText}>
+            <p className={s.aboutEyebrow}>About us</p>
+            <h2 id="cm-about" className={s.h2}>{ABOUT_TITLE}</h2>
+            {ABOUT_BODY.map(p => (
+              <p key={p.slice(0, 24)} className={s.aboutBody}>{p}</p>
+            ))}
+          </div>
+          <div className={s.aboutArt}>
+            <AboutScene />
+          </div>
         </div>
       </section>
 
@@ -78,17 +91,14 @@ export default function HomePage() {
               </h2>
               <p className={s.navySub}>Every circle has one subject and a moderator, so a question about a single letter is never buried.</p>
             </div>
-            <Link href={to('/circles')} className={s.navyLink}>
-              How circles work <ArrowRight size={16} aria-hidden="true" />
-            </Link>
           </div>
           <ul className={s.circleTiles}>
             {CIRCLES.map(c => (
               <li key={c.id}>
-                <Link href={`${to('/circles')}#${c.id}`} className={s.circleTile}>
+                <span className={s.circleTile}>
                   <Icon name={c.icon} size={18} />
                   {c.name}
-                </Link>
+                </span>
               </li>
             ))}
           </ul>
@@ -135,7 +145,6 @@ export default function HomePage() {
                 </div>
               )}
               {PREVIEW && <p className={s.cardNote}>Example profiles, shown while the community opens.</p>}
-              <ArrowLink href={to('/members')}>Meet the members</ArrowLink>
             </article>
 
             <article className={`${s.card} ${s.bentoWide}`}>
@@ -146,14 +155,12 @@ export default function HomePage() {
                   <li key={c.id}>{c.name}</li>
                 ))}
               </ul>
-              <ArrowLink href={to('/circles')}>View all circles</ArrowLink>
             </article>
 
             <article className={s.card}>
               <p className={s.stat}>{FORMATS.length}</p>
               <p className={s.statLabel}>Ways we gather</p>
               <p className={s.cardText}>Weekly sessions, recitation clinics, partner check-ins, milestone evenings and city meetups.</p>
-              <ArrowLink href={to('/gatherings')}>How gatherings work</ArrowLink>
             </article>
 
             <article className={s.card}>
@@ -178,7 +185,6 @@ export default function HomePage() {
                   <p className={s.cardText}>Milestones will be shared here by members, in their own words.</p>
                 </>
               )}
-              <ArrowLink href={to('/stories')}>Read member stories</ArrowLink>
             </article>
           </div>
         </div>
@@ -192,9 +198,6 @@ export default function HomePage() {
               Every tool, <Mark>one tap away</Mark>
             </h2>
             <p className={s.sub}>Circles work from the Learn Quran app: the reader, recitations, the Hifz program, tajweed lessons and more.</p>
-            <Link href={to('/resources')} className={`${s.btn} ${s.btnSm}`}>
-              See all resources <ArrowRight size={16} aria-hidden="true" />
-            </Link>
           </ToolsOrbit>
         </div>
       </section>

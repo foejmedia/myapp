@@ -15,7 +15,8 @@ self-contained so that it can later move to its own subdomain.
 | `/community/guidelines` | Community guidelines |
 | `/community/join` | Application form |
 
-Dark mode follows the site theme (`html.dark`).
+Dark mode follows the site theme (`html.dark`). In light mode a "light view" layer (end of
+`community.module.css`) gives the section a white, blue-accented look with a floating pill header.
 
 ## Where things are
 

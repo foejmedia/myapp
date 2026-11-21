@@ -2146,6 +2146,108 @@
   flex: none;
 }
 
+
+/* ---------- home: about us ---------- */
+.about {
+  padding-block: 56px;
+  background:
+    radial-gradient(40% 60% at 0% 0%, var(--lilac), transparent 70%),
+    var(--bg);
+}
+.aboutIn {
+  display: grid;
+  gap: 40px;
+  align-items: center;
+}
+.aboutEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.aboutEyebrow::before {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+.aboutText .h2 {
+  max-width: 14ch;
+}
+.aboutBody {
+  max-width: 58ch;
+  margin-top: 18px;
+  color: var(--ink-2);
+  font-size: 1.0313rem;
+  line-height: 1.85;
+}
+.aboutArt {
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+.aboutScene {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--head);
+}
+.floatA,
+.floatB,
+.floatC {
+  animation: cm-float 6s ease-in-out infinite;
+}
+.floatB {
+  animation-duration: 7s;
+  animation-delay: -2s;
+}
+.floatC {
+  animation-duration: 5s;
+  animation-delay: -1s;
+}
+.twinkle {
+  animation: cm-twinkle 3.2s ease-in-out infinite;
+}
+.glowPulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cm-glow 5s ease-in-out infinite;
+}
+@keyframes cm-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes cm-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes cm-glow {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floatA, .floatB, .floatC, .twinkle, .glowPulse { animation: none; }
+}
+@media (min-width: 960px) {
+  .about {
+    padding-block: 88px;
+  }
+  .aboutIn {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 64px;
+  }
+  .aboutArt {
+    margin-inline: auto 0;
+  }
+}
+
 /* ---------- home: navy band of circles ---------- */
 .navyBand {
   color: var(--on-navy);
@@ -2368,5 +2470,264 @@
   }
   .root :where(*) {
     transition: none !important;
+  }
+}
+
+/* =====================================================================
+ * Light view
+ * A clean white look with a blue accent: floating pill header, round buttons,
+ * an uppercase eyebrow and a centred headline with the key words in blue.
+ * Applies only in light mode; html.dark keeps the tokens above.
+ * ===================================================================== */
+:global(html:not(.dark)) .root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f7fd;
+  --ink: #16181d;
+  --ink-2: #3f4450;
+  --ink-3: #6b7180;
+  --line: #e7eaf0;
+  --line-strong: #d6dbe5;
+  --primary: #1f63e0;
+  --primary-hover: #174fb8;
+  --primary-soft: #eaf1fe;
+  --primary-border: #c7d9fb;
+  --mint: #2f6df6;
+  --mint-hover: #1f5be0;
+  --on-mint: #ffffff;
+  --on-primary: #ffffff;
+  --cta: #2f6df6;
+  --cta-hover: #1f5be0;
+  --on-cta: #ffffff;
+  --lilac: #eef3ff;
+  --peach: #f5f8ff;
+  --sky: #e6efff;
+  --marker: transparent;
+  --t0: #e3eeff;
+  --t0-ink: #1d4fb3;
+  --shadow: 0 1px 2px rgba(22, 24, 29, 0.04), 0 14px 34px -18px rgba(31, 99, 224, 0.22);
+  --bar: 84px;
+}
+
+/* header: a floating pill */
+:global(html:not(.dark)) .top,
+:global(html:not(.dark)) .topScrolled {
+  inset: 10px 12px auto;
+  max-width: 1240px;
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 28px -18px rgba(22, 24, 29, 0.3);
+}
+:global(html:not(.dark)) .topScrolled {
+  border-color: var(--line-strong);
+  box-shadow: 0 12px 32px -18px rgba(22, 24, 29, 0.38);
+}
+:global(html:not(.dark)) .topIn {
+  height: 62px;
+  max-width: none;
+  padding-inline: 10px 12px;
+}
+:global(html:not(.dark)) .brandText small {
+  color: var(--primary);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+:global(html:not(.dark)) .navLink:hover,
+:global(html:not(.dark)) .navOn,
+:global(html:not(.dark)) .navOn:hover {
+  background: #f1f3f7;
+}
+:global(html:not(.dark)) .navOn,
+:global(html:not(.dark)) .navOn:hover {
+  color: var(--primary);
+}
+:global(html:not(.dark)) .menuBtn {
+  margin-right: 0;
+  border-radius: 50%;
+  background: #f1f3f7;
+}
+:global(html:not(.dark)) .sheet {
+  inset: calc(100% + 8px) 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 24px 48px -24px rgba(22, 24, 29, 0.35);
+}
+
+/* buttons: pills */
+:global(html:not(.dark)) .btn,
+:global(html:not(.dark)) .btnGhost,
+:global(html:not(.dark)) .btnLight {
+  border-radius: 999px;
+}
+:global(html:not(.dark)) .btn {
+  box-shadow: 0 12px 26px -12px rgba(47, 109, 246, 0.65);
+}
+:global(html:not(.dark)) .btnDark {
+  box-shadow: 0 10px 22px -12px rgba(47, 109, 246, 0.7);
+}
+:global(html:not(.dark)) .btnGhost {
+  border-color: var(--line-strong);
+  box-shadow: 0 1px 2px rgba(22, 24, 29, 0.04);
+}
+:global(html:not(.dark)) .btnGhost:hover {
+  border-color: var(--ink-3);
+  background: #fafbfd;
+}
+
+/* hero */
+:global(html:not(.dark)) .heroBg {
+  padding-top: 52px;
+  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 45%, #f1f6ff 100%);
+}
+:global(html:not(.dark)) .badge {
+  gap: 0;
+  margin-bottom: 26px;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+:global(html:not(.dark)) .badgeDot {
+  display: none;
+}
+:global(html:not(.dark)) .display {
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+:global(html:not(.dark)) .h1,
+:global(html:not(.dark)) .h2 {
+  font-weight: 700;
+}
+:global(html:not(.dark)) .mark {
+  padding-bottom: 0;
+  color: var(--mint);
+  background: none;
+  font-weight: 800;
+}
+:global(html:not(.dark)) .heroCenter {
+  max-width: 900px;
+}
+:global(html:not(.dark)) .heroCenter .lead {
+  max-width: 72ch;
+  color: var(--ink-2);
+  font-size: 1.125rem;
+}
+:global(html:not(.dark)) .eyebrow {
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+:global(html:not(.dark)) .pageHead {
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f6ff 100%);
+}
+
+/* cards */
+:global(html:not(.dark)) .card,
+:global(html:not(.dark)) .circleCard,
+:global(html:not(.dark)) .circleRow,
+:global(html:not(.dark)) .member,
+:global(html:not(.dark)) .story,
+:global(html:not(.dark)) .format,
+:global(html:not(.dark)) .pillar,
+:global(html:not(.dark)) .step {
+  border-radius: 22px;
+  box-shadow: 0 1px 2px rgba(22, 24, 29, 0.03);
+}
+:global(html:not(.dark)) .iconTile,
+:global(html:not(.dark)) .letterTile {
+  border-radius: 50%;
+}
+
+/* the circles band and the footer turn light */
+:global(html:not(.dark)) .navyBand,
+:global(html:not(.dark)) .foot {
+  --navy: #f4f7fd;
+  --navy-2: #ffffff;
+  --on-navy: var(--ink);
+  --on-navy-2: var(--ink-2);
+}
+:global(html:not(.dark)) .navyBand {
+  border-block: 1px solid var(--line);
+}
+:global(html:not(.dark)) .navyTitle b,
+:global(html:not(.dark)) .navyLink,
+:global(html:not(.dark)) .navyLink:hover,
+:global(html:not(.dark)) .circleTile svg,
+:global(html:not(.dark)) .foot .brandText small,
+:global(html:not(.dark)) .footNav a:hover {
+  color: var(--primary);
+}
+:global(html:not(.dark)) .circleTile {
+  border-color: var(--line);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(22, 24, 29, 0.04);
+}
+:global(html:not(.dark)) .circleTile:hover {
+  border-color: var(--primary-border);
+}
+:global(html:not(.dark)) .foot {
+  border-top: 1px solid var(--line);
+}
+:global(html:not(.dark)) .footLegal {
+  border-top-color: var(--line);
+}
+
+/* the app preview keeps a dark stage, so its label needs a lighter blue */
+:global(html:not(.dark)) .previewStage {
+  background:
+    radial-gradient(70% 120% at 100% 0%, rgba(47, 109, 246, 0.45), transparent 60%),
+    linear-gradient(135deg, #151b3d, #1e2550);
+  color: #f3f4fb;
+}
+:global(html:not(.dark)) .previewStage small {
+  color: #9dbcff;
+}
+
+/* closing invitation: blue card that sits over the light footer */
+:global(html:not(.dark)) .joinBand {
+  background: linear-gradient(to bottom, transparent 50%, #f4f7fd 50%);
+}
+:global(html:not(.dark)) .joinCard {
+  border-radius: 28px;
+  color: #ffffff;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
+    linear-gradient(135deg, #3b7bff, #1f5be0);
+  box-shadow: 0 30px 60px -30px rgba(31, 91, 224, 0.6);
+}
+:global(html:not(.dark)) .joinCard .h2 {
+  color: #ffffff;
+}
+:global(html:not(.dark)) .joinCard .sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+:global(html:not(.dark)) .joinSquiggle {
+  color: rgba(255, 255, 255, 0.3);
+}
+:global(html:not(.dark)) .btnLight,
+:global(html:not(.dark)) .btnLight:hover {
+  color: #1f5be0;
+}
+
+/* ---------- single page ----------
+ * The community is one page: the circle tiles are labels, not links, and the footer has no page lists.
+ */
+.circleTile:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+:global(html:not(.dark)) .circleTile:hover {
+  border-color: var(--line);
+}
+@media (min-width: 600px) {
+  .footIn {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
   }
 }

@@ -4,7 +4,7 @@ import {
   ArrowRight, BookMarked, DoorOpen, Ear, Flower2, GraduationCap, Home, Languages, Lightbulb, MapPin, Mic, Repeat2,
   Sparkles, Sprout, Users,
 } from 'lucide-react';
-import { PREVIEW, to } from '../config';
+import { APPLY_URL, PREVIEW } from '../config';
 import { Portrait, Squiggle, type Look } from './Art';
 import s from '../community.module.css';
 
@@ -114,9 +114,9 @@ export function JoinBand() {
               people who will notice when you are missing.
             </p>
           </div>
-          <Link href={to('/join')} className={s.btnLight}>
+          <a href={APPLY_URL} target="_blank" rel="noopener noreferrer" className={s.btnLight}>
             Apply to join <ArrowRight size={18} aria-hidden="true" />
-          </Link>
+          </a>
           <Squiggle />
         </div>
       </div>
