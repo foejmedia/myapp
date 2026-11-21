@@ -5,7 +5,7 @@ import './QuickAccessGrid.css';
 
 type Key =
   | 'read' | 'mushaf' | 'nav' | 'hifz' | 'radio' | 'wbw' | 'tafseer' | 'dua'
-  | 'search' | 'tra' | 'namaz' | 'schedule' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
+  | 'search' | 'tra' | 'taf' | 'namaz' | 'schedule' | 'tasbih' | 'qibla' | 'mosques' | 'quiz';
 
 interface Tile {
   key: Key;
@@ -34,6 +34,7 @@ const TILES: Tile[] = [
   { key: 'dua', label: 'Duas', sub: 'Daily Supplications', short: 'Supplications', href: '/dua', from: '#f472b6', to: '#be185d' },
   { key: 'search', label: 'Search Quran', sub: 'Find any ayah by topic', short: 'Find any ayah', href: '/search-quran', from: '#34d399', to: '#047857', wide: true },
   { key: 'tra', label: 'Translation Audio', sub: 'Hear each ayah in your language', short: 'In your language', href: '/translation-audio', from: '#2dd4bf', to: '#0f766e', wide: true },
+  { key: 'taf', label: 'Tafsir Audio', sub: 'Listen to the tafsir of every surah', short: 'Listen to tafsir', href: '/tafsir-audio', from: '#a78bfa', to: '#6d28d9', wide: true },
   { key: 'namaz', label: 'Namaz Tracker', sub: 'Log your five prayers and qaza', short: 'Daily prayers', href: '/namaz-tracker', from: '#34d399', to: '#047857', wide: true },
   { key: 'schedule', label: 'My Schedule', sub: 'Plan your day around the prayers', short: 'Plan your day', href: '/my-schedule', from: '#a5b4fc', to: '#4338ca', wide: true },
   { key: 'tasbih', label: 'Tasbeeh Garden', sub: 'Every count plants a flower', short: 'Dhikr counter', href: '/tasbih', from: '#4ade80', to: '#15803d', wide: true },
@@ -170,6 +171,22 @@ function Art({ k }: { k: Key }) {
           ))}
           <rect className="s" x="78" y="44" width="24" height="18" rx="6" />
           <text className="t-s" x="90" y="57" textAnchor="middle">Aa</text>
+        </g>
+      );
+    case 'taf':
+      return (
+        <g>
+          <path className="w o" d="M60 26c-9-6-21-7-31-4v38c10-3 22-2 31 4z" />
+          <path className="s o" d="M60 26c9-6 21-7 31-4v38c-10-3-22-2-31 4z" />
+          <path className="l" d="M36 32h16M36 39h16M36 46h11" />
+          <g className="qa-float">
+            <path className="o thick" d="M64 22a20 20 0 0 1 32 0" />
+            <rect className="a" x="60" y="22" width="7" height="13" rx="3" />
+            <rect className="a" x="93" y="22" width="7" height="13" rx="3" />
+          </g>
+          {[0, 1, 2].map(i => (
+            <rect key={i} className="a qa-bar" style={{ animationDelay: `${i * 0.15}s` }} x={70 + i * 7} y={46 - [4, 7, 4][i]} width="4" height={[4, 7, 4][i] * 2} rx="2" />
+          ))}
         </g>
       );
     case 'namaz':

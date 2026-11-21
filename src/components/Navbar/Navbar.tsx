@@ -39,6 +39,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { href: '/quran-player', label: 'Quran Player', icon: 'play_circle', desc: 'Renowned reciters' },
       { href: '/audio-quran', label: 'Audio Quran', icon: 'headphones', desc: 'Stream full recitations' },
+      { href: '/tafsir-audio', label: 'Tafsir Audio', icon: 'menu_book', desc: 'Listen to the tafsir of every surah' },
       { href: '/radio', label: 'Quran Radio', icon: 'radio', desc: 'Live channels 24/7' },
       { href: '/video-gallery', label: 'Watch', icon: 'smart_display', desc: 'Recitations, lectures & kids' },
     ],

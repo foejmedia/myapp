@@ -1,0 +1,698 @@
+/* Tafsir Audio. Light by default; follows the site's dark mode (html.dark). */
+
+.root {
+  --ta-bg: #faf9ff;
+  --ta-surface: #ffffff;
+  --ta-surface-2: #f4f1fe;
+  --ta-ink: #1c1633;
+  --ta-ink-2: #4f4868;
+  --ta-ink-3: #7a7392;
+  --ta-line: #ebe7f7;
+  --ta-accent: #6d3fe0;
+  --ta-accent-2: #8b5cf6;
+  --ta-accent-soft: #efe9fe;
+  --ta-gold: #f5b43c;
+  --ta-shadow: 0 1px 2px rgba(28, 22, 51, 0.04), 0 18px 40px -24px rgba(76, 42, 170, 0.35);
+
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 28px 16px 64px;
+  color: var(--ta-ink);
+  font-family: var(--font-manrope), 'Manrope', system-ui, sans-serif;
+}
+:global(html.dark) .root {
+  --ta-bg: #0f0c1d;
+  --ta-surface: #17132b;
+  --ta-surface-2: #1f1938;
+  --ta-ink: #f1eefc;
+  --ta-ink-2: #c3bcdc;
+  --ta-ink-3: #948cb3;
+  --ta-line: #2b2449;
+  --ta-accent: #a78bfa;
+  --ta-accent-2: #8b5cf6;
+  --ta-accent-soft: #2a2150;
+  --ta-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+}
+.root button {
+  font: inherit;
+  cursor: pointer;
+}
+.root button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ---------- heading ---------- */
+.head {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--ta-accent);
+  background: var(--ta-accent-soft);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.title {
+  margin: 14px 0 0;
+  color: var(--ta-ink);
+  font-size: clamp(1.75rem, 6vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+.lead {
+  max-width: 58ch;
+  margin: 12px auto 0;
+  color: var(--ta-ink-2);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ---------- choices ---------- */
+.panel,
+.player,
+.textCard {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--ta-line);
+  border-radius: 22px;
+  background: var(--ta-surface);
+  box-shadow: var(--ta-shadow);
+}
+.panel {
+  display: grid;
+  gap: 14px;
+}
+.surahBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid var(--ta-line);
+  border-radius: 16px;
+  color: var(--ta-ink);
+  background: var(--ta-surface-2);
+  text-align: left;
+}
+.surahBtn:hover {
+  border-color: var(--ta-accent-2);
+}
+.surahNo,
+.rowNo {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ta-accent-2), #5b21b6);
+  font-weight: 800;
+}
+.surahName,
+.rowName {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.surahName b,
+.rowName b {
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+.surahName small,
+.rowName small {
+  overflow: hidden;
+  color: var(--ta-ink-3);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.surahAr,
+.rowAr {
+  color: var(--ta-accent);
+  font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif;
+  font-size: 1.375rem;
+}
+.langs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-inline: -4px;
+  padding: 2px 4px;
+}
+.langs::-webkit-scrollbar {
+  display: none;
+}
+.lang,
+.langOn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 7px 14px;
+  border: 1px solid var(--ta-line);
+  border-radius: 999px;
+  font-size: 0.9063rem;
+  font-weight: 700;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.lang {
+  color: var(--ta-ink-2);
+  background: var(--ta-surface);
+}
+.lang:hover {
+  border-color: var(--ta-accent-2);
+  color: var(--ta-ink);
+}
+.lang svg {
+  color: var(--ta-accent);
+}
+.langOn {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ta-accent-2), #5b21b6);
+  box-shadow: 0 8px 18px -10px rgba(91, 33, 182, 0.8);
+}
+.sourceRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ta-ink-3);
+}
+.sourceLabel {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.select {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--ta-line);
+  border-radius: 12px;
+  color: var(--ta-ink);
+  background: var(--ta-surface);
+  font: inherit;
+  font-size: 0.9063rem;
+  font-weight: 600;
+}
+
+/* ---------- player ---------- */
+.player {
+  position: relative;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(139, 92, 246, 0.12), transparent 60%),
+    var(--ta-surface);
+}
+.playerTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cover {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 18px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.35), transparent 50%),
+    linear-gradient(135deg, var(--ta-accent-2), #4c1d95);
+  box-shadow: 0 12px 24px -12px rgba(76, 29, 149, 0.8);
+  font-family: 'Amiri', 'Scheherazade New', serif;
+  font-size: 1.125rem;
+  line-height: 1.1;
+  text-align: center;
+}
+.nowText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+.nowText small {
+  color: var(--ta-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.nowText b {
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+.nowText span {
+  color: var(--ta-ink-2);
+  font-size: 0.875rem;
+}
+.seekRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--ta-ink-3);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.seek {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--ta-accent-2) var(--pct, 0%), var(--ta-line) var(--pct, 0%));
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.seek::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--ta-accent-2);
+  box-shadow: 0 2px 6px rgba(76, 29, 149, 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.seek::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--ta-accent-2);
+}
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.ctl {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ta-ink);
+  background: transparent;
+}
+.ctl:hover {
+  background: var(--ta-surface-2);
+}
+.play {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ta-accent-2), #5b21b6);
+  box-shadow: 0 14px 28px -12px rgba(91, 33, 182, 0.9);
+  transition: transform 0.15s;
+}
+.play:hover {
+  transform: scale(1.05);
+}
+.spin {
+  animation: ta-spin 1s linear infinite;
+}
+@keyframes ta-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.extras {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.pill,
+.pillOn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid var(--ta-line);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.pill {
+  color: var(--ta-ink-2);
+  background: var(--ta-surface);
+}
+.pill:hover:not(:disabled) {
+  border-color: var(--ta-accent-2);
+  color: var(--ta-ink);
+}
+.pillOn {
+  border-color: var(--ta-accent-2);
+  color: var(--ta-accent);
+  background: var(--ta-accent-soft);
+}
+.parts {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-top: 12px;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.part,
+.partOn {
+  flex: none;
+  padding: 6px 11px;
+  border: 1px solid var(--ta-line);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.part {
+  color: var(--ta-ink-2);
+  background: var(--ta-surface-2);
+}
+.partOn {
+  border-color: transparent;
+  color: #fff;
+  background: var(--ta-accent-2);
+}
+.warn {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #92400e;
+  background: #fff7e6;
+  font-size: 0.8438rem;
+}
+:global(html.dark) .warn {
+  color: #fcd9a0;
+  background: #33260f;
+}
+
+/* ---------- tafsir text ---------- */
+.textHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ta-line);
+}
+.kicker {
+  margin: 0 0 4px;
+  color: var(--ta-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.h2 {
+  margin: 0;
+  color: var(--ta-ink);
+  font-size: clamp(1.35rem, 4.6vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.h2 span {
+  margin-left: 6px;
+  color: var(--ta-accent);
+  font-family: 'Amiri', 'Scheherazade New', serif;
+  font-weight: 700;
+}
+.metaLine {
+  margin: 6px 0 0;
+  color: var(--ta-ink-3);
+  font-size: 0.8438rem;
+}
+.state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 12px;
+  color: var(--ta-ink-3);
+  font-weight: 600;
+  list-style: none;
+}
+.groups {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.group,
+.groupOn {
+  padding: 18px 2px;
+  border-bottom: 1px solid var(--ta-line);
+  scroll-margin-top: 260px;
+}
+.groupOn {
+  margin-inline: -10px;
+  padding-inline: 12px;
+  border-radius: 14px;
+  background: var(--ta-accent-soft);
+}
+.groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ayahTag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--ta-accent);
+  background: var(--ta-accent-soft);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.mini {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ta-line);
+  border-radius: 50%;
+  color: var(--ta-accent);
+  background: var(--ta-surface);
+}
+.body,
+.bodyClosed {
+  color: var(--ta-ink-2);
+  font-size: 1rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.bodyClosed {
+  max-height: 260px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 60%, transparent);
+  mask-image: linear-gradient(#000 60%, transparent);
+}
+.body :global(p),
+.bodyClosed :global(p) {
+  margin: 0 0 0.8em;
+}
+.body :global(h3),
+.bodyClosed :global(h3),
+.body :global(h4),
+.bodyClosed :global(h4) {
+  margin: 1em 0 0.4em;
+  color: var(--ta-ink);
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+.groups[dir='rtl'] .body,
+.groups[dir='rtl'] .bodyClosed {
+  font-size: 1.1875rem;
+  line-height: 2.1;
+}
+.groups[lang='ur'] .body,
+.groups[lang='ur'] .bodyClosed {
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', 'Amiri', serif;
+  line-height: 2.4;
+}
+.groups[lang='ar'] .body,
+.groups[lang='ar'] .bodyClosed {
+  font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif;
+}
+.more {
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  color: var(--ta-accent);
+  background: none;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+.credit {
+  margin: 16px 0 0;
+  color: var(--ta-ink-3);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* ---------- surah picker ---------- */
+.overlay {
+  position: fixed;
+  z-index: 10050;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 10, 35, 0.45);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  max-height: 85dvh;
+  border-radius: 24px 24px 0 0;
+  background: var(--ta-surface);
+  box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, 0.4);
+}
+.sheetHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--ta-line);
+}
+.searchBox {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--ta-line);
+  border-radius: 14px;
+  color: var(--ta-ink-3);
+  background: var(--ta-surface-2);
+}
+.searchBox input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  outline: 0;
+  color: var(--ta-ink);
+  background: transparent;
+  font: inherit;
+  font-size: 0.9375rem;
+}
+.surahList {
+  margin: 0;
+  padding: 6px 8px 16px;
+  overflow-y: auto;
+  list-style: none;
+}
+.row,
+.rowOn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 14px;
+  color: var(--ta-ink);
+  background: transparent;
+  text-align: left;
+}
+.row:hover {
+  background: var(--ta-surface-2);
+}
+.rowOn {
+  background: var(--ta-accent-soft);
+}
+.rowNo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+}
+.rowName b {
+  font-size: 0.9688rem;
+}
+.rowAr {
+  font-size: 1.1875rem;
+}
+.rowIcon {
+  color: var(--ta-accent);
+}
+
+@media (min-width: 720px) {
+  .root {
+    padding-top: 40px;
+  }
+  .panel,
+  .player,
+  .textCard {
+    padding: 22px;
+  }
+  .panel {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .surahBtn {
+    grid-column: 1 / -1;
+  }
+  /* on wider screens the player stays in view while the tafsir is read */
+  .player {
+    position: sticky;
+    z-index: 5;
+    top: 72px;
+  }
+  .langs {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+  .sourceRow {
+    grid-column: 1 / -1;
+  }
+  .overlay {
+    align-items: center;
+  }
+  .sheet {
+    border-radius: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}

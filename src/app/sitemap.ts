@@ -14,6 +14,7 @@ const SECTIONS: { path: string; priority: number; changeFrequency: 'daily' | 'we
   { path: '/learn-1-min', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/quran-pages', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/audio-quran', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/tafsir-audio', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/radio', priority: 0.6, changeFrequency: 'weekly' },
   { path: '/duas', priority: 0.8, changeFrequency: 'weekly' },
   { path: '/hadees', priority: 0.7, changeFrequency: 'daily' },
